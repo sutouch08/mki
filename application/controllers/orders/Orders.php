@@ -374,6 +374,7 @@ class Orders extends PS_Controller
         else
         {
           $ds = array(
+            'date_add' => $date_add,
             'code' => $code,
             'role' => $role,
             'bookcode' => $book_code,
