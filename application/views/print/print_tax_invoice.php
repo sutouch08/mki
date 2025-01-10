@@ -1,7 +1,7 @@
 <?php
 $this->load->helper('print');
 $total_row 	= empty($details) ? 0 :count($details);
-$row_span = $use_vat ? 5 : 2;
+$row_span = $use_vat ? 6 : 2;
 
 $config 		= array(
 	"row" => 12,
@@ -83,13 +83,10 @@ $subtotal_row = 4;
 $row 		     = $this->printer->row;
 $total_page  = $this->printer->total_page;
 $total_qty 	 = 0; //--  จำนวนรวม
-$total_amount_ex = 0;  //--- มูลค่ารวม(หลังหักส่วนลด ไมีรวมภาษี)
-$total_amount_inc = 0; //--- มูลค่ารวม(หลังหักส่วนลด รวมภาษี)
-$total_discount 	= 0; //--- ส่วนลดรวม
-$total_order  = 0;    //--- มูลค่าราคารวม
+$total_amount = 0;
+$total_vatable = 0;
+$total_non_vat = 0;
 $total_vat = 0;
-$total_vat_amount = 0; //--- มูลค่าสินค้าที่มีภาษี
-$total_non_vat_amount = 0; //-- มูลค่าสินค้าที่ยกเว้นภาษี
 
 
 //**************  กำหนดหัวตาราง  ******************************//
@@ -187,16 +184,13 @@ while($total_page > 0 )
     if( ! empty($rs) )
     {
 			//--- เตรียมข้อมูลไว้เพิ่มลงตาราง
-			$price = vat_price($rs->price, $order->vat_type, $rs->vat_rate); //--- vat_helper
-			$amount = vat_price($rs->amount, $order->vat_type, $rs->vat_rate);
-
 			$data = array();
 
 			$data[] = $n;
 			$data[] = $rs->product_name;
 			$data[] = qty_format($rs->qty, 2);
 			$data[] = $rs->unit_name;
-			$data[] = number($price, 2);
+			$data[] = number($rs->price, 2);
 			$data[] = empty($rs->discount_label) ? "" : $rs->discount_label;
 
 			if($use_vat)
@@ -204,16 +198,14 @@ while($total_page > 0 )
 				$data[] = ($rs->vat_rate > 0 ? qty_format($rs->vat_rate).' %' : 'ยกเว้น');
 			}
 
-			$data[] = number($amount, 2);
+			$data[] = number($rs->amount, 2);
 
       $total_qty += $rs->qty;
-      $total_amount_ex += $amount;
-			$total_amount_inc += $rs->amount;
-      $total_discount += $rs->discount_amount;
+    	$total_amount += $rs->amount;
+			$total_vatable += $rs->vat_rate > 0 ? $rs->amount : 0;
+			$total_non_vat += $rs->vat_rate > 0 ? 0 : $rs->amount;
 			$total_vat += $rs->vat_amount;
-      $total_order    += ($rs->qty * $rs->price);
-			$total_vat_amount += $rs->vat_rate > 0 ? $amount : 0;
-			$total_non_vat_amount += $rs->vat_rate > 0 ? 0 : $amount;
+
     }
     else
     {
@@ -236,22 +228,23 @@ while($total_page > 0 )
 	if($this->printer->current_page == $this->printer->total_page)
   {
 		$qty  = "<b>*** จำนวนรวม  ".qty_format($total_qty, 0)."  หน่วย ***</b>";
-		$totalBfTax = number($total_amount_ex, 2);
-		$vat_sum = number($total_vat, 2);
-		$item_vat_amount = number($total_vat_amount, 2);
-		$item_non_vat_amount = number($total_non_vat_amount, 2);
-		$net_amount = number($total_amount_inc, 2);
+
+		$f_total = number($total_amount, 2); //--- ราคารวมภาษี
+		$f_total_vatable = number($total_vatable, 2);
+		$f_total_bef_vat = number($total_vatable - $total_vat, 2);
+		$f_total_non_vat = number($total_non_vat, 2);
+		$f_total_vat = number($total_vat, 2);
 		$remark = $order->remark;
-		$baht_text = "(".baht_text($total_amount_inc).")";
+		$baht_text = "(".baht_text($total_amount).")";
   }
   else
   {
 		$qty  = "";
-		$totalBfTax = "";
-		$vat_sum = "";
-		$item_vat_amount = "";
-		$item_non_vat_amount = "";
-		$net_amount = "";
+		$f_total = "";
+		$f_total_vatable = "";
+		$f_total_bef_vat = "";
+		$f_total_non_vat = "";
+		$f_total_vat = "";
 		$remark = "";
 		$baht_text = "";
   }
@@ -278,38 +271,47 @@ while($total_page > 0 )
 	  $sub_price .=  '<strong>รวมเป็นเงิน</strong>';
 	  $sub_price .= '</td>';
 	  $sub_price .= '<td class="width-20 subtotal subtotal-first-row text-right">';
-	  $sub_price .=  $totalBfTax;
+	  $sub_price .=  $f_total;
 	  $sub_price .= '</td>';
 	  array_push($subTotal, array($sub_price));
 	}
 
+	if($use_vat)
+	{
+		$sub_disc  = '<td class="subtotal text-right">';
+		$sub_disc .=  '<strong>มูลค่าที่ไม่มี/ยกเว้นภาษี</strong>';
+		$sub_disc .= '</td>';
+		$sub_disc .= '<td class="subtotal text-right">';
+		$sub_disc .=  $f_total_non_vat;
+		$sub_disc .= '</td>';
+		array_push($subTotal, array($sub_disc));
 
-if($use_vat)
-{
-	$sub_disc  = '<td class="subtotal text-right">';
-	$sub_disc .=  '<strong>มูลค่าที่ไม่มี/ยกเว้นภาษี</strong>';
-	$sub_disc .= '</td>';
-	$sub_disc .= '<td class="subtotal text-right">';
-	$sub_disc .=  $item_non_vat_amount;
-	$sub_disc .= '</td>';
-	array_push($subTotal, array($sub_disc));
+		$sub_disc  = '<td class="subtotal text-right">';
+		$sub_disc .=  '<strong>มูลค่าที่คำนวนภาษี</strong>';
+		$sub_disc .= '</td>';
+		$sub_disc .= '<td class="subtotal text-right">';
+		$sub_disc .=  $f_total_vatable;
+		$sub_disc .= '</td>';
+		array_push($subTotal, array($sub_disc));
 
-	$sub_disc  = '<td class="subtotal text-right">';
-	$sub_disc .=  '<strong>มูลค่าที่คำนวณภาษี</strong>';
-	$sub_disc .= '</td>';
-	$sub_disc .= '<td class="subtotal text-right">';
-	$sub_disc .=  $item_vat_amount;
-	$sub_disc .= '</td>';
-	array_push($subTotal, array($sub_disc));
+		$sub_disc  = '<td class="subtotal text-right">';
+		$sub_disc .=  '<strong>มูลค่าก่อนภาษี</strong>';
+		$sub_disc .= '</td>';
+		$sub_disc .= '<td class="subtotal text-right">';
+		$sub_disc .=  $f_total_bef_vat;
+		$sub_disc .= '</td>';
+		array_push($subTotal, array($sub_disc));
 
-	$sub_disc  = '<td class="subtotal text-right">';
-	$sub_disc .=  '<strong>ภาษีมูลค่าเพิ่ม &nbsp;'.getConfig('SALE_VAT_RATE').' %</strong>';
-	$sub_disc .= '</td>';
-	$sub_disc .= '<td class="subtotal text-right">';
-	$sub_disc .=  $vat_sum;
-	$sub_disc .= '</td>';
-	array_push($subTotal, array($sub_disc));
-}
+		$sub_disc  = '<td class="subtotal text-right">';
+		$sub_disc .=  '<strong>ภาษีมูลค่าเพิ่ม &nbsp;'.getConfig('SALE_VAT_RATE').' %</strong>';
+		$sub_disc .= '</td>';
+		$sub_disc .= '<td class="subtotal text-right">';
+		$sub_disc .=  $f_total_vat;
+		$sub_disc .= '</td>';
+		array_push($subTotal, array($sub_disc));
+
+	}
+
 
 $first_row = $use_vat ? "" : "subtotal-first-row";
 	//--- ยอดสุทธิ
@@ -324,7 +326,7 @@ $first_row = $use_vat ? "" : "subtotal-first-row";
   $sub_net .=  '<strong>จำนวนเงินรวมทั้งสิ้น</strong>';
   $sub_net .= '</td>';
   $sub_net .= '<td class="subtotal subtotal-last-row '.$first_row.' text-right">';
-  $sub_net .=  $net_amount;
+  $sub_net .=  $f_total;
   $sub_net .= '</td>';
 
   array_push($subTotal, array($sub_net));

@@ -244,7 +244,7 @@ class Delivery extends PS_Controller
 											'discount_amount' => ($rs->discount_amount * $rs->order_qty) + $sumBillDiscAmount,
 											'total_amount'   => $total_amount,
 											'total_amount_ex' => $total_amount_ex,
-											'vat_amount' => $total_amount * ($item->vat_rate * 0.01),
+											'vat_amount' => $total_amount - $total_amount_ex, 
 											'total_cost'   => $total_cost,
 											'margin'  =>  $total_amount_ex - $total_cost,
 											'id_policy'   => $rs->id_policy,
