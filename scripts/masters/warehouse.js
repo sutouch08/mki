@@ -124,118 +124,132 @@ function toggleActive(option)
 }
 
 
-function checkAdd(){
-  var code = $.trim($('#code').val());
-  var name = $.trim($('#name').val());
-  var type = $('#role').val();
+function add() {
+  clearErrorByClass('e');
 
-  if(code.length == 0){
-    set_error($('#code'), $('#code-error'), 'Required');
+  let h = {
+    'code' : $('#code').val().trim(),
+    'name' : $('#name').val().trim(),
+    'role' : $('#role').val(),
+    'sell' : $('#sell').val(),
+    'prepare' : $('#prepare').val(),
+    'auz' : $('#auz').val(),
+    'active' : $('#active').val()
+  };
+
+  if(h.code.length == 0) {
+    $('#code').hasError();
     return false;
-  }else{
-    clear_error($('#code'), $('#code-error'));
   }
 
-  if(name.length == 0){
-    set_error($('#name'), $('#name-error'), 'Required');
+  if(h.name.length == 0) {
+    $('#name').hasError();
     return false;
-  }else{
-    clear_error($('#name'), $('#name-error'));
   }
 
-  //---- check exists code
+  if(h.role == "" || h.role < 1) {
+    $('#role').hasError();
+    return false;
+  }
+
+  load_in();
+
   $.ajax({
-    url:HOME + '/is_exists_code/'+code,
-    type:'GET',
+    url:HOME + '/add',
+    type:'POST',
     cache:false,
-    success:function(rs){
-      if(rs != 'ok'){
-        set_error($('#code'), $('#code-error'), rs);
-        return false;
-      }else{
-        clear_error($('#code'), $('#code-error'));
-        //----- check exists name
-        $.ajax({
-          url: HOME + '/is_exists_name/'+name,
-          type:'GET',
-          cache:false,
-          success:function(rs){
-            if(rs != 'ok'){
-              set_error($('#name'), $('#name-error'), rs);
-              return false;
-            }else{
-              clear_error($('#name'), $('#name-error'));
+    data:{
+      'data' : JSON.stringify(h)
+    },
+    success:function(rs) {
+      load_out();
 
-              if(type == ""){
-                set_error($('#role'), $('#role-error'), 'Required');
-                return false;
-              }else{
-                $('#addForm').submit();
-              }
-            }
-          }
-        });
+      if(isJson(rs)) {
+        let ds = JSON.parse(rs);
+
+        if(ds.status == 'success') {
+          swal({
+            title:'Success',
+            type:'success',
+            timer:1000
+          });
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 1200);
+        }
+        else {
+          showError(ds.message);
+        }
       }
+      else {
+        showError(rs);
+      }
+    },
+    error:function(rs) {
+      load_out();
+      showError(rs);
     }
-  });
+  })
 }
 
 
+function update() {
+  clearErrorByClass('e');
 
-function checkUpdate(){
-  var code = $.trim($('#code').val());
-  var old_code = $('#old_code').val();
-  var name = $.trim($('#name').val());
-  var old_name = $('#old_name').val();
-  var type = $('#role').val();
+  let h = {
+    'code' : $('#code').val().trim(),
+    'name' : $('#name').val().trim(),
+    'role' : $('#role').val(),
+    'sell' : $('#sell').val(),
+    'prepare' : $('#prepare').val(),
+    'auz' : $('#auz').val(),
+    'active' : $('#active').val()
+  };
 
-  if(code.length == 0){
-    set_error($('#code'), $('#code-error'), 'Required');
+  if(h.name.length == 0) {
+    $('#name').hasError();
     return false;
-  }else{
-    clear_error($('#code'), $('#code-error'));
   }
 
-  if(name.length == 0){
-    set_error($('#name'), $('#name-error'), 'Required');
+  if(h.role == "" || h.role < 1) {
+    $('#role').hasError();
     return false;
-  }else{
-    clear_error($('#name'), $('#name-error'));
   }
 
-  //---- check exists code
+  load_in();
+
   $.ajax({
-    url:HOME + '/is_exists_code/'+code+'/'+old_code,
-    type:'GET',
+    url:HOME + '/update',
+    type:'POST',
     cache:false,
-    success:function(rs){
-      if(rs != 'ok'){
-        set_error($('#code'), $('#code-error'), rs);
-        return false;
-      }else{
-        clear_error($('#code'), $('#code-error'));
-        //----- check exists name
-        $.ajax({
-          url: HOME + '/is_exists_name/'+name+'/'+old_name,
-          type:'GET',
-          cache:false,
-          success:function(rs){
-            if(rs != 'ok'){
-              set_error($('#name'), $('#name-error'), rs);
-              return false;
-            }else{
-              clear_error($('#name'), $('#name-error'));
+    data:{
+      'data' : JSON.stringify(h)
+    },
+    success:function(rs) {
+      load_out();
 
-              if(type == ""){
-                set_error($('#role'), $('#role-error'), 'Required');
-                return false;
-              }else{
-                $('#addForm').submit();
-              }
-            }
-          }
-        });
+      if(isJson(rs)) {
+        let ds = JSON.parse(rs);
+
+        if(ds.status == 'success') {
+          swal({
+            title:'Success',
+            type:'success',
+            timer:1000
+          });
+        }
+        else {
+          showError(ds.message);
+        }
       }
+      else {
+        showError(rs);
+      }
+    },
+    error:function(rs) {
+      load_out();
+      showError(rs);
     }
-  });
+  })
 }

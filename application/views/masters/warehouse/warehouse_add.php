@@ -10,12 +10,12 @@
 	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
-<form class="form-horizontal" id="addForm" method="post" action="<?php echo $this->home."/add"; ?>">
+<div class="form-horizontal">
 
 	<div class="form-group">
     <label class="col-sm-3 control-label no-padding-right">รหัส</label>
     <div class="col-xs-12 col-sm-3">
-      <input type="text" class="form-control input-sm code" name="code" id="code" maxlength="20" value="" onkeyup="validCode(this)" required/>
+      <input type="text" class="form-control input-sm code e" name="code" id="code" maxlength="20" value="" onkeyup="validCode(this)" required/>
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="code-error"></div>
   </div>
@@ -25,7 +25,7 @@
   <div class="form-group">
     <label class="col-sm-3 control-label no-padding-right">ชื่อ</label>
     <div class="col-xs-12 col-sm-3">
-			<input type="text" class="form-control input-sm" name="name" id="name" maxlength="100" value="" required />
+			<input type="text" class="form-control input-sm e" name="name" id="name" maxlength="100" value="" required />
     </div>
     <div class="help-block col-xs-12 col-sm-reset inline red" id="name-error"></div>
   </div>
@@ -33,7 +33,7 @@
 	<div class="form-group">
  	 <label class="col-sm-3 control-label no-padding-right">ประเภทคลัง</label>
  	 <div class="col-xs-12 col-sm-3">
- 		 <select class="form-control input-sm" name="role" id="role" required>
+ 		 <select class="form-control input-sm e" name="role" id="role" required>
  		 	<option value="">เลือก</option>
 			<?php echo select_warehouse_role(); ?>
  		 </select>
@@ -90,7 +90,7 @@
     <label class="col-sm-3 control-label no-padding-right"></label>
     <div class="col-xs-12 col-sm-3">
       <p class="pull-right">
-        <button type="button" class="btn btn-sm btn-success" onclick="checkAdd()"><i class="fa fa-save"></i> บันทึก</button>
+        <button type="button" class="btn btn-sm btn-success" onclick="add()"><i class="fa fa-save"></i> บันทึก</button>
       </p>
     </div>
     <div class="help-block col-xs-12 col-sm-reset inline">
@@ -101,7 +101,7 @@
 	<input type="hidden" name="prepare" id="prepare" value="1">
 	<input type="hidden" name="auz" id="auz" value="0">
 	<input type="hidden" name="active" id="active" value="1">
-</form>
+</div>
 
 <script src="<?php echo base_url(); ?>scripts/masters/warehouse.js"></script>
 <?php $this->load->view('include/footer'); ?>

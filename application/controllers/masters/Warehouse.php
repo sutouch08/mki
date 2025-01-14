@@ -62,35 +62,64 @@ class Warehouse extends PS_Controller
 
   public function add()
   {
-    if($this->input->post('code'))
-    {
-      $arr = array(
-        'code' => trim($this->input->post('code')),
-        'name' => trim($this->input->post('name')),
-        'role' => $this->input->post('role'),
-        'active' => $this->input->post('active'),
-        'sell' => $this->input->post('sell'),
-        'prepare' => $this->input->post('prepare'),
-        'auz' => $this->input->post('auz'),
-        'date_add' => now(),
-        'update_user' => get_cookie('uname')
-      );
+    $sc = TRUE;
+    $ds = json_decode($this->input->post('data'));
 
-      if($this->warehouse_model->add($arr))
+    if($this->pm->can_add)
+    {
+      if( ! empty($ds))
       {
-        set_message(label_value('insert_success'));
+        if( ! $this->warehouse_model->is_exists_code($ds->code))
+        {
+          if( ! $this->warehouse_model->is_exists_name($ds->name))
+          {
+            $arr = array(
+              'code' => $ds->code,
+              'name' => trim($ds->name),
+              'role' => $ds->role,
+              'sell' => $ds->sell == 0 ? 0 : 1,
+              'prepare' => $ds->prepare == 0 ? 0 : 1,
+              'auz' => $ds->auz == 1 ? 1 : 0,
+              'active' => $ds->active == 0 ? 0 : 1,
+              'update_user' => $this->_user->uname
+            );
+
+            if( ! $this->warehouse_model->add($arr))
+            {
+              $sc = FALSE;
+              $this->error = get_error_message('update');
+            }
+          }
+          else
+          {
+            $sc = FALSE;
+            $this->error = get_error_message('exists', $ds->name);
+          }
+        }
+        else
+        {
+          $sc = FALSE;
+          $this->error = get_error_message('exists', $ds->code);
+        }
       }
       else
       {
-        set_error(label_value('insert_fail'));
+        $sc = FALSE;
+        $this->error = get_error_message('required');
       }
     }
     else
     {
-      set_error(label_value('no_data_found'));
+      $sc = FALSE;
+      $this->error = get_error_message('permission');
     }
 
-    redirect($this->home.'/add_new');
+    $arr = array(
+      'status' => $sc === TRUE ? 'success' : 'failed',
+      'message' => $sc === TRUE ? 'success' : $this->error
+    );
+
+    echo json_encode($arr);
   }
 
 
@@ -113,45 +142,55 @@ class Warehouse extends PS_Controller
 
   public function update()
   {
+    $sc = TRUE;
+    $ds = json_decode($this->input->post('data'));
+
     if($this->pm->can_edit)
     {
-      if($this->input->post('code'))
+      if( ! empty($ds))
       {
-        $old_code = $this->input->post('old_code');
-        $code = trim($this->input->post('code'));
-        $arr = array(
-          'code' => $code,
-          'name' => trim($this->input->post('name')),
-          'role' => $this->input->post('role'),
-          'sell' => $this->input->post('sell'),
-          'prepare' => $this->input->post('prepare'),
-          'auz' => $this->input->post('auz'),
-          'active' => $this->input->post('active'),
-          'update_user' => get_cookie('uname')
-        );
-
-        if($this->warehouse_model->update($old_code, $arr))
+        if( ! $this->warehouse_model->is_exists_name($ds->name, $ds->code))
         {
-          set_message(label_value('update_success'));
-          redirect($this->home.'/edit/'.$code);
+          $arr = array(
+            'name' => trim($ds->name),
+            'role' => $ds->role,
+            'sell' => $ds->sell == 0 ? 0 : 1,
+            'prepare' => $ds->prepare == 0 ? 0 : 1,
+            'auz' => $ds->auz == 1 ? 1 : 0,
+            'active' => $ds->active == 0 ? 0 : 1,
+            'update_user' => $this->_user->uname
+          );
+
+          if( ! $this->warehouse_model->update($ds->code, $arr))
+          {
+            $sc = FALSE;
+            $this->error = get_error_message('update');
+          }
         }
         else
         {
-          set_error(label_value('update_fail'));
-          redirect($this->home.'/edit/'.$old_code);
+          $sc = FALSE;
+          $this->error = get_error_message('exists', $ds->name);
         }
       }
       else
       {
-        set_error(label_value('no_data_found'));
-        redirect($this->home);
+        $sc = FALSE;
+        $this->error = get_error_message('required');
       }
     }
     else
     {
-      set_error(label_value('no_permission'));
-      redirect($this->home);
+      $sc = FALSE;
+      $this->error = get_error_message('permission');
     }
+
+    $arr = array(
+      'status' => $sc === TRUE ? 'success' : 'failed',
+      'message' => $sc === TRUE ? 'success' : $this->error
+    );
+
+    echo json_encode($arr);
   }
 
 

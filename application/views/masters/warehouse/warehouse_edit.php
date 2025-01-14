@@ -20,8 +20,7 @@
 	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
-<form class="form-horizontal" id="addForm" method="post" action="<?php echo $this->home."/update"; ?>">
-
+<div class="form-horizontal">
 	<div class="form-group">
     <label class="col-sm-3 control-label no-padding-right">รหัส</label>
     <div class="col-xs-12 col-sm-3">
@@ -30,12 +29,10 @@
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="code-error"></div>
   </div>
 
-
-
   <div class="form-group">
     <label class="col-sm-3 control-label no-padding-right">ชื่อ</label>
     <div class="col-xs-12 col-sm-3">
-			<input type="text" class="form-control input-sm" name="name" id="name" maxlength="100" value="<?php echo $ds->name; ?>" />
+			<input type="text" class="form-control input-sm e" name="name" id="name" maxlength="100" value="<?php echo $ds->name; ?>" />
     </div>
     <div class="help-block col-xs-12 col-sm-reset inline red" id="name-error"></div>
   </div>
@@ -43,7 +40,7 @@
 	<div class="form-group">
  	 <label class="col-sm-3 control-label no-padding-right">ประเภทคลัง</label>
  	 <div class="col-xs-12 col-sm-3">
- 		 <select class="form-control input-sm" name="role" id="role" required>
+ 		 <select class="form-control input-sm e" name="role" id="role" required>
  		 	<option value="">เลือก</option>
 			<?php echo select_warehouse_role($ds->role); ?>
  		 </select>
@@ -100,20 +97,18 @@
     <label class="col-sm-3 control-label no-padding-right"></label>
     <div class="col-xs-12 col-sm-3">
       <p class="pull-right">
-        <button type="button" class="btn btn-sm btn-success" onclick="checkUpdate()"><i class="fa fa-save"></i> บันทึก</button>
+        <button type="button" class="btn btn-sm btn-success" onclick="update()"><i class="fa fa-save"></i> บันทึก</button>
       </p>
     </div>
     <div class="help-block col-xs-12 col-sm-reset inline">
       &nbsp;
     </div>
   </div>
-	<input type="hidden" name="old_code" id="old_code" value="<?php echo $ds->code; ?>">
-	<input type="hidden" name="old_name" id="old_name" value="<?php echo $ds->name; ?>">
 	<input type="hidden" name="sell" id="sell" value="<?php echo $ds->sell; ?>">
 	<input type="hidden" name="prepare" id="prepare" value="<?php echo $ds->prepare; ?>">
 	<input type="hidden" name="auz" id="auz" value="<?php echo $ds->auz; ?>">
 	<input type="hidden" name="active" id="active" value="<?php echo $ds->active; ?>">
-</form>
+</div>
 
 <script src="<?php echo base_url(); ?>scripts/masters/warehouse.js"></script>
 <?php $this->load->view('include/footer'); ?>

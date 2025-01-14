@@ -164,7 +164,7 @@ class Warehouse_model extends CI_Model
     return FALSE;
   }
 
-  
+
   public function get_warehouses()
   {
     $rs = $this->db->get('warehouse');
@@ -225,12 +225,14 @@ class Warehouse_model extends CI_Model
   public function is_exists_code($code, $old_code = NULL)
   {
     $this->db->where('code', $code);
-    if(!empty($old_code))
+
+    if( ! empty($old_code))
     {
       $this->db->where('code !=', $old_code);
     }
 
     $rs = $this->db->get('warehouse');
+
     if($rs->num_rows() > 0)
     {
       return TRUE;
@@ -241,15 +243,17 @@ class Warehouse_model extends CI_Model
 
 
 
-  public function is_exists_name($name, $old_name = NULL)
+  public function is_exists_name($name, $code = NULL)
   {
     $this->db->where('name', $name);
-    if(!empty($old_name))
+
+    if( ! empty($code))
     {
-      $this->db->where('name !=', $old_name);
+      $this->db->where('code !=', $code);
     }
 
     $rs = $this->db->get('warehouse');
+
     if($rs->num_rows() > 0)
     {
       return TRUE;
