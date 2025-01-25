@@ -43,41 +43,51 @@
 
 	<?php $hide = ($role == 3 ? '' : 'hide'); ?>
 	<div class="form-group <?php echo $hide; ?>" id="bank_account">
-    <label class="col-sm-3 control-label no-padding-right">เลขที่บัญชี</label>
-    <div class="col-xs-12 col-sm-3">
+		<label class="col-sm-3 control-label no-padding-right">เลขที่บัญชี</label>
+		<div class="col-xs-12 col-sm-3">
 			<select name="acc_no" id="acc_no" class="form-control input-sm">
 				<option value="">โปรดเลือก</option>
 				<?php echo select_bank_account($acc_id); ?>
 			</select>
-    </div>
-  </div>
+		</div>
+	</div>
 
 	<div class="divider-hidden"></div>
 
-		<div class="form-group">
-	    <label class="col-sm-3 control-label no-padding-right">&nbsp;</label>
-	    <div class="col-xs-12 col-sm-3">
-				<label>
-					<input type="checkbox" class="ace" name="is_default" id="is_default" value="1" <?php echo is_checked('1', $is_default); ?> />
-					<span class="lbl">&nbsp; &nbsp;ค่าเริ่มต้น</span>
-				</label>
-	    </div>
-	    <div class="help-block col-xs-12 col-sm-reset inline red" id="customer_name-error"></div>
-	  </div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label no-padding-right">&nbsp;</label>
+		<div class="col-xs-12 col-sm-3">
+			<label>
+				<input type="checkbox" class="ace" id="active" value="1" <?php echo is_checked('1', $active); ?>/>
+				<span class="lbl">&nbsp;&nbsp; Active</span>
+			</label>
+		</div>
+	</div>
+	<div class="divider-hidden"></div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label no-padding-right">&nbsp;</label>
+		<div class="col-xs-12 col-sm-3">
+			<label>
+				<input type="checkbox" class="ace" name="is_default" id="is_default" value="1" <?php echo is_checked('1', $is_default); ?> />
+				<span class="lbl">&nbsp; &nbsp;ค่าเริ่มต้น</span>
+			</label>
+		</div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="customer_name-error"></div>
+	</div>
 
-		<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
 
-  <div class="form-group">
-    <label class="col-sm-3 control-label no-padding-right"></label>
-    <div class="col-xs-12 col-sm-3">
-      <p class="pull-right">
-        <button type="button" class="btn btn-sm btn-success" onclick="update()"><i class="fa fa-save"></i> Save</button>
-      </p>
-    </div>
-    <div class="help-block col-xs-12 col-sm-reset inline">
-      &nbsp;
-    </div>
-  </div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label no-padding-right"></label>
+		<div class="col-xs-12 col-sm-3">
+			<p class="pull-right">
+				<button type="button" class="btn btn-sm btn-success" onclick="update()"><i class="fa fa-save"></i> Save</button>
+			</p>
+		</div>
+		<div class="help-block col-xs-12 col-sm-reset inline">
+			&nbsp;
+		</div>
+	</div>
 
 	<input type="hidden" name="old_name" id="old_name" value="<?php echo $name; ?>" />
 	<input type="hidden" name="code" id="code" value="<?php echo $code; ?>" />

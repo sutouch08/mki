@@ -1,17 +1,13 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-sm-6 col-xs-6 padding-5">
-    <h3 class="title">
-      <i class="fa fa-credit-card"></i> <?php echo $this->title; ?>
-    </h3>
-    </div>
-    <div class="col-sm-6 col-xs-6 padding-5">
-    	<p class="pull-right top-p">
-      <?php if($this->pm->can_add) : ?>
-        <button type="button" class="btn btn-sm btn-success" onclick="addNew()"><i class="fa fa-plus"></i> เพิมใหม่</button>
-      <?php endif; ?>
-      </p>
-    </div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 padding-top-5">
+		<h3 class="title"><?php echo $this->title; ?></h3>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
+		<?php if($this->pm->can_add) : ?>
+			<button type="button" class="btn btn-white btn-success top-btn" onclick="addNew()"><i class="fa fa-plus"></i> เพิมใหม่</button>
+		<?php endif; ?>
+	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
@@ -53,14 +49,14 @@
 		<table class="table table-striped table-hover border-1">
 			<thead>
 				<tr>
-					<th class="width-5 middle text-center">ลำดับ</th>
-					<th class="width-10 middle">รหัส</th>
-					<th class="width-30 middle">ชื่อ</th>
-					<th class="width-10 middle text-center">ประเภท</th>
-					<th class="width-10 middle text-center">เครติด</th>
-					<th class="width-10 middle text-center">Default</th>
-          <th class="width-15 middle">ปรับปรุงล่าสุด</th>
-					<th></th>
+					<th class="fix-width-50 middle text-center">#</th>
+					<th class="fix-width-100 middle">รหัส</th>
+					<th class="min-width-200 middle">ชื่อ</th>
+					<th class="fix-width-100 middle text-center">ประเภท</th>
+					<th class="fix-width-80 middle text-center">เครติด</th>
+					<th class="fix-width-80 middle text-center">Active</th>
+					<th class="fix-width-80 middle text-center">Default</th>
+          <th class="fix-width-150 middle">ปรับปรุงล่าสุด</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -76,6 +72,9 @@
 							<?php if($rs->has_term == 1) : ?>
 								<i class="fa fa-check green"></i>
 							<?php endif; ?>
+						</td>
+						<td class="middle text-center">
+							<?php echo is_active($rs->active); ?>
 						</td>
 						<td class="middle text-center">
 							<?php if($rs->is_default) : ?>

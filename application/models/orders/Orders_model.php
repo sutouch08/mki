@@ -80,6 +80,34 @@ class Orders_model extends CI_Model
   }
 
 
+  public function get_order_balance_by_customer($customer_code, $order_code = NULL)
+  {
+    $this->db
+    ->select_sum('o.balance')
+    ->from('orders AS o')
+    ->join('payment_method AS pm', 'o.payment_code = pm.code', 'left')
+    ->where('o.role', 'S')
+    ->where('o.is_term', 0)
+    ->where('o.state <=', 8)
+    ->where('o.state >=', 2)
+    ->where_in('pm.role', [2, 3]);
+
+    if( ! empty($order_code))
+    {
+      $this->db->where('o.code !=', $order_code);
+    }
+
+    $rs = $this->db->where('o.customer_code', $customer_code)->get();
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->balance;
+    }
+
+    return NULL;
+  }
+
+
   public function get($code)
   {
 		$rs = $this->db
@@ -438,7 +466,7 @@ class Orders_model extends CI_Model
     ->where('code', $code)
     ->update('orders');
   }
-  
+
 
 	public function count_rows(array $ds = array(), $role = 'S')
 	{

@@ -63,6 +63,7 @@ class Payment_methods extends PS_Controller
       $name = $this->input->post('name');
 			$role = $this->input->post('role');
 			$acc_id = get_null($this->input->post('acc_no'));
+      $active = $this->input->post('active') == 0 ? 0 : 1;
       $term = ($role == 1 OR $role == 4) ? 1 : 0;
 
 			$has_default = $this->payment_methods_model->has_default();
@@ -73,6 +74,7 @@ class Payment_methods extends PS_Controller
 				'role' => $role,
 				'acc_id' => $acc_id,
         'has_term' => $term,
+        'active' => $active,
 				'is_default' => $has_default ? 0 : 1
       );
 
@@ -135,6 +137,7 @@ class Payment_methods extends PS_Controller
       $name = $this->input->post('name');
       $role = $this->input->post('role');
 			$acc_id = get_null($this->input->post('acc_no'));
+      $active = $this->input->post('active') == 0 ? 0 : 1;
 			$term = ($role == 1 OR $role == 4) ? 1 : 0;
 			$is_default = $this->input->post('is_default');
 
@@ -142,7 +145,8 @@ class Payment_methods extends PS_Controller
         'name' => $name,
         'has_term' => $term,
         'role' => $role,
-				'acc_id' => $acc_id
+				'acc_id' => $acc_id,
+        'active' => $active
       );
 
 

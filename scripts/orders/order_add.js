@@ -3,11 +3,47 @@ $('#date').datepicker({
 });
 
 
-
-
 //---- เปลี่ยนสถานะออเดอร์  เป็นบันทึกแล้ว
-function saveOrder(){
+function saveOrder() {
+  let customer_code = $('#customerCode').val();
+  let order_code = $('#order_code').val();
+
+  $.ajax({
+    url:HOME + 'get_customer_unpaid_amount',
+    type:'GET',
+    cache:false,
+    data:{
+      'customer_code' : customer_code,
+      'order_code' : order_code
+    },
+    success:function(rs) {
+      if(rs.trim() == 0) {
+        save();
+      }
+      else {
+        swal({
+          title:'โปรดทราบ',
+          text:'ลูกค้า '+customer_code+' มียอดค้างชำระ '+addCommas(rs)+' <br/>ต้องการดำเนินการต่อหรือไม่ ?',
+          type:'warning',
+          html:true,
+          showCancelButton:true,
+          confirmButtonText:'ดำเนินการต่อ',
+          cancelButtonText:'ยกเลิก',
+          closeOnConfirm:true
+        }, function() {
+          setTimeout(() => {
+            save();
+          }, 100)
+        })
+      }
+    }
+  })
+}
+
+
+function save() {
   var order_code = $('#order_code').val();
+
 	$.ajax({
 		url: BASE_URL + 'orders/orders/save/'+ order_code,
 		type:"POST",
@@ -155,27 +191,6 @@ $("#customer").autocomplete({
 		}else{
 			$("#customerCode").val('');
 			$('#customerName').val('');
-			$(this).val('');
-		}
-	}
-});
-
-
-$("#customerName").autocomplete({
-	source: BASE_URL + 'auto_complete/get_customer_code_and_name',
-	autoFocus: true,
-	close: function(){
-		var rs = $.trim($(this).val());
-		var arr = rs.split(' | ');
-		if( arr.length == 2 ){
-			var code = arr[0];
-			var name = arr[1];
-			$(this).val(name);
-			$("#customerCode").val(code);
-			$("#customer").val(code);
-		}else{
-			$("#customerCode").val('');
-			$("#customer").val('');
 			$(this).val('');
 		}
 	}
@@ -510,6 +525,136 @@ function countInput(){
 }
 
 
+function checkBalance() {
+  clearErrorByClass('e');
+  let customer_code = $('#customerCode').val().trim();
+
+  if(customer_code.length == 0) {
+    $('#customer').hasError();
+    showError("กรุณาระบุลูกค้า");
+    return false;
+  }
+
+  $.ajax({
+    url:HOME + 'get_customer_unpaid_amount',
+    type:'GET',
+    cache:false,
+    data:{
+      "customer_code" : customer_code
+    },
+    success:function(rs) {
+      if(rs.trim() == 0) {
+        add();
+      }
+      else {
+        swal({
+          title:'โปรดทราบ',
+          text:'ลูกค้า '+customer_code+' มียอดค้างชำระ '+addCommas(rs)+' <br/>ต้องการดำเนินการต่อหรือไม่ ?',
+          type:'warning',
+          html:true,
+          showCancelButton:true,
+          confirmButtonText:'ดำเนินการต่อ',
+          cancelButtonText:'ยกเลิก',
+          closeOnConfirm:true
+        }, function() {
+          setTimeout(() => {
+            add();
+          }, 100)
+        })
+      }
+    },
+    error:function(rs) {
+      showError(rs);
+    }
+  })
+}
+
+
+
+function add() {
+  clearErrorByClass('e');
+
+  let h = {
+    'date_add' : $('#date').val().trim(),
+    'customer_code' : $('#customerCode').val().trim(),
+    'customer_name' : $('#customerName').val().trim(),
+    'customer' : $('#customer').val().trim(),
+    'customer_ref' : $('#cust-ref').val().trim(),
+    'reference' : $('#reference').val().trim(),
+    'channels_code' : $('#channels').val(),
+    'payment_code' : $('#payment').val(),
+    'sender_id' : $('#sender_id').val(),
+    'remark' : $('#remark').val().trim()
+  };
+
+  if( ! isDate(h.date_add)) {
+    $('#date').hasError();
+    showError("กรุณาระบุวันที่");
+    return false;
+  }
+
+  if(h.customer.length == 0) {
+    $('#customer').hasError();
+    showError('กรุณาระบุลูกค้า');
+    return false;
+  }
+
+  if(h.customer_name.length == 0) {
+    $('#customerName').hasError();
+    showError("กรุณาระบุชื่อลูกค้า");
+    return false;
+  }
+
+  if(h.customer_code != h.customer) {
+    $('#customer').hasError();
+    showError("รหัสลูกค้าไม่ถูกต้อง กรุณาแก้ไข");
+    return false;
+  }
+
+  if(h.channels_code == "") {
+    $('#channels').hasError();
+    showError("กรุณาเลือกช่องทางขาย");
+    return false;
+  }
+
+  if(h.payment_code == "") {
+    $('#payment').hasError();
+    showError("กรุณาเลือกการชำระเงิน");
+    return false;
+  }
+
+  load_in();
+
+  $.ajax({
+    url:HOME + 'add',
+    type:'POST',
+    cache:false,
+    data:{
+      'data' : JSON.stringify(h)
+    },
+    success:function(rs) {
+      load_out();
+
+      if(isJson(rs)) {
+        let ds = JSON.parse(rs);
+
+        if(ds.status == 'success') {
+          window.location.href = HOME + 'edit_detail/'+ds.code;
+        }
+        else {
+          showError(ds.message);
+        }
+      }
+      else {
+        showError(rs);
+      }
+    },
+    error:function(rs) {
+      load_out();
+      showError(rs);
+    }
+  })
+}
 
 function validUpdate(){
 	var date_add = $("#date").val();
@@ -549,9 +694,6 @@ function validUpdate(){
 
   updateOrder(recal);
 }
-
-
-
 
 
 function updateOrder(recal){

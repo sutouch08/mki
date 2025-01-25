@@ -61,6 +61,8 @@ function save_add() {
 	var name = $('#name').val();
 	var role = $('#role').val();
 	var acc_no = $('#acc_no').val();
+  var active = $('#active').is(':checked') ? 1 : 0;
+
 	var error = 0;
 
 	if(code.length === 0) {
@@ -100,11 +102,12 @@ function save_add() {
 			'code' : code,
 			'name' : name,
 			'role' : role,
-			'acc_no' : acc_no
+			'acc_no' : acc_no,
+      'active' : active
 		},
 		success:function(rs) {
-			var rs = $.trim(rs);
-			if(rs === 'success') {
+
+			if(rs.trim() === 'success') {
 				swal({
 					title:'Success',
 					type:'success',
@@ -141,7 +144,8 @@ function update() {
 	var old_name = $('#old_name').val();
 	var role = $('#role').val();
 	var acc_no = $('#acc_no').val();
-	var is_default = $('#is_default').is(':checked') ? 1 : 0
+	var is_default = $('#is_default').is(':checked') ? 1 : 0;
+  var active = $('#active').is(':checked') ? 1 : 0;
 
 	var error = 0;
 
@@ -184,7 +188,8 @@ function update() {
 			'old_name' : old_name,
 			'role' : role,
 			'acc_no' : acc_no,
-			'is_default' : is_default
+			'is_default' : is_default,
+      'active' : active
 		},
 		success:function(rs) {
 			var rs = $.trim(rs);

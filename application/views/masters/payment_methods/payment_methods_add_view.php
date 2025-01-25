@@ -51,6 +51,16 @@
     </div>
   </div>
 
+	<div class="form-group">
+    <label class="col-sm-3 control-label no-padding-right">&nbsp;</label>
+    <div class="col-xs-12 col-sm-3">
+			<label>
+				<input type="checkbox" class="ace" id="active" value="1" checked/>
+				<span class="lbl">&nbsp;&nbsp; Active</span>
+			</label>
+    </div>
+  </div>
+
 
 	<div class="divider-hidden">
 

@@ -190,7 +190,9 @@ hr.padding-5 {
   margin-bottom:30px;
 }
 
-
+select.width-100 {
+  height: 31px;
+}
 
 .input-xs {
   height: 22px;

@@ -59,6 +59,25 @@ class Payment_methods_model extends CI_Model
   }
 
 
+  public function get_active_list()
+  {
+    $rs = $this->db
+		->select('pm.*')
+		->select('pr.name AS role_name')
+		->from('payment_method AS pm')
+		->join('payment_role AS pr', 'pm.role = pr.id', 'left')
+    ->where('pm.active', 1)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
 	public function get_list(array $ds = array(), $perpage = NULL, $offset = 0)
   {
 		$this->db
