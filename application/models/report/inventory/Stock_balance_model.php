@@ -52,11 +52,12 @@ class Stock_balance_model extends CI_Model
 
     $qr  = "SELECT pd.barcode, pd.code, pd.name, pd.cost, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
     $qr .= "FROM stock_movement AS s ";
-    $qr .= "JOIN products AS pd ON s.product_code = pd.code ";
-    $qr .= "JOIN product_size AS ps ON pd.size_code = ps.code ";
+    $qr .= "LEFT JOIN products AS pd ON s.product_code = pd.code ";
+    $qr .= "LEFT JOIN product_size AS ps ON pd.size_code = ps.code ";
+
     if($allWhouse == 0)
     {
-      $qr .= "JOIN zone AS z ON s.zone_code = z.code ";
+      $qr .= "LEFT JOIN zone AS z ON s.zone_code = z.code ";
     }
 
     $qr .= "WHERE s.date_add <= '{$date}' ";
@@ -85,7 +86,7 @@ class Stock_balance_model extends CI_Model
     $qr .= "ORDER BY pd.style_code ASC, ";
     $qr .= "pd.color_code ASC, ";
     $qr .= "ps.position ASC";
-
+    
     $rs = $this->db->query($qr);
 
     if($rs->num_rows() > 0)

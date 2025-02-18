@@ -270,6 +270,13 @@ function get_template() {
 	window.location.href = HOME + 'download_template/'+token;
 }
 
+$('#code').focusout(function() {
+  setTimeout(() => {
+    let val = $(this).val();
+    let res  = val.toUpperCase();
+    $(this).val(res);
+  }, 100);
+})
 
 $('#credit_term').focus(function(){
 	$(this).select();
