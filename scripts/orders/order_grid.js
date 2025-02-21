@@ -18,9 +18,15 @@ function getItemGrid(){
 				if(rs[0] === 'success'){
 					$('#stock-qty').val(rs[2]);
 					$('#input-qty').val('').focus();
-				}else{
+
+					getPOBacklogs(itemCode);
+					getDoBacklogs(itemCode);
+				}
+				else{
 					$('#stock-qty').val('');
 					$('#input-qty').val('');
+					$('#po-qty').val('');
+					$('#do-qty').val('');
 					swal(rs[1]);
 				}
 			}
@@ -28,6 +34,45 @@ function getItemGrid(){
 	}
 }
 
+
+function getPOBacklogs(itemCode) {
+	if(itemCode != "") {
+		$.ajax({
+			url:BASE_URL + 'main/get_po_backlogs',
+			type:'POST',
+			cache:false,
+			data:{
+				'item_code' : itemCode
+			},
+			success:function(rs) {
+				$('#po-qty').val(rs);
+			},
+			error:function(rs) {
+				$('#po-qty').val(0);
+			}
+		})
+	}
+}
+
+
+function getDoBacklogs(itemCode) {
+	if(itemCode != "") {
+		$.ajax({
+			url:BASE_URL + 'main/get_do_backlogs',
+			type:'POST',
+			cache:false,
+			data:{
+				'item_code' : itemCode
+			},
+			success:function(rs) {
+				$('#do-qty').val(rs);
+			},
+			error:function(rs) {
+				$('#do-qty').val(0);
+			}
+		})
+	}
+}
 
 
 //----

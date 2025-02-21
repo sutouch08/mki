@@ -356,6 +356,8 @@ function addItemToOrder(){
 						$('#item-code').val('');
 						$('#stock-qty').val('');
 						$('#input-qty').val('');
+            $('#po-qty').val('');
+            $('#do-qty').val('');
 						$('#item-code').focus();
 					},1200);
 

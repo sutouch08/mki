@@ -150,4 +150,46 @@ class Main extends PS_Controller
     echo json_encode($sc);
   }
 
+
+	public function get_po_backlogs()
+	{
+		$this->load->model('purchase/po_model');
+		$sc = TRUE;
+
+		$qty = 0;
+
+		$item_code = $this->input->post('item_code');
+
+		$rs = $this->db
+		->select_sum('pd.qty')
+		->select_sum('pd.received')
+		->from('po_detail AS pd')
+		->join('po AS po', 'pd.po_code = po.code', 'left')
+		->where('product_code', $item_code)
+		->where_in('po.status', [1, 2])
+		->where('pd.valid', 0)
+		->where('pd.qty >', 'pd.received', FALSE)
+		->get();
+
+		if($rs->num_rows() === 1)
+		{
+			$qty = $rs->row()->qty - $rs->row()->received;
+		}
+
+		echo $qty;
+	}
+
+
+	public function get_do_backlogs()
+	{
+		$qty = 0;
+
+		$item_code = $this->input->post('item_code');
+
+		$this->load->model('orders/orders_model');
+
+		$qty = $this->orders_model->get_reserv_stock($item_code);
+
+		echo round($qty);
+	}
 } //--- end class

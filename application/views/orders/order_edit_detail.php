@@ -48,11 +48,11 @@ $hide = $order->status == 1 ? 'hide' : '';
 <!--  Search Product -->
 <div class="row">
 	<div class="divider padding-5 visible-xs"></div>
-	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10">
+	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 hide">
     <label>รุ่นสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="pd-box" placeholder="ค้นรหัสสินค้า" />
   </div>
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
+  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10 hide">
     <label class="not-show">รุ่นสินค้า</label>
   	<button type="button" class="btn btn-xs btn-primary btn-block" onclick="getProductGrid()">แสดงสินค้า</button>
   </div>
@@ -66,6 +66,14 @@ $hide = $order->status == 1 ? 'hide' : '';
   <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
     <label>คงเหลือ</label>
     <input type="number" class="form-control input-sm text-center" id="stock-qty" disabled>
+  </div>
+  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+    <label>ค้างรับ</label>
+    <input type="number" class="form-control input-sm text-center" id="po-qty" disabled>
+  </div>
+  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+    <label>ค้างส่ง</label>
+    <input type="number" class="form-control input-sm text-center" id="do-qty" disabled>
   </div>
   <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
     <label>จำนวน</label>
@@ -178,9 +186,9 @@ if(getConfig('USE_PRODUCT_TAB'))
 </script>
 
 <input type="hidden" id="auz" value="<?php echo getConfig('ALLOW_UNDER_ZERO'); ?>">
-<script src="<?php echo base_url(); ?>scripts/orders/orders.js"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/order_add.js"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/product_tab_menu.js"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/order_grid.js"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/order_add.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/product_tab_menu.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/order_grid.js?v=<?php echo date('Ymd'); ?>"></script>
 
 <?php $this->load->view('include/footer'); ?>

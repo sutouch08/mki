@@ -22,11 +22,11 @@ $hide = $order->status == 1 ? 'hide' : '';
 <!--  Search Product -->
 <div class="row">
 	<div class="divider padding-5 visible-xs"></div>
-	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10">
+	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 not-show">
     <label>รุ่นสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="pd-box" placeholder="ค้นรหัสสินค้า" />
   </div>
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
+  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10 not-show">
     <label class="not-show">รุ่นสินค้า</label>
   	<button type="button" class="btn btn-xs btn-primary btn-block" onclick="getProductGrid()">แสดงสินค้า</button>
   </div>
@@ -97,7 +97,7 @@ $hide = $order->status == 1 ? 'hide' : '';
 <script src="<?php echo base_url(); ?>scripts/order_consign/consign_tr.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php endif; ?>
 <script src="<?php echo base_url(); ?>scripts/order_consign/consign_add.js"></script>
-<!-- <script src="<?php echo base_url(); ?>scripts/orders/order_add.js"></script> -->
+<script src="<?php echo base_url(); ?>scripts/orders/order_add.js"></script>
 <script src="<?php echo base_url(); ?>scripts/orders/product_tab_menu.js"></script>
 <script src="<?php echo base_url(); ?>scripts/orders/order_grid.js"></script>
 

@@ -92,7 +92,7 @@
               <td class="middle text-center no"><?php echo $no; ?></td>
               <td class="middle text-center"><?php echo thai_date($rs->date_add); ?></td>
               <td class="middle"><?php echo $rs->code; ?></td>
-              <td class="middle"><?php echo $rs->name; ?></td>
+              <td class="middle"><?php echo $rs->vender_name; ?></td>
 							<td class="middle text-right"><?php echo number($rs->total_amount, 2); ?></td>
               <td class="middle"><?php echo thai_date($rs->due_date); ?></td>
               <td class="middle text-center">

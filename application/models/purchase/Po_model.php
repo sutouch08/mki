@@ -231,93 +231,91 @@ class Po_model extends CI_Model
 
   public function get_list(array $ds = array(), $perpage = NULL, $offset = NULL)
   {
-    if(!empty($ds))
+    if( ! empty($ds['code']))
     {
-      $this->db->select('po.*, vender.name');
-      $this->db->from('po')->join('vender', 'po.vender_code = vender.code','left');
+      $this->db->like('.code', $ds['code']);
+    }
 
-      if(!empty($ds['code']))
+    if(!empty($ds['vender']))
+    {
+      $this->db->group_start();
+      $this->db->like('vender_code', $ds['vender'])->or_like('vender_name', $ds['vender']);
+      $this->db->group_end();
+    }
+
+    if($ds['status'] !== 'all')
+    {
+      //-- 0 = not save, 1= saved (open) , 2 = partail received, 3 = closed, 4 = cancled
+      if($ds['status'] == 1)
       {
-        $this->db->like('po.code', $ds['code']);
+        $this->db->where_in('status', array('1', '2'));
       }
-
-      if(!empty($ds['vender']))
+      else
       {
-        $this->db->group_start();
-        $this->db->like('vender.code', $ds['vender'])->or_like('vender.name', $ds['vender']);
-        $this->db->group_end();
+        $this->db->where('status', $ds['status']);
       }
+    }
 
-      if($ds['status'] !== 'all')
-      {
-        //-- 0 = not save, 1= saved (open) , 2 = partail received, 3 = closed, 4 = cancled
-        if($ds['status'] == 1)
-        {
-          $this->db->where_in('po.status', array('1', '2'));
-        }
-        else
-        {
-          $this->db->where('po.status', $ds['status']);
-        }
-      }
+    if($ds['from_date'] != '' && $ds['to_date'] != '')
+    {
+      $this->db->where('date_add >=', from_date($ds['from_date']));
+      $this->db->where('date_add <=', to_date($ds['to_date']));
+    }
 
-      if($ds['from_date'] != '' && $ds['to_date'] != '')
-      {
-        $this->db->where('date_add >=', from_date($ds['from_date']));
-        $this->db->where('date_add <=', to_date($ds['to_date']));
-      }
+    $this->db->order_by('code', 'DESC');
 
-      $this->db->order_by('po.code', 'DESC');
+    if(!empty($perpage))
+    {
+      $offset = $offset === NULL ? 0 : $offset;
+      $this->db->limit($perpage, $offset);
+    }
 
-      if(!empty($perpage))
-      {
-        $offset = $offset === NULL ? 0 : $offset;
-        $this->db->limit($perpage, $offset);
-      }
+    $rs = $this->db->get('po');
 
-      $rs = $this->db->get();
-
+    if($rs->num_rows() > 0)
+    {
       return $rs->result();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
 
   public function count_rows(array $ds = array())
   {
-    if(!empty($ds))
+    if( ! empty($ds['code']))
     {
-      $this->db->from('po')->join('vender', 'po.vender_code = vender.code','left');
-
-      if(!empty($ds['code']))
-      {
-        $this->db->like('po.code', $ds['code']);
-      }
-
-      if(!empty($ds['vender']))
-      {
-        $this->db->group_start();
-        $this->db->like('vender.code', $ds['vender'])->or_like('vender.name', $ds['vender']);
-        $this->db->group_end();
-      }
-
-      if($ds['status'] !== 'all')
-      {
-        $this->db->where('po.status', $ds['status']); //-- 0 not save, 1= saved (open) , 2 = closed, 3 = cancled
-      }
-
-      if($ds['from_date'] != '' && $ds['to_date'] != '')
-      {
-        $this->db->where('date_add >=', from_date($ds['from_date']));
-        $this->db->where('date_add <=', to_date($ds['to_date']));
-      }
-
-      return $this->db->count_all_results();
+      $this->db->like('.code', $ds['code']);
     }
 
-    return 0;
+    if(!empty($ds['vender']))
+    {
+      $this->db->group_start();
+      $this->db->like('vender_code', $ds['vender'])->or_like('vender_name', $ds['vender']);
+      $this->db->group_end();
+    }
+
+    if($ds['status'] !== 'all')
+    {
+      //-- 0 = not save, 1= saved (open) , 2 = partail received, 3 = closed, 4 = cancled
+      if($ds['status'] == 1)
+      {
+        $this->db->where_in('status', array('1', '2'));
+      }
+      else
+      {
+        $this->db->where('status', $ds['status']);
+      }
+    }
+
+    if($ds['from_date'] != '' && $ds['to_date'] != '')
+    {
+      $this->db->where('date_add >=', from_date($ds['from_date']));
+      $this->db->where('date_add <=', to_date($ds['to_date']));
+    }
+
+    return $this->db->count_all_results('po');
   }
 
 
