@@ -966,6 +966,7 @@ class Order_invoice extends PS_Controller
 							'remark' => NULL,
 							'uname' => $this->_user->uname,
 							'reference' => $order_code,
+							'tags' => $order->tags,
 							'status' => 1
 						);
 
@@ -1473,6 +1474,7 @@ class Order_invoice extends PS_Controller
 									'remark' => NULL,
 									'uname' => $this->_user->uname,
 									'reference' => $order->code,
+									'tags' => $order->tags,
 									'status' => 1,
 									'gen_id' => $gen_id
 								);

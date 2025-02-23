@@ -131,8 +131,6 @@ class Orders extends PS_Controller
   }
 
 
-
-
 	public function update_detail()
 	{
 		$sc = TRUE;
@@ -318,18 +316,37 @@ class Orders extends PS_Controller
 
   public function add_new()
   {
-		$role = 'S';
-		$limit = get_zero(getConfig('SYSTEM_ORDER_LIMIT'));
+    $role = 'S';
+    $limit = get_zero(getConfig('SYSTEM_ORDER_LIMIT'));
 
-		if(! $this->orders_model->is_limit($role, $limit))
-		{
-			$this->load->view('orders/orders_add');
-		}
+    if(! $this->orders_model->is_limit($role, $limit))
+    {
+      $this->load->view('orders/orders_add');
+    }
     else
-		{
-			set_error("ไม่สามารถเพิ่มเอกสารได้เนื่องจากจำนวนเอกสารเกินจำนวนที่จำกัด");
-			redirect($this->home);
-		}
+    {
+      set_error("ไม่สามารถเพิ่มเอกสารได้เนื่องจากจำนวนเอกสารเกินจำนวนที่จำกัด");
+      redirect($this->home);
+    }
+  }
+
+
+  public function add_tags()
+  {
+    $sc = TRUE;
+
+    $name = trim($this->input->post('name'));
+
+    if( ! empty($name))
+    {
+      if( ! $this->db->insert('order_tags', ['name' => $name]))
+      {
+        $sc = FALSE;
+        $this->error = "เพิ่ม tags ไม่สำเร็จ";
+      }
+    }
+
+    echo $sc === TRUE ? 'success' : $this->error;
   }
 
 
@@ -390,6 +407,7 @@ class Orders extends PS_Controller
               'user' => $this->_user->uname,
   						'address_id' => $id_address,
               'sender_id' => $sender_id,
+              'tags' => get_null($ds->tags),
               'remark' => get_null($ds->remark)
             );
 
@@ -930,6 +948,7 @@ class Orders extends PS_Controller
       $has_term = $this->payment_methods_model->has_term($this->input->post('payment_code'));
       $sale_code = $this->customers_model->get_sale_code($customer_code);
 			$id_address = empty($customer_ref) ? $this->address_model->get_shipping_address_id($customer_code) : $this->address_model->get_shipping_address_id($customer_ref);
+      $tags = get_null($this->input->post('tags'));
 
       //--- check over due
       $is_strict = is_true(getConfig('STRICT_OVER_DUE'));
@@ -958,6 +977,7 @@ class Orders extends PS_Controller
           'sender_id' => get_null($this->input->post('sender_id')),
           'date_add' => db_date($this->input->post('date_add')),
           'remark' => trim($this->input->post('remark')),
+          'tags' => $tags,
 					'qt_no' => $this->input->post('qt_no'),
           'status' => 0
         );

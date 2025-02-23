@@ -6,6 +6,14 @@ $('#customerModal').on('shown.bs.modal', function(){
 	$('#customer_code').focus();
 })
 
+$('#customer_code').focusout(function() {
+  setTimeout(() => {
+    let val = $(this).val();
+    let res  = val.toUpperCase();
+    $(this).val(res);
+  }, 100);
+})
+
 function saveCustomer() {
 	var code = $('#customer_code').val();
 	var name = $('#customer_name').val();
@@ -272,6 +280,53 @@ function savePayment() {
 				text:'Error-' + xhr.status + ': '+xhr.statusText,
 				type:'error'
 			});
+		}
+	})
+}
+
+
+function newTags() {
+	$('#tags-name').val('');
+	$('#tagsModal').modal('show');
+}
+
+$('#tagsModal').on('shown.bs.modal', function() {
+	$('#tags-name').focus();
+});
+
+function addTags() {
+	$('#tags-name').clearError();
+	let name = $('#tags-name').val();
+
+	if(name.length == 0) {
+		$('#tags-name').hasError();
+		return false;
+	}
+
+	$('#tagsModal').modal('hide');
+
+	$.ajax({
+		url:BASE_URL + 'orders/orders/add_tags',
+		type:'POST',
+		cache:false,
+		data:{
+			'name' : name
+		},
+		success:function(rs) {
+			if(rs.trim() === 'success') {
+				$('#tags').append($('<option>', {
+					value:name,
+					text:name
+				}));
+
+				$('#tags').val(name);
+			}
+			else {
+				showError(rs);
+			}
+		},
+		error:function(rs) {
+			showError(rs);
 		}
 	})
 }

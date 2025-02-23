@@ -22,6 +22,14 @@
       <input type="text" class="form-control input-sm text-center edit" id="customer_ref" name="customer_ref" value="<?php echo str_replace('"', '&quot;',$order->customer_ref); ?>" disabled />
     </div>
 
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 padding-5">
+	    <label>Tags</label>
+			<select class="form-control input-sm edit" name="tags" id="tags" disabled>
+				<option value="">เลือก</option>
+				<?php echo select_order_tags($order->tags); ?>
+			</select>
+	  </div>
+
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-5 padding-5">
     	<label>ใบเสนอราคา</label>
       <input type="text" class="form-control input-sm text-center edit" id="qt_no" name="qt_no" value="<?php echo $order->qt_no; ?>" disabled />
@@ -65,7 +73,7 @@
 		  <input type="text" class="form-control input-sm text-center edit" name="shipping_code" id="shipping_code" value="<?php echo $order->shipping_code; ?>" disabled />
 		</div>
 
-		<div class="col-lg-10-harf col-md-8-harf col-sm-8-harf col-xs-9 padding-5">
+		<div class="col-lg-8-harf col-md-6-harf col-sm-6-harf col-xs-9 padding-5">
 		 	<label>หมายเหตุ</label>
 		  <input type="text" class="form-control input-sm edit" name="remark" id="remark" value="<?php echo $order->remark; ?>" disabled />
 		</div>

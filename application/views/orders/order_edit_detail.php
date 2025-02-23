@@ -11,6 +11,7 @@ $hide = $order->status == 1 ? 'hide' : '';
    </div>
    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
      <button type="button" class="btn btn-white btn-warning top-btn" onclick="editOrder('<?php echo $order->code; ?>')"><i class="fa fa-arrow-left"></i> กลับ</button>
+     <button type="button" class="btn btn-white btn-info top-btn" onclick="recal_discount_rule()">คำนวณส่วนลดใหม่</button>
      <?php if($this->pm->can_add OR $this->pm->can_edit) : ?>
        <button type="button" class="btn btn-white btn-success top-btn <?php echo $hide; ?>" id="btn-save-order" onclick="saveOrder()"><i class="fa fa-save"></i> บันทึก</button>
      <?php endif; ?>
@@ -47,48 +48,38 @@ $hide = $order->status == 1 ? 'hide' : '';
 
 <!--  Search Product -->
 <div class="row">
-	<div class="divider padding-5 visible-xs"></div>
-	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 hide">
+	<!-- <div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 hide">
     <label>รุ่นสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="pd-box" placeholder="ค้นรหัสสินค้า" />
   </div>
   <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10 hide">
     <label class="not-show">รุ่นสินค้า</label>
   	<button type="button" class="btn btn-xs btn-primary btn-block" onclick="getProductGrid()">แสดงสินค้า</button>
-  </div>
+  </div> -->
 
-	<div class="divider padding-5 visible-xs"></div>
-
-  <div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5 margin-bottom-10">
+  <div class="col-lg-3 col-lg-offset-4 col-md-3-harf col-md-offset-1 col-sm-4-harf col-xs-8 padding-5 margin-bottom-10">
     <label>รหัสสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="item-code" placeholder="ค้นหารหัสสินค้า">
   </div>
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>คงเหลือ</label>
     <input type="number" class="form-control input-sm text-center" id="stock-qty" disabled>
   </div>
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>ค้างรับ</label>
     <input type="number" class="form-control input-sm text-center" id="po-qty" disabled>
   </div>
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>ค้างส่ง</label>
     <input type="number" class="form-control input-sm text-center" id="do-qty" disabled>
   </div>
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>จำนวน</label>
     <input type="number" class="form-control input-sm text-center" id="input-qty">
   </div>
-  <div class="col-lg-1 col-md-1-harf col-sm-1 col-xs-2 padding-5 margin-bottom-10">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-12 padding-5 margin-bottom-10">
     <label class="not-show">Add</label>
     <button type="button" class="btn btn-xs btn-primary btn-block" onclick="addItemToOrder()">เพิ่ม</button>
-  </div>
-
-	<div class="divider padding-5 visible-xs"></div>
-
-  <div class="col-lg-1-harf col-md-2 col-sm-2-harf col-xs-12 col-lg-offset-1 padding-5">
-    <label class="not-show">ส่วนลด</label>
-    <button type="button" class="btn btn-xs btn-info btn-block" onclick="recal_discount_rule()">คำนวณส่วนลดใหม่</button>
   </div>
 </div>
 <hr class="margin-top-15 margin-bottom-0 padding-5" />

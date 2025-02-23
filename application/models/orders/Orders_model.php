@@ -916,6 +916,19 @@ class Orders_model extends CI_Model
 	}
 
 
+  public function get_tags_list()
+  {
+    $rs = $this->db->where('active', 1)->get('order_tags');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
 } //--- End class
 
 

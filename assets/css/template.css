@@ -895,6 +895,7 @@ select.width-100 {
 }
 
 
+.col-xs-harf, .col-sm-harf, .col-md-harf, .col-lg-harf,
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1,
 .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2,
 .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3,
@@ -929,7 +930,7 @@ select.width-100 {
   padding-right: 5px;
 }
 
-.col-xs-1-harf, .col-xs-2-harf, .col-xs-20, .col-xs-3-harf, .col-xs-4-harf, .col-xs-5-harf, .col-xs-6-harf, .col-xs-7-harf, .col-xs-8-harf, .col-xs-9-harf, .col-xs-10-harf, .col-xs-11-harf {
+.col-xs-harf, .col-xs-1-harf, .col-xs-2-harf, .col-xs-20, .col-xs-3-harf, .col-xs-4-harf, .col-xs-5-harf, .col-xs-6-harf, .col-xs-7-harf, .col-xs-8-harf, .col-xs-9-harf, .col-xs-10-harf, .col-xs-11-harf {
 	float:left;
 }
 
@@ -940,6 +941,10 @@ select.width-100 {
 		padding-left: 0;
 		padding-right: 0;
 	}
+
+  .col-xs-harf {
+    width:4.1666667%
+  }
 
   .col-xs-1-harf {
   	width: 12.5%;
@@ -1020,7 +1025,7 @@ select.width-100 {
 }
 
 
-.col-sm-1-harf, .col-sm-2-harf, .col-sm-20, .col-sm-3-harf, .col-sm-4-harf, .col-sm-5-harf, .col-sm-6-harf, .col-sm-7-harf, .col-sm-8-harf, .col-sm-9-harf, .col-sm-10-harf, .col-sm-11-harf {
+.col-sm-harf, .col-sm-1-harf, .col-sm-2-harf, .col-sm-20, .col-sm-3-harf, .col-sm-4-harf, .col-sm-5-harf, .col-sm-6-harf, .col-sm-7-harf, .col-sm-8-harf, .col-sm-9-harf, .col-sm-10-harf, .col-sm-11-harf {
 	float:left;
 }
 
@@ -1029,6 +1034,10 @@ select.width-100 {
 
   .container {
     width: 750px;
+  }
+
+  .col-sm-harf {
+    width:4.1666667%
   }
 
 
@@ -1110,7 +1119,7 @@ select.width-100 {
 
 
 
-.col-md-1-harf, .col-md-2-harf, .col-md-20, .col-md-3-harf, .col-md-4-harf, .col-md-5-harf, .col-md-6-harf, .col-md-7-harf, .col-md-8-harf, .col-md-9-harf, .col-md-10-harf, .col-md-11-harf {
+.col-md-harf, .col-md-1-harf, .col-md-2-harf, .col-md-20, .col-md-3-harf, .col-md-4-harf, .col-md-5-harf, .col-md-6-harf, .col-md-7-harf, .col-md-8-harf, .col-md-9-harf, .col-md-10-harf, .col-md-11-harf {
 	float:left;
 }
 
@@ -1119,6 +1128,11 @@ select.width-100 {
 
   .container {
     width:970px;
+  }
+
+
+  .col-md-harf {
+    width:4.1666667%
   }
 
 
@@ -1199,7 +1213,7 @@ select.width-100 {
 
 
 
-.col-lg-1-harf, .col-lg-2-harf, .col-lg-20, .col-lg-3-harf, .col-lg-4-harf, .col-lg-5-harf, .col-lg-6-harf, .col-lg-7-harf, .col-lg-8-harf, .col-lg-9-harf, .col-lg-10-harf, .col-lg-11-harf {
+.col-lg-harf, .col-lg-1-harf, .col-lg-2-harf, .col-lg-20, .col-lg-3-harf, .col-lg-4-harf, .col-lg-5-harf, .col-lg-6-harf, .col-lg-7-harf, .col-lg-8-harf, .col-lg-9-harf, .col-lg-10-harf, .col-lg-11-harf {
 	float:left;
 }
 
@@ -1208,6 +1222,12 @@ select.width-100 {
   .container {
     width:1170px;
   }
+
+
+  .col-lg-harf {
+    width: 4.1666667%
+  }
+
 
   .col-lg-1-harf {
   	width: 12.5%;

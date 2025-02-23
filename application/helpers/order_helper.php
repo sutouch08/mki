@@ -45,7 +45,6 @@ function paymentLabel($payments=NULL)
 }
 
 
-
 function paymentExists($order_code)
 {
   $CI =& get_instance();
@@ -80,8 +79,6 @@ function getSpace($amount, $length)
 	}
 	return $sc.$amount;
 }
-
-
 
 
 function get_summary($order, $details, $banks)
@@ -153,7 +150,6 @@ function get_summary($order, $details, $banks)
 }
 
 
-
 function select_order_role($role = '')
 {
 	$sc = '';
@@ -188,5 +184,24 @@ function role_name($role)
 	return isset($ds[$role]) ? $ds[$role] : NULL;
 }
 
+
+function select_order_tags($name = NULL)
+{
+	$sc = '';
+	$ci =& get_instance();
+	$ci->load->model('orders/orders_model');
+
+	$tags = $ci->orders_model->get_tags_list();
+
+	if( ! empty($tags))
+	{
+		foreach($tags as $rs)
+		{
+			$sc .= '<option value="'.$rs->name.'" '.is_selected($name, $rs->name).'>'.$rs->name.'</option>';
+		}
+	}
+
+	return $sc;
+}
 
  ?>

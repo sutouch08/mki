@@ -87,7 +87,8 @@ class Order_sold_details extends PS_Controller
 		$this->excel->getActiveSheet()->setCellValue("AJ{$row}", 'customer saleman');
 		$this->excel->getActiveSheet()->setCellValue("AK{$row}", 'Warehouse');
 		$this->excel->getActiveSheet()->setCellValue("AL{$row}", 'Zone');
-
+    $this->excel->getActiveSheet()->setCellValue("AM{$row}", 'Customer Reference');
+    $this->excel->getActiveSheet()->setCellValue("AN{$row}", 'Tags');
 
 
     $row = 5;
@@ -142,6 +143,8 @@ class Order_sold_details extends PS_Controller
 				$this->excel->getActiveSheet()->setCellValue("AJ{$row}", $rs->sale_name);
 				$this->excel->getActiveSheet()->setCellValue("AK{$row}", $rs->warehouse_code);
 				$this->excel->getActiveSheet()->setCellValue("AL{$row}", $rs->zone_code);
+        $this->excel->getActiveSheet()->setCellValue("AM{$row}", $rs->customer_ref);
+        $this->excel->getActiveSheet()->setCellValue("AN{$row}", $rs->tags);
         $row++;
       }
 

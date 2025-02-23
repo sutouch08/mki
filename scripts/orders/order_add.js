@@ -582,6 +582,7 @@ function add() {
     'customer_name' : $('#customerName').val().trim(),
     'customer' : $('#customer').val().trim(),
     'customer_ref' : $('#cust-ref').val().trim(),
+    'tags' : $('#tags').val(),
     'reference' : $('#reference').val().trim(),
     'channels_code' : $('#channels').val(),
     'payment_code' : $('#payment').val(),
@@ -710,6 +711,7 @@ function updateOrder(recal){
   var sender_id = $('#sender_id').val();
 	var remark = $("#remark").val();
 	var qt_no = $('#qt_no').val();
+  var tags = $('#tags').val();
 
 	load_in();
 
@@ -727,6 +729,7 @@ function updateOrder(recal){
   		"payment_code" : payment_code,
   		"reference" : reference,
       "sender_id" : sender_id,
+      "tags" : tags,
   		"remark" : remark,
 			"qt_no" : qt_no,
       "recal" : recal
@@ -764,39 +767,39 @@ function recal_discount_rule() {
 
 // JavaScript Document
 function changeState(){
-    var order_code = $("#order_code").val();
-    var state = $("#stateList").val();
-    if( state != 0){
-      load_in();
-        $.ajax({
-            url:BASE_URL + 'orders/orders/order_state_change',
-            type:"POST",
-            cache:"false",
-            data:{
-              "order_code" : order_code,
-              "state" : state
-            },
-            success:function(rs){
-              load_out();
-                var rs = $.trim(rs);
-                if(rs == 'success'){
-                    swal({
-                      title:'success',
-                      text:'status updated',
-                      type:'success',
-                      timer: 1000
-                    });
+  var order_code = $("#order_code").val();
+  var state = $("#stateList").val();
+  if( state != 0){
+    load_in();
+    $.ajax({
+      url:BASE_URL + 'orders/orders/order_state_change',
+      type:"POST",
+      cache:"false",
+      data:{
+        "order_code" : order_code,
+        "state" : state
+      },
+      success:function(rs){
+        load_out();
+        var rs = $.trim(rs);
+        if(rs == 'success'){
+          swal({
+            title:'success',
+            text:'status updated',
+            type:'success',
+            timer: 1000
+          });
 
-                    setTimeout(function(){
-                      window.location.reload();
-                    }, 1500);
+          setTimeout(function(){
+            window.location.reload();
+          }, 1500);
 
-                }else{
-                    swal("Error !", rs, "error");
-                }
-            }
-        });
-    }
+        }else{
+          swal("Error !", rs, "error");
+        }
+      }
+    });
+  }
 }
 
 
