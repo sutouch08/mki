@@ -23,7 +23,7 @@
     </div>
 
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 padding-5">
-	    <label>Tags</label>
+	    <label>ผู้ช่วยขาย</label>
 			<select class="form-control input-sm edit" name="tags" id="tags" disabled>
 				<option value="">เลือก</option>
 				<?php echo select_order_tags($order->tags); ?>

@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Consign_order extends PS_Controller
 {
   public $menu_code = 'ACCSOD';
-	public $menu_group_code = 'AC';
+	public $menu_group_code = 'SO';
   public $menu_sub_group_code = '';
 	public $title = 'ตัดยอดขาย';
   public $filter;
@@ -858,7 +858,175 @@ class Consign_order extends PS_Controller
   }
 
 
-  public function import_excel_file($code)
+  public function import_pos_file($code, $target = 0)
+  {
+    $sc = TRUE;
+    $this->load->library('excel');
+    $this->load->model('stock/stock_model');
+
+    $file = isset( $_FILES['excel'] ) ? $_FILES['excel'] : FALSE;
+
+    if($file !== FALSE)
+    {
+      $file	= 'excel';
+
+      $config = array(   // initial config for upload class
+        "allowed_types" => "xlsx",
+        "upload_path" => $this->config->item('consign_file_path'),
+        "file_name"	=> $code.'-'.date('YmdHis'),
+        "max_size" => 5120,
+        "overwrite" => TRUE
+      );
+
+      $this->load->library("upload", $config);
+
+      if(! $this->upload->do_upload($file))
+      {
+        $sc = FALSE;
+        $this->error = $this->upload->display_errors();
+      }
+      else
+      {
+        $info = $this->upload->data();
+        /// read file
+        $excel = PHPExcel_IOFactory::load($info['full_path']);
+        //get only the Cell Collection
+        $collection	= $excel->getActiveSheet()->toArray(NULL, TRUE, TRUE, TRUE);
+
+        $i = 1;
+
+        $doc = $this->consign_order_model->get($code);
+        $auz = is_true(getConfig('ALLOW_UNDER_ZERO'));
+        $rows = [];
+        $billNo = "";
+        $isCancel = FALSE;
+
+        foreach($collection as $rs)
+        {
+          if($sc === FALSE)
+          {
+            break;
+          }
+
+          if($i == 1)
+          {
+            if( empty($rs['I']))
+            {
+              $sc = FALSE;
+              $this->error = "Template ไม่ถูกต้อง";
+            }
+          }
+
+          if($i > 1)
+          {
+
+            $bill = trim($rs['C']);
+
+            if( ! empty($bill))
+            {
+              $isCancel = trim($rs['B']) == "-" ? FALSE : TRUE;
+
+              if( ! $isCancel)
+              {
+                $billNo = $bill;
+              }
+            }
+
+            if( ! empty(trim($rs['D'])) && ! $isCancel)
+            {
+              $item = $this->products_model->get(trim($rs['D']));
+
+              if( ! empty($item))
+              {
+                $price = trim($rs['H']);
+                $disc = trim($rs['J']);
+                $qty = trim($rs['I']);
+                $total = trim($rs['L']);
+
+                $uniqueRow = $item->code.$price.$disc;
+
+                if(empty($rows[$uniqueRow]))
+                {
+                  $rows[$uniqueRow] = (object) array(
+                  'consign_code' => $code,
+                  'style_code' => $item->style_code,
+                  'product_code' => $item->code,
+                  'product_name' => $item->name,
+                  'cost' => $item->cost,
+                  'price' => $price,
+                  'qty' => $qty,
+                  'discount' => $disc,
+                  'discount_amount' => $disc * $qty,
+                  'amount' => $total,
+                  'ref_code' => $doc->ref_code,
+                  'input_type' => 3,
+                  'count_stock' => $item->count_stock
+                  );
+                }
+                else
+                {
+                  $row = $rows[$uniqueRow];
+                  $nQty = $row->qty + $qty;
+                  $nDisc = $row->discount_amount + ($disc * $qty);
+                  $nTotal = $row->amount + $total;
+
+                  $rows[$uniqueRow]->qty = $nQty;
+                  $rows[$uniqueRow]->discount_amount = $nDisc;
+                  $rows[$uniqueRow]->amount = $nTotal;
+                }
+              }
+              else
+              {
+                $sc = FALSE;
+                $this->error = "รหัสสินค้าไม่ถูกต้อง : {$rs['D']} @line {$i}";
+              }
+            } //-- endif ! $isCancel
+          } //-- endif $i > 1;
+
+          $i++;
+        } //--- end foreach
+
+
+        if($sc === TRUE && ! empty($rows))
+        {
+          $this->db->trans_begin();
+
+          foreach($rows as $rs)
+          {
+            if($sc === FALSE)
+            {
+              break;
+            }
+
+            if( ! $this->consign_order_model->add_detail($rs))
+            {
+              $sc = FALSE;
+              $this->error = "Failed to insert item row @ {$rs->product_code}";
+            }
+          }
+
+          if($sc === FALSE)
+          {
+            $this->db->trans_rollback();
+          }
+          else
+          {
+            $this->db->trans_commit();
+          }
+        }
+      }
+    }
+    else
+    {
+      $sc = FALSE;
+      $this->error = "Upload file not found";
+    }
+
+    echo $sc === TRUE ? 'success' : $this->error;
+  }
+
+
+  public function import_excel_file($code, $target = 0)
   {
     $sc = TRUE;
     $this->load->library('excel');
@@ -897,6 +1065,7 @@ class Consign_order extends PS_Controller
 
           $doc = $this->consign_order_model->get($code);
           $auz = is_true(getConfig('ALLOW_UNDER_ZERO'));
+          $rows = [];
 
           $this->db->trans_begin();
 
@@ -905,6 +1074,15 @@ class Consign_order extends PS_Controller
             if($sc === FALSE)
             {
               break;
+            }
+
+            if($i == 1)
+            {
+              if( ! empty($rs['I']))
+              {
+                $sc = FALSE;
+                $this->error = "Template ไม่ถูกต้อง";
+              }
             }
 
             if($i > 1)

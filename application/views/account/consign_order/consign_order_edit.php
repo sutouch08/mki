@@ -21,7 +21,10 @@
 				</li>
 				<?php if(($this->pm->can_add OR $this->pm->can_edit) && $doc->status == 0) : ?>
 					<li>
-						<a href="javascript:getUploadFile()"><i class="fa fa-upload"></i> Import excel</a>
+						<a href="javascript:getUploadFile(0)"><i class="fa fa-upload"></i> Import excel</a>
+					</li>
+					<li>
+						<a href="javascript:getUploadFile(1)"><i class="fa fa-upload"></i> Import from POS</a>
 					</li>
 					<?php if(empty($doc->ref_code)) : ?>
 						<li class="hide">
@@ -127,7 +130,7 @@
 					</div>
 				</div>
 				<input type="file" class="hide" name="uploadFile" id="uploadFile" accept=".xlsx" />
-				<input type="hidden" name="555" />
+				<input type="hidden" id="target" name="target" value="0"/>
 				</form>
 			 </div>
 			<div class="modal-footer">

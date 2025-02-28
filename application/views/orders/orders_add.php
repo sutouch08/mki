@@ -53,7 +53,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
   </div>
 
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-10 padding-5">
-    <label>Tags</label>
+    <label>ผู้ช่วยขาย</label>
 		<select class="width-100 e" name="tags" id="tags">
 			<option value="">เลือก</option>
 			<?php echo select_order_tags(); ?>

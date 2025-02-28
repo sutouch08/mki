@@ -131,7 +131,7 @@
           {
             if($use_qc)
             {
-              $color = (($rs->qc != $rs->order_qty) OR ($rs->qc != $rs->prepqred)) ? 'red' : $color;
+              $color = (($rs->qc != $rs->order_qty) OR ($rs->qc != $rs->prepared)) ? 'red' : $color;
             }
             else
             {

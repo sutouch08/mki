@@ -228,7 +228,9 @@ function getEdit(){
 }
 
 function editRemark() {
+  $('#reference').removeAttr('disabled');
 	$('#sender_id').removeAttr('disabled');
+  $('#shipping_code').removeAttr('disabled');
 	$('#remark').removeAttr('disabled');
 	$('#btn-edit').addClass('hide');
 	$('#btn-update').removeClass('hide');
@@ -237,8 +239,10 @@ function editRemark() {
 
 function updateRemark() {
 	var order_code = $('#order_code').val();
+  var reference = $('#reference').val().trim();
+  var shipping_code = $('#shipping_code').val().trim();
 	var sender_id = $('#sender_id').val();
-	var remark = $.trim($('#remark').val());
+	var remark = $('#remark').val().trim();
 
 	load_in();
 	$.ajax({
@@ -247,6 +251,8 @@ function updateRemark() {
 		cache:false,
 		data:{
 			'code' : order_code,
+      'reference' : reference,
+      'shipping_code' : shipping_code,
 			'sender_id' : sender_id,
 			'remark' : remark
 		},
@@ -260,6 +266,9 @@ function updateRemark() {
 					timer:1000
 				});
 
+        $('#reference').attr('disabled', 'disabled');
+        $('#sender_id').attr('disabled', 'disabled');
+        $('#shipping_code').attr('disabled', 'disabled');
 				$('#remark').attr('disabled', 'disabled');
 				$('#btn-update').addClass('hide');
 				$('#btn-edit').removeClass('hide');

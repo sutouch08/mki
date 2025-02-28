@@ -122,7 +122,7 @@ class Address extends PS_Controller
       //--- จำนวนผู้จัดส่ง
       $sdn = $this->transport_model->count_sender($customer_code);
       //--- ที่อยู่ลูกค้าทั้งหมด
-      $adrs = $adn > 0 ? $this->address_model->get_shipping_address($customer_code) : FALSE;
+      $adrs = $adn > 0 ? $this->address_model->get_ship_to_address($customer_code) : FALSE;
       //--- รายชื่อผู้ให้บริการจัดส่ง
       $senders = $sdn > 0 ? $this->transport_model->get_senders($customer_code) : FALSE;
 
@@ -132,7 +132,7 @@ class Address extends PS_Controller
         $senders->second = $this->transport_model->get_name($senders->second_sender);
         $senders->third = $this->transport_model->get_name($senders->third_sender);
       }
-
+      
 			$use_qc = getConfig('USE_QC');
       echo get_address_form($adn, $sdn, $adrs, $senders, $use_qc);
     }

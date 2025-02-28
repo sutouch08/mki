@@ -597,7 +597,8 @@ function getSample(){
 
 
 
-function getUploadFile(){
+function getUploadFile(target){
+  $('#target').val(target);
   $('#upload-modal').modal('show');
 }
 
@@ -631,7 +632,13 @@ $("#uploadFile").change(function(){
 
 function uploadfile(){
   var code = $('#consign_code').val();
+  var target = $('#target').val();
   var excel = $('#uploadFile')[0].files[0];
+  let url = HOME + 'import_excel_file/'+code;
+
+  if(target == '1') {
+    url = HOME + 'import_pos_file/'+code;
+  }
 
 	$("#upload-modal").modal('hide');
 
@@ -641,7 +648,8 @@ function uploadfile(){
 	load_in();
 
 	$.ajax({
-		url:HOME + 'import_excel_file/'+code,
+		// url:HOME + 'import_excel_file/'+code,
+    url:url,
 		type:"POST",
     cache: "false",
     data: fd,

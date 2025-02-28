@@ -224,10 +224,14 @@ class Orders extends PS_Controller
 	{
 		$sc = TRUE;
 		$code = trim($this->input->post('code'));
+    $reference = get_null(trim($this->input->post('reference')));
+    $shipping_code = get_null(trim($this->input->post('shipping_code')));
 		$sender_id = $this->input->post('sender_id');
 		$remark = get_null(trim($this->input->post('remark')));
 
 		$arr = array(
+      'reference' => $reference,
+      'shipping_code' => $shipping_code,
 			'sender_id' => $sender_id,
 			'remark' => $remark
 		);
