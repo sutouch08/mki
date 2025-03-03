@@ -1308,9 +1308,9 @@ select.width-100 {
 	cursor:pointer;
 }
 
-.btn-sm {
+/* .btn-sm {
   height: 30px;
-}
+} */
 
 .btn-100 {
   min-width: 100px;
@@ -1437,6 +1437,9 @@ select.width-100 {
 	font-size: 36px;
 }
 
+.font-size-42 {
+  font-size: 42px;
+}
 
 .font-size-48 {
   font-size:48px;

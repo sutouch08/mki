@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/chosen.css">
 <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/select2.css" />
-<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/bootstrap.css" />
+<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/bootstrap.css?v=1" />
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/font-awesome.css" />
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/ace-fonts.css" />
 <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/ace.css" class="ace-main-stylesheet" id="main-ace-style" />

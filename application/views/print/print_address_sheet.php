@@ -1,131 +1,65 @@
-<?php
-	$use_delivery_bill = getConfig('USE_DELIVERY_BILL') == 1 ? TRUE : FALSE;
-
-	/*********  Sender  ***********/
-	$sender			= '<div class="col-lg-12" style="font-size:14px; padding-top:15px; padding-bottom:30px;">';
-	$sender			.= '<span style="display:block; margin-bottom:10px;">'.$cName.'</span>';
-	$sender			.= '<span style="width:70%; display:block; white-space:normal;">'.$cAddress.' '.$cPostCode.'</span>';
-	$sender			.= '<span style="display:block"> โทร. '.$cPhone.'</span>';
-	$sender			.= '</div>';
-	/********* / Sender *************/
-
-
-
-	/*********** Receiver  **********/
-	$receiver		= '<div class="col-lg-12" style="font-size:30px; padding-left: 250px; padding-top:15px; padding-bottom:40px;">';
-	$receiver		.= '<span style="display:block; margin-bottom:10px;">'.$ad->name.'</span>';
-	$receiver		.= '<span style="display:block;">'.$ad->address.'</span>';
-	$receiver		.= '<span style="display:block;"> ต. '.$ad->sub_district.' อ. '.$ad->district.'</span>';
-	$receiver		.= '<span style="display:block;">จ. '.$ad->province.' '.$ad->postcode.'</span>';
-	$receiver		.= $ad->phone == '' ? '' : '<span style="display:block;">โทร. '.$ad->phone.'</span>';
-	$receiver		.= '</div>';
-	/********** / Receiver ***********/
-
-	/********* Transport  ***********/
-	$transport = '';
-	if( $sd !== FALSE )
-	{
-		$transport	= '<table style="width:100%; border:0px; margin-left: 30px; position: relative; bottom:1px;">';
-		$transport	.= '<tr style="font-size:24px;"><td>'. $sd->name .'</td></tr>';
-		$transport	.= '<tr style="font-size:18px;"><td>'. $sd->address1 .' '.$sd->address2.'</td></tr>';
-		$transport	.= '<tr style="font-size:18px;"><td>โทร. '. $sd->phone.' เวลาทำการ : '.date('H:i', strtotime($sd->open)).' - '.date('H:i', strtotime($sd->close)).' น. - ( '.$sd->type.')</td></tr>';
-		$transport 	.= '</table>';
-	}
-
-	/*********** / transport **********/
-
-	$total_page		= $use_delivery_bill ? ($boxes <= 1 ? 1 : ($boxes+1)/2) : ($boxes <= 1 ? 1 : $boxes/2);
-	$Page = '';
-
-	$config = array(
-		"row" => 16,
-		"header_row" => 0,
-		"footer_row" => 0,
-		"sub_total_row" => 0,
-		"content_border" => 2
-	);
-
-	$this->printer->config($config);
-
-
-	$Page .= $this->printer->doc_header();
-	$n = 1;
-	while($total_page > 0 )
-	{
-		$Page .= $this->printer->page_start();
-
-		if( $n < ($boxes+1) )
-		{
-			$Page .= $this->printer->content_start();
-			$Page .= '<table style="width:100%; border:0px;"><tr><td style="width:50%;">';
-			$Page .= $sender;
-			$Page .= '</td>';
-			$Page .= '<td style=" vertical-align:text-top; text-align:right; font-size:18px; padding-top:25px; padding-right:15px;">'.$reference.' : กล่องที่ '.$n.' / '.$boxes.'</td></tr></table>';
-			$Page .= $receiver;
-			$Page .= $transport;
-			$Page .= $this->printer->content_end();
-			$n++;
+<?php	
+	$adr = parse_address((array) $address);
+ ?>
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<link rel="icon" href="<?php echo base_url(); ?>assets/images/icons/favicon.ico" type="image/x-icon" />
+  	<title><?php echo $this->title; ?></title>
+  	<link href="<?php echo base_url(); ?>assets/css/bootstrap.css?v=1" rel="stylesheet" />
+		<link href="<?php echo base_url(); ?>assets/css/font-awesome.css" rel="stylesheet"/>
+  	<link href="<?php echo base_url(); ?>assets/css/template.css" rel="stylesheet" />
+  	<link href="<?php echo base_url(); ?>assets/css/print.css" rel="stylesheet" />
+  	<script src="<?php echo base_url(); ?>assets/js/jquery.min.js"></script>
+		<style>
+		@page {
+			size: A4 landscape;
 		}
-		if( $n < ($boxes+1) )
-		{
-			$Page .= $this->printer->content_start();
-			$Page .= '<table style="width:100%; border:0px;"><tr><td style="width:50%;">';
-			$Page .= $sender;
-			$Page .= '</td><td style=" vertical-align:text-top; text-align:right; font-size:18px; padding-top:25px; padding-right:15px;">'.$reference.' : กล่องที่ '.$n.' / '.$boxes.'</td></tr></table>';
-			$Page .= $receiver;
-			$Page .= $transport;
-			$Page .= $this->printer->content_end();
-			$n++;
+		.page_layout{
+			border: solid 1px #aaa;
+			border-radius:0px;
+			width:282mm;
+			height:200mm;
+			margin:auto;
+			display: flex;
+			flex-flow: column;
+			justify-content: center;
+			align-items: center;
 		}
 
-		if( $n > $boxes && $use_delivery_bill){
-			if( $n > $boxes && ($n % 2) == 0 )
-			{
-				$Page .= '
-				<style>.table-bordered > tbody > tr > td { border : solid 1px #333 !important;  }</style>
-				<table class="table table-bordered" >
-					<tr style="font-size:10px">
-						<td style="width:8%;">ใบสั่งงาน</td>
-						<td style="width:25%;">
-              <input type="checkbox" style="margin-left:10px; margin-right:5px;"> รับ
-              <input type="checkbox" checked style="margin-left:10px; margin-right:5px;"> ส่ง
-            </td>
-						<td style="width:27%;">
-              วันที่ '.date("d/m/Y").'
-              <input type="checkbox" style="margin-left:10px; margin-right:5px;">เช้า
-              <input type="checkbox" style="margin-left:10px; margin-right:5px;"> บ่าย
-            </td>
-						<td style="width:20%;">
-              จำนวน '.$boxes.' กล่อง
-            </td>
-						<td style="width:20%;">
-              ออเดอร์ :  '.$reference.'
-            </td>
-					</tr>
-					<tr style="font-size:10px;">
-            <td>ขนส่ง</td>
-            <td>'.(empty($sd) ? "" : $sd->name).'</td>
-            <td colspan="3">'.(empty($sd) ? "" : $sd->address1.' '.$sd->address2.' ('.$sd->phone.')').'</td>
-          </tr>
-					<tr style="font-size:10px;">
-            <td>ผู้รับ</td>
-            <td>'.$ad->name.'</td>
-            <td colspan="3">'.$ad->address.' ต. '.$ad->sub_district.' อ. '.$ad->district.' จ. '.$ad->province.' '.$ad->postcode.'</td>
-          </tr>
-					<tr style="font-size:10px;">
-            <td>ผู้ติดต่อ</td>
-            <td>'.$ad->name.'</td>
-            <td>โทร. '.$ad->phone.'</td>
-            <td>ผู้สั่งงาน '.get_cookie('uname').'</td>
-            <td>โทร. </td>
-          </tr>
-				</table>';
-			}
-			$n++;
+		.page-content {
+			height: 100%;
+			padding-left: 50mm;
+			padding-right: 50mm;
+			display: flex;
+			flex-flow: column;
+			justify-content: center;
+			align-items: center;
+			line-height: 2;
 		}
-		$Page .= $this->printer->page_end();
 
-		$total_page--;
-	}
-	$Page .= $this->printer->doc_footer();
-	echo $Page;
+		@media print{
+			.page_layout{ border: none; }
+		}
+		</style>
+  	<script src="<?php echo base_url(); ?>assets/js/bootstrap.min.js"></script>
+  	</head>
+  	<body>
+    	<div class="hidden-print" style="margin-top:10px; padding-bottom:10px; padding-right:5mm; width:280mm; margin-left:auto; margin-right:auto; text-align:right">
+    	   <button class="btn btn-primary" onclick="print()"><i class="fa fa-print"></i>&nbspพิมพ์</button>
+    	</div>
+      <div style="width:100%">
+        <!-- Page Start -->
+    		<div class="page_layout">
+          <div class="width-100 text-center page-content">
+            <div class="width-100 text-center font-size-48 red"><?php echo (empty($order->sender_name) ? "" : $order->sender_name); ?></div>
+						<div class="width-100 text-center font-size-42 margin-top-30"><?php echo $cusName; ?></div>
+						<div class="width-100 text-center font-size-42"><?php echo $adr; ?></div>
+						<div class="width-100 text-center font-size-42">เบอร์โทร - <?php echo $cusPhone; ?></div>
+          </div>
+        </div>
+      </div>
+    </body>
+  </html>

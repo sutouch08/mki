@@ -83,6 +83,7 @@ function setDefault(id) {
 function reloadAddressTable() {
   var order_code = $("#order_code").val();
   var customer_ref = $('#customer_ref').val();
+
   $.ajax({
     url:BASE_URL + 'orders/orders/get_address_table',
     type:"POST",
@@ -107,24 +108,22 @@ function reloadAddressTable() {
 
 
 function saveAddress() {
-  var code 			= $('#customer_ref').val();
+  let code = $('#customer_ref').val().trim();
+  let cusCode = $('#customer').val();
   var adrCode = $('#address_code').val();
-
-  code = code.length ? code : adrCode;
-
-  var name			= $("#Fname").val();
-  var addr			= $("#address1").val();
+  var name = $("#Fname").val();
+  var addr = $("#address1").val();
   var subdistrict = $('#sub_district').val();
-  var district  = $('#district').val();
-  var province  = $('#province').val();
-  var email			= $("#email").val();
-  var alias 		= $("#alias").val();
+  var district = $('#district').val();
+  var province = $('#province').val();
+  var email = $("#email").val();
+  var alias = $("#alias").val();
+  code = code.length ? code : adrCode;
 
   if(code == ''){
     swal('กรุณาระบุชื่อลูกค้า[ออนไลน์] หรือ รหัสสาขา');
     return false;
   }
-
 
   if( name == '' ){
     swal('กรุณาระบุชื่อผู้รับ');
@@ -133,22 +132,6 @@ function saveAddress() {
 
   if( addr.length == 0 ){
     swal('กรุณาระบุที่อยู่');
-    return false;
-  }
-
-  if(subdistrict.length == 0){
-    swal('กรุณาระบุตำบล');
-    return false;
-  }
-
-
-  if(district.length == 0){
-    swal('กรุณาระบุอำเภอ');
-    return false;
-  }
-
-  if(province.length == 0){
-    swal('กรุณาระบุจังหวัด');
     return false;
   }
 
@@ -166,6 +149,7 @@ function saveAddress() {
   var ds = [];
 
   ds.push( {"name" : "id_address", "value" : $("#id_address").val() } );
+  ds.push( {"name" : "customer_code", "value" : cusCode});
   ds.push( {"name" : "customer_ref", "value" : code } );
   ds.push( {"name" : "name", "value" : $("#Fname").val() } );
   ds.push( {"name" : "address", "value" : $("#address1").val() } );

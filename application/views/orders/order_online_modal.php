@@ -293,12 +293,13 @@
 	<td>{{ phone }}</td>
 	<td align="right">
 	{{#if default}}
-		<button type="button" class="btn btn-xs btn-success btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
+		<button type="button" class="btn btn-minier btn-success btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
 	{{else}}
-		<button type="button" class="btn btn-xs btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
+		<button type="button" class="btn btn-minier btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
 	{{/if}}
-		<button type="button" class="btn btn-xs btn-warning" onClick="editAddress({{ id }})"><i class="fa fa-pencil"></i></button>
-		<button type="button" class="btn btn-xs btn-danger" onClick="removeAddress({{ id }})"><i class="fa fa-trash"></i></button>
+    <button type="button" class="btn btn-minier btn-primary" onclick="printOnlineAddress({{id}}, '{{order_code}}')"><i class="fa fa-print"></i></button>
+		<button type="button" class="btn btn-minier btn-warning" onClick="editAddress({{ id }})"><i class="fa fa-pencil"></i></button>
+		<button type="button" class="btn btn-minier btn-danger" onClick="removeAddress({{ id }})"><i class="fa fa-trash"></i></button>
 	</td>
 </tr>
 </script>
@@ -309,18 +310,19 @@
 {{#each this}}
 <tr style="font-size:12px;" id="{{ id }}">
 	<td align="center">{{ alias }}</td>
+  <td>{{ code }}</td>
 	<td>{{ name }}</td>
-	<td>{{ address }}</td>
-	<td>{{ email }}</td>
+	<td>{{ address }}</td>	
 	<td>{{ phone }}</td>
 	<td align="right">
 	{{#if default}}
-		<button type="button" class="btn btn-xs btn-success btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
+		<button type="button" class="btn btn-minier btn-success btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
 	{{else}}
-		<button type="button" class="btn btn-xs btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
+		<button type="button" class="btn btn-minier btn-address" id="btn-{{ id }}" onClick="setDefault({{ id }})"><i class="fa fa-check"></i></button>
 	{{/if}}
-		<button type="button" class="btn btn-xs btn-warning" onClick="editAddress({{ id }})"><i class="fa fa-pencil"></i></button>
-		<button type="button" class="btn btn-xs btn-danger" onClick="removeAddress({{ id }})"><i class="fa fa-trash"></i></button>
+    <button type="button" class="btn btn-minier btn-primary" onclick="printOnlineAddress({{id}}, '{{order_code}}')"><i class="fa fa-print"></i></button>
+		<button type="button" class="btn btn-minier btn-warning" onClick="editAddress({{ id }})"><i class="fa fa-pencil"></i></button>
+		<button type="button" class="btn btn-minier btn-danger" onClick="removeAddress({{ id }})"><i class="fa fa-trash"></i></button>
 	</td>
 </tr>
 {{/each}}

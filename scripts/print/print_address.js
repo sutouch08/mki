@@ -94,7 +94,8 @@ function printPackingSheet()
 
 function printOnlineAddress(id, code)
 {
-	var center 	= ($(document).width() - 800)/2;
+	var prop = "width=1100, height=850. left="+center+", scrollbars=yes";
+	var center 	= ($(document).width() - 1100)/2;
 	var target 	= BASE_URL + 'masters/address/print_online_address/'+id+'/' + code;
 	window.open(target, "_blank", prop );
 }

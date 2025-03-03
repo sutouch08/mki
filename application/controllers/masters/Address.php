@@ -15,6 +15,7 @@ class Address extends PS_Controller
     $this->load->model('address/address_model');
     $this->load->model('address/transport_model');
     $this->load->model('masters/customers_model');
+    $this->load->helper('address');
   }
 
 
@@ -61,9 +62,9 @@ class Address extends PS_Controller
       $order->sender_name = $this->sender_model->get_name($order->sender_id);
     }
 
-    $details = $order->state == 8 ? $this->invoice_model->get_details($code) : FALSE;
+    $details = NULL; //$order->state == 8 ? $this->invoice_model->get_details($code) : FALSE;
 
-    if(!empty($adr))
+    if( ! empty($adr))
     {
 			$sub_district = empty($adr->sub_district) ? '' : 'ต.'.$adr->sub_district;
 			$district = empty($adr->district) ? '' : ' อ. '.$adr->district;
@@ -71,6 +72,7 @@ class Address extends PS_Controller
         'order' => $order,
         'details' => $details,
         'cusName' => $adr->name,
+        'address' => $adr,
         'cusAdr1' => $adr->address,
         'cusAdr2' => ($sub_district . $district),
         'cusProv' => empty($adr->province) ? '' : ('จ. '.$adr->province),
@@ -83,7 +85,8 @@ class Address extends PS_Controller
         'cPostCode' => getConfig("COMPANY_POST_CODE")
       );
 
-      $this->load->view('print/print_address_online_sheet', $ds);
+      // $this->load->view('print/print_address_online_sheet', $ds);
+      $this->load->view('print/print_address_sheet', $ds);
     }
   }
 
@@ -132,7 +135,7 @@ class Address extends PS_Controller
         $senders->second = $this->transport_model->get_name($senders->second_sender);
         $senders->third = $this->transport_model->get_name($senders->third_sender);
       }
-      
+
 			$use_qc = getConfig('USE_QC');
       echo get_address_form($adn, $sdn, $adrs, $senders, $use_qc);
     }

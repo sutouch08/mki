@@ -2193,39 +2193,6 @@ class Orders extends PS_Controller
   }
 
 
-  // public function update_shipping_fee()
-  // {
-  //   $order_code = $this->input->post('order_code');
-  //   $shipping_fee = $this->input->post('shipping_fee');
-  //   if($this->orders_model->update_shipping_fee($order_code, $shipping_fee))
-  //   {
-  //     update_order_total_amount($order_code);
-  //     echo 'success';
-  //   }
-  //   else
-  //   {
-  //     echo 'failed';
-  //   }
-  // }
-	//
-	//
-  // public function update_service_fee()
-  // {
-  //   $order_code = $this->input->post('order_code');
-  //   $service_fee = $this->input->post('service_fee');
-  //   if($this->orders_model->update_service_fee($order_code, $service_fee))
-  //   {
-  //     update_order_total_amount($order_code);
-  //     echo 'success';
-  //   }
-  //   else
-  //   {
-  //     echo 'failed';
-  //   }
-  // }
-
-
-
   public function save_address()
   {
     $sc = TRUE;
@@ -2276,18 +2243,19 @@ class Orders extends PS_Controller
   public function get_address_table()
   {
     $sc = TRUE;
-    if($this->input->post('customer_ref'))
+    $ds = array();
+    $code = $this->input->post('customer_ref');
+    $order_code = $this->input->post('order_code');
+
+    if($order_code || $code)
     {
-      $code = $this->input->post('customer_ref');
-      $order_code = $this->input->post('order_code');
 			$order = empty($order_code) ? NULL : $this->orders_model->get($order_code);
 
       if(! empty($code) OR ! empty($order))
       {
-        $ds = array();
         $this->load->model('address/address_model');
-				$code = empty($code) ? $order->customer_code : $code;
-        $adrs = $this->address_model->get_shipping_address($code);
+
+        $adrs = empty($code) ? $this->address_model->get_ship_to_address($order->customer_code) : $this->address_model->get_shipping_address($code);
 
         if(!empty($adrs))
         {
@@ -2296,6 +2264,7 @@ class Orders extends PS_Controller
             $arr = array(
               'id' => $rs->id,
 							'code' => $rs->code,
+              'order_code' => $order_code,
               'name' => $rs->name,
               'address' => $rs->address.' '.$rs->sub_district.' '.$rs->district.' '.$rs->province.' '.$rs->postcode,
               'phone' => $rs->phone,
@@ -2303,7 +2272,8 @@ class Orders extends PS_Controller
               'alias' => $rs->alias,
               'default' => empty($order_code) ? ($rs->is_default == 1? 1 : 0) : (($rs->id == $order->address_id) ? 1 : '')
             );
-            array_push($ds, $arr);
+
+            $ds[] = $arr;
           }
         }
         else

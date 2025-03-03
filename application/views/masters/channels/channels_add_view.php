@@ -47,9 +47,8 @@
     <div class="help-block col-xs-12 col-sm-reset inline red" id="customer_name-error"></div>
   </div>
 
-	<div class="divider-hidden">
-
-	</div>
+	<div class="divider-hidden"></div>
+	
   <div class="form-group">
     <label class="col-sm-3 control-label no-padding-right"></label>
     <div class="col-xs-12 col-sm-3">
