@@ -13,8 +13,7 @@ class Stock_balance_model extends CI_Model
     ->select('products.barcode, products.code, products.name, products.cost')
     ->select_sum('stock.qty')
     ->from('stock')
-    ->join('products', 'stock.product_code = products.code', 'left')
-    ->join('product_size', 'product_size.code = products.size_code', 'left');
+    ->join('products', 'stock.product_code = products.code', 'left');
 
     //--- if specify warehouse
     if(empty($allWhouse))
@@ -26,14 +25,12 @@ class Stock_balance_model extends CI_Model
     //--- if specify product
     if(empty($allProduct))
     {
-      $this->db->where('products.style_code >=', $pdFrom);
-      $this->db->where('products.style_code <=', $pdTo);
+      $this->db->where('products.code >=', $pdFrom);
+      $this->db->where('products.code <=', $pdTo);
     }
 
     $this->db->group_by('stock.product_code');
-    $this->db->order_by('products.style_code', 'ASC');
-    $this->db->order_by('products.color_code', 'ASC');
-    $this->db->order_by('product_size.position', 'ASC');
+    $this->db->order_by('products.code', 'ASC');
 
     $rs = $this->db->get();
 
@@ -53,7 +50,6 @@ class Stock_balance_model extends CI_Model
     $qr  = "SELECT pd.barcode, pd.code, pd.name, pd.cost, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
     $qr .= "FROM stock_movement AS s ";
     $qr .= "LEFT JOIN products AS pd ON s.product_code = pd.code ";
-    $qr .= "LEFT JOIN product_size AS ps ON pd.size_code = ps.code ";
 
     if($allWhouse == 0)
     {
@@ -64,8 +60,8 @@ class Stock_balance_model extends CI_Model
 
     if($allProduct == 0)
     {
-      $qr .= "AND pd.style_code >= '{$pdFrom}' ";
-      $qr .= "AND pd.style_code <= '{$pdTo}' ";
+      $qr .= "AND pd.code >= '{$pdFrom}' ";
+      $qr .= "AND pd.code <= '{$pdTo}' ";
     }
 
 
@@ -83,10 +79,8 @@ class Stock_balance_model extends CI_Model
     }
 
     $qr .= "GROUP BY pd.code ";
-    $qr .= "ORDER BY pd.style_code ASC, ";
-    $qr .= "pd.color_code ASC, ";
-    $qr .= "ps.position ASC";
-    
+    $qr .= "ORDER BY pd.code ASC";
+
     $rs = $this->db->query($qr);
 
     if($rs->num_rows() > 0)

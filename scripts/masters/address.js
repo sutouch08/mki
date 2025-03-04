@@ -156,30 +156,8 @@ function saveAddress()
 		return false;
 	}
 
-	if(subdistrict.length == 0){
-		swal('กรุณาระบุตำบล');
-		return false;
-	}
-
-
-	if(district.length == 0){
-		swal('กรุณาระบุอำเภอ');
-		return false;
-	}
-
-	if(province.length == 0){
-		swal('กรุณาระบุจังหวัด');
-		return false;
-	}
-
-
 	if( alias == '' ){
 		swal('กรุณาตั้งชื่อให้ที่อยู่');
-		return false;
-	}
-
-	if( email != '' && ! validEmail(email) ) {
-		swal("อีเมล์ไม่ถูกต้องกรุณาตรวจสอบ");
 		return false;
 	}
 

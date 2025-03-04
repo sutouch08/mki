@@ -14,7 +14,6 @@ class Stock_balance_zone_model extends CI_Model
     ->select('zone.code AS zone_code, zone.name AS zone_name, stock.qty')
     ->from('stock')
     ->join('products', 'stock.product_code = products.code', 'left')
-    ->join('product_size', 'product_size.code = products.size_code', 'left')
     ->join('zone', 'stock.zone_code = zone.code', 'left');
 
     if(empty($ds['allZone']) && !empty($ds['zoneCode']))
@@ -34,13 +33,11 @@ class Stock_balance_zone_model extends CI_Model
     //--- if specify product
     if(empty($ds['allProduct']))
     {
-      $this->db->where('products.style_code >=', $ds['pdFrom']);
-      $this->db->where('products.style_code <=', $ds['pdTo']);
+      $this->db->where('products.code >=', $ds['pdFrom']);
+      $this->db->where('products.code <=', $ds['pdTo']);
     }
 
-    $this->db->order_by('products.style_code', 'ASC');
-    $this->db->order_by('products.color_code', 'ASC');
-    $this->db->order_by('product_size.position', 'ASC');
+    $this->db->order_by('products.code', 'ASC');
 
     $rs = $this->db->get();
 
@@ -61,15 +58,14 @@ class Stock_balance_zone_model extends CI_Model
     $qr .= "pd.code, pd.name, pd.cost, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
     $qr .= "FROM stock_movement AS s ";
     $qr .= "JOIN products AS pd ON s.product_code = pd.code ";
-    $qr .= "JOIN product_size AS ps ON pd.size_code = ps.code ";
     $qr .= "JOIN zone AS z ON s.zone_code = z.code ";
 
     $qr .= "WHERE s.date_add <= '{$date}' ";
 
     if($ds['allProduct'] == 0)
     {
-      $qr .= "AND pd.style_code >= '{$ds['pdFrom']}' ";
-      $qr .= "AND pd.style_code <= '{$ds['pdTo']}' ";
+      $qr .= "AND pd.code >= '{$ds['pdFrom']}' ";
+      $qr .= "AND pd.code <= '{$ds['pdTo']}' ";
     }
 
     //---- ถ้าระบุโซน
@@ -95,9 +91,7 @@ class Stock_balance_zone_model extends CI_Model
 
 
     $qr .= "GROUP BY pd.code, s.zone_code ";
-    $qr .= "ORDER BY pd.style_code ASC, ";
-    $qr .= "pd.color_code ASC, ";
-    $qr .= "ps.position ASC";
+    $qr .= "ORDER BY pd.code ASC";    
 
     $rs = $this->db->query($qr);
 

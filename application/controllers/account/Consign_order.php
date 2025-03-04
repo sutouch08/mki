@@ -899,6 +899,7 @@ class Consign_order extends PS_Controller
         $auz = is_true(getConfig('ALLOW_UNDER_ZERO'));
         $rows = [];
         $billNo = "";
+        $billDiscPercent = 0;
         $isCancel = FALSE;
 
         foreach($collection as $rs)
@@ -929,6 +930,14 @@ class Consign_order extends PS_Controller
               if( ! $isCancel)
               {
                 $billNo = $bill;
+                $bDisc = floatval($rs['M']);
+                $bTotal = floatval($rs['Q']);
+                $sTotal = $bDisc + $bTotal;
+                $billDiscPercent = ($bTotal > 0 && $bDisc > 0) ? $bDisc / $sTotal : 0;
+              }
+              else
+              {
+                $billDiscPercent = 0;
               }
             }
 
@@ -941,9 +950,15 @@ class Consign_order extends PS_Controller
                 $price = trim($rs['H']);
                 $disc = trim($rs['J']);
                 $qty = trim($rs['I']);
+                $disc = $disc > 0 ? $disc/$qty : 0;                
                 $total = trim($rs['L']);
+                $priceAfDisc = $price - $disc;
+                $exDisc = round($priceAfDisc * $billDiscPercent, 2);
+                $finalItemDisc = $disc + $exDisc;
+                $finalPrice = $priceAfDisc - $exDisc;
+                $lineTotal = $finalPrice * $qty;
 
-                $uniqueRow = $item->code.$price.$disc;
+                $uniqueRow = $item->code.$price.$finalItemDisc;
 
                 if(empty($rows[$uniqueRow]))
                 {
@@ -955,9 +970,9 @@ class Consign_order extends PS_Controller
                   'cost' => $item->cost,
                   'price' => $price,
                   'qty' => $qty,
-                  'discount' => $disc,
-                  'discount_amount' => $disc * $qty,
-                  'amount' => $total,
+                  'discount' => $finalItemDisc, //$disc,
+                  'discount_amount' => $finalItemDisc * $qty,
+                  'amount' => $lineTotal,
                   'ref_code' => $doc->ref_code,
                   'input_type' => 3,
                   'count_stock' => $item->count_stock
@@ -967,8 +982,8 @@ class Consign_order extends PS_Controller
                 {
                   $row = $rows[$uniqueRow];
                   $nQty = $row->qty + $qty;
-                  $nDisc = $row->discount_amount + ($disc * $qty);
-                  $nTotal = $row->amount + $total;
+                  $nDisc = $row->discount_amount + ($row->discount * $qty);
+                  $nTotal = $row->amount + $lineTotal;
 
                   $rows[$uniqueRow]->qty = $nQty;
                   $rows[$uniqueRow]->discount_amount = $nDisc;

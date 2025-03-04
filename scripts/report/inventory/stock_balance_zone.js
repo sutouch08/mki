@@ -23,7 +23,7 @@ function toggleAllProduct(option){
 
 
 $('#pdFrom').autocomplete({
-  source : BASE_URL + 'auto_complete/get_style_code',
+  source : BASE_URL + 'auto_complete/get_product_code',
   autoFocus:true,
   close:function(){
     var pdFrom = $(this).val();
@@ -39,7 +39,7 @@ $('#pdFrom').autocomplete({
 
 
 $('#pdTo').autocomplete({
-  source:BASE_URL + 'auto_complete/get_style_code',
+  source:BASE_URL + 'auto_complete/get_product_code',
   autoFocus:true,
   close:function(){
     var pdTo = $(this).val();

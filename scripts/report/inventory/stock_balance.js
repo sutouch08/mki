@@ -23,11 +23,11 @@ function toggleAllProduct(option){
 
 
 $('#pdFrom').autocomplete({
-  source : BASE_URL + 'auto_complete/get_style_code',
+  source : BASE_URL + 'auto_complete/get_product_code',
   autoFocus:true,
   close:function(){
-    var pdFrom = $(this).val();
-    var pdTo = $('#pdTo').val();
+    var pdFrom = $(this).val().trim();
+    var pdTo = $('#pdTo').val().trim();
     if(pdTo.length > 0 && pdFrom.length > 0){
       if(pdFrom > pdTo){
         $('#pdTo').val(pdFrom);
@@ -39,11 +39,11 @@ $('#pdFrom').autocomplete({
 
 
 $('#pdTo').autocomplete({
-  source:BASE_URL + 'auto_complete/get_style_code',
+  source:BASE_URL + 'auto_complete/get_product_code',
   autoFocus:true,
   close:function(){
-    var pdTo = $(this).val();
-    var pdFrom = $('#pdFrom').val();
+    var pdTo = $(this).val().trim();
+    var pdFrom = $('#pdFrom').val().trim();
     if(pdTo.length > 0 && pdFrom.length > 0){
       if(pdFrom > pdTo){
         $('#pdTo').val(pdFrom);
@@ -52,6 +52,7 @@ $('#pdTo').autocomplete({
     }
   }
 })
+
 
 function toggleAllWarehouse(option){
   $('#allWarehouse').val(option);

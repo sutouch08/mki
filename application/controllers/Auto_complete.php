@@ -927,6 +927,7 @@ public function get_active_item_code_and_name()
     $rs = $this->db
     ->select('code')
     ->like('code', $txt)
+    ->order_by('code', 'ASC')
     ->limit(20)
     ->get('products');
 
