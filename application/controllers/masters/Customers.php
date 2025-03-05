@@ -18,58 +18,49 @@ class Customers extends PS_Controller
     $this->load->model('masters/customer_class_model');
     $this->load->model('masters/customer_area_model');
 		$this->load->model('masters/saleman_model');
+    $this->load->model('masters/channels_model');
     $this->load->helper('customer');
+    $this->load->helper('channels');
   }
 
 
   public function index()
   {
-		$code = get_filter('code', 'code', '');
-		$name = get_filter('name', 'name', '');
-    $group = get_filter('group', 'group', '');
-    $kind = get_filter('kind', 'kind', '');
-    $type = get_filter('type', 'type', '');
-    $class = get_filter('class', 'class', '');
-    $area = get_filter('area', 'area', '');
+    $filter = array(
+      'code' => get_filter('code', 'code', ''),
+      'name' => get_filter('name', 'name', ''),
+      'group' => get_filter('group', 'group', 'all'),
+      'kind' => get_filter('kind', 'kind', 'all'),
+      'type' => get_filter('type', 'type', 'all'),
+      'class' => get_filter('class', 'class', 'all'),
+      'area' => get_filter('area', 'area', 'all'),
+      'channels' => get_filter('channels', 'channels', 'all')
+    );
 
 		//--- แสดงผลกี่รายการต่อหน้า
 		$perpage = get_rows();
-		//--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
-		if($perpage > 300)
-		{
-			$perpage = 20;
-		}
 
 		$segment = 4; //-- url segment
-		$rows = $this->customers_model->count_rows($code, $name, $group, $kind, $type, $class, $area);
+		$rows = $this->customers_model->count_rows($filter);
 		//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
 		$init	= pagination_config($this->home.'/index/', $rows, $perpage, $segment);
-		$customers = $this->customers_model->get_data($code, $name, $group, $kind, $type, $class, $area, $perpage, $this->uri->segment($segment));
-    if(!empty($customers))
+		$filter['data'] = $this->customers_model->get_list($filter, $perpage, $this->uri->segment($segment));
+
+    if( ! empty($filter['data']))
     {
-      foreach($customers as $rs)
+      foreach($filter['data'] as $rs)
       {
         $rs->group  = $this->customer_group_model->get_name($rs->group_code);
         $rs->kind   = $this->customer_kind_model->get_name($rs->kind_code);
         $rs->type   = $this->customer_type_model->get_name($rs->type_code);
+        $rs->channels  = $this->channels_model->get_name($rs->channels_code);
         $rs->class  = $this->customer_class_model->get_name($rs->class_code);
-        //$rs->area   = $this->customer_area_model->get_name($rs->area_code);
+        $rs->area  = $this->customer_area_model->get_name($rs->area_code);
       }
     }
 
-    $data = array(
-      'code' => $code,
-      'name' => $name,
-      'group' => $group,
-      'kind' => $kind,
-      'type' => $type,
-      'class' => $class,
-      'area' => $area,
-			'data' => $customers
-    );
-
 		$this->pagination->initialize($init);
-    $this->load->view('masters/customers/customers_view', $data);
+    $this->load->view('masters/customers/customers_view', $filter);
   }
 
 
@@ -77,7 +68,28 @@ class Customers extends PS_Controller
 
   public function add_new()
   {
-    $this->load->view('masters/customers/customers_add_view');
+    $no = $this->customers_model->get_max_no();
+    $code = $this->get_new_code($no);
+    $this->load->view('masters/customers/customers_add_view', ['code' => $code, 'run_no' => $no]);
+  }
+
+
+  public function get_new_code($no)
+  {
+    $prefix = getConfig('PREFIX_CUSTOMER_CODE');
+    $run_digit = getConfig('RUN_DIGIT_CUSTOMER_CODE');
+
+    if( ! is_null($no))
+    {
+      $run_no = intval($no) + 1;
+      $new_code = $prefix . sprintf('%0'.$run_digit.'d', $run_no);
+    }
+    else
+    {
+      $new_code = $prefix . sprintf('%0'.$run_digit.'d', '001');
+    }
+
+    return $new_code;
   }
 
 
@@ -85,9 +97,11 @@ class Customers extends PS_Controller
   {
 		$sc = TRUE;
 		$code = $this->input->post('code');
+    $run_no = intval($this->input->post('run_no')) + 1;
 		$name = $this->input->post('name');
 		$credit = $this->input->post('CreditLine');
 		$credit_term = $this->input->post('credit_term');
+
     if(! is_null($code) && !empty($name))
     {
       $ds = array(
@@ -99,10 +113,12 @@ class Customers extends PS_Controller
         'type_code' => get_null(trim($this->input->post('type'))),
         'class_code' => get_null(trim($this->input->post('class'))),
         'area_code' => get_null(trim($this->input->post('area'))),
+        'channels_code' => get_null($this->input->post('channels')),
         'sale_code' => get_null(trim($this->input->post('sale'))),
         'credit_term' => empty($credit_term) ? 0 : $credit_term,
         'amount' => empty($credit) ? 0 : $credit,
-        'note' => get_null($this->input->post('note'))
+        'note' => get_null($this->input->post('note')),
+        'run_no' => $run_no
       );
 
       if($this->customers_model->is_exists($code))
@@ -281,6 +297,7 @@ class Customers extends PS_Controller
         'type_code' => get_null(trim($this->input->post('type'))),
         'class_code' => get_null(trim($this->input->post('class'))),
         'area_code' => get_null(trim($this->input->post('area'))),
+        'channels_code' => get_null($this->input->post('channels')),
         'sale_code' => get_null(trim($this->input->post('sale'))),
         'credit_term' => empty($credit_term) ? 0 : $credit_term,
         'amount' => empty($credit) ? 0 : $credit,

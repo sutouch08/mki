@@ -9,8 +9,6 @@
     <div class="help-block col-xs-12 col-sm-reset inline red" id="code-error"></div>
   </div>
 
-
-
   <div class="form-group">
     <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">ชื่อ</label>
     <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
@@ -51,7 +49,7 @@
 
 
 	<div class="form-group">
-    <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">ชนิดลูกค้า</label>
+    <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">CSR</label>
     <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
 			<select name="type" id="type" class="form-control" disabled>
 				<option value="">เลือก</option>
@@ -86,6 +84,15 @@
     <div class="help-block col-xs-12 col-sm-reset inline red" id="area-error"></div>
   </div>
 
+	<div class="form-group">
+	 <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">ช่องทางขาย</label>
+	 <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
+		 <select name="channels" id="channels" class="form-control" disabled>
+			 <option value="">เลือก</option>
+			 <?php echo select_channels($ds->channels_code); ?>
+		 </select>
+	 </div>
+	</div>
 
 	<div class="form-group">
 	 <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">พนักงานขาย</label>

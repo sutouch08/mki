@@ -1,3 +1,7 @@
+window.addEventListener('load', () => {
+  customer_init();
+})
+
 $('#date').datepicker({
   dateFormat:'dd-mm-yy'
 });
@@ -106,8 +110,7 @@ function update_detail(id) {
 }
 
 
-function update_shipping_fee()
-{
+function update_shipping_fee() {
 	var order_code = $('#order_code').val();
 	var fee = parseDefaultValue($('#shipping-box').val(), 0, 'float');
 	var c_fee = $('#current_shipping_fee').val();
@@ -141,8 +144,7 @@ function update_shipping_fee()
 
 
 
-function update_service_fee()
-{
+function update_service_fee() {
 	var order_code = $('#order_code').val();
 	var fee = parseDefaultValue($('#service-box').val(), 0, 'float');
 	var c_fee = $('#current_service_fee').val();
@@ -175,26 +177,72 @@ function update_service_fee()
 }
 
 
+function customer_init() {
+  var code = "";
+  var name = "";
+  var csr = "";
+  var chanels = "";
 
-$("#customer").autocomplete({
-	source: BASE_URL + 'auto_complete/get_customer_code_and_name',
-	autoFocus: true,
-	close: function(){
-		var rs = $.trim($(this).val());
-		var arr = rs.split(' | ');
-		if( arr.length == 2 ){
-			var code = arr[0];
-			var name = arr[1];
-			$(this).val(code);
-			$("#customerCode").val(code);
-			$("#customerName").val(name);
-		}else{
-			$("#customerCode").val('');
-			$('#customerName').val('');
-			$(this).val('');
-		}
-	}
-});
+  $('#customer').autocomplete({
+  	source: BASE_URL + 'orders/orders/get_customer',
+  	autoFocus: true,
+    open:function(event) {
+      var ul = $(this).autocomplete('widget');
+      ul.css('width', 'auto');
+    },
+    select:function(event, ui) {
+      code = ui.item === undefined ? "" : ui.item.code;
+      name = ui.item === undefined ? "" : ui.item.name;
+      type_code = ui.item === undefined ? "" : ui.item.type_code;
+      sale_name = ui.item === undefined ? "" : ui.item.sale_name;
+      channels = ui.item === undefined ? "" : ui.item.channels_code;
+
+      if(code !== undefined && code.length) {
+        $('#customerCode').val(code);
+        $('#customerName').val(name);
+        $('#sale-code').val(sale_name);
+        $('#cus-type').val(type_code);
+        $('#channels').val(channels);
+      }
+      else {
+        $('#customerCode').val('');
+        $('#customerName').val('');
+        $('#sale-code').val('');
+        $('#cus-type').val('');
+        $('#channels').val('');
+      }
+    },
+  	close: function(){
+  		$('#customer').val(code);
+  	}
+  });
+}
+
+
+
+function getCsrCode() {
+  let customerCode = $('#customerCode').val().trim();
+
+  if(customerCode.length) {
+    $.ajax({
+      url:BASE_URL + 'orders/orders/get_csr_code',
+      type:'POST',
+      cache:false,
+      data:{
+        'customer_code' : customerCode
+      },
+      success:function(rs) {
+        $('#csr').val(rs.trim());
+      },
+      error:function(rs) {
+        showError(rs);
+      }
+    })
+  }
+  else {
+    $('#csr').val('');
+  }
+}
 
 
 $('#qt_no').autocomplete({
@@ -363,6 +411,7 @@ function addItemToOrder(){
 
 					setTimeout(function(){
 						$('#item-code').val('');
+            $('#item-name').val('');
 						$('#stock-qty').val('');
 						$('#input-qty').val('');
             $('#po-qty').val('');
@@ -371,7 +420,8 @@ function addItemToOrder(){
 					},1200);
 
 
-				}else{
+				}
+        else{
 					swal("Error", rs, "error");
 				}
 			}
@@ -493,12 +543,14 @@ $('#item-code').autocomplete({
 
 		if(arr.length === 2) {
 			$(this).val(arr[0]);
+      $('#item-name').val(arr[1]);
 			setTimeout(function(){
 				getItemGrid();
 			}, 200);
 		}
 		else {
 			$(this).val('');
+      $('#item-name').val('');
 		}
 	}
 });
@@ -591,8 +643,10 @@ function add() {
     'customer_name' : $('#customerName').val().trim(),
     'customer' : $('#customer').val().trim(),
     'customer_ref' : $('#cust-ref').val().trim(),
+    'type_code' : $('#cus-type').val().trim(),
     'tags' : $('#tags').val(),
     'reference' : $('#reference').val().trim(),
+    'reference2' : $('#reference2').val().trim(),
     'channels_code' : $('#channels').val(),
     'payment_code' : $('#payment').val(),
     'sender_id' : $('#sender_id').val(),
@@ -714,9 +768,11 @@ function updateOrder(recal){
 	var customer_code = $("#customerCode").val();
   var customer_name = $("#customerName").val();
   var customer_ref = $('#customer_ref').val();
+  var type_code = $('#cus-type').val();
 	var channels_code = $("#channels").val();
 	var payment_code = $("#payment").val();
-	var reference = $('#reference').val();
+	var reference = $('#reference').val().trim();
+  var reference2 = $('#reference2').val().trim();
   var sender_id = $('#sender_id').val();
 	var remark = $("#remark").val();
 	var qt_no = $('#qt_no').val();
@@ -734,9 +790,11 @@ function updateOrder(recal){
   		"customer_code" : customer_code,
       "customer_name" : customer_name,
       "customer_ref" : customer_ref,
+      "type_code" : type_code,
   		"channels_code" : channels_code,
   		"payment_code" : payment_code,
   		"reference" : reference,
+      "reference2" : reference2,
       "sender_id" : sender_id,
       "tags" : tags,
   		"remark" : remark,

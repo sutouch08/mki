@@ -18,11 +18,6 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 <hr class="padding-5"/>
 
 <div class="row">
-  <!-- <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5 hidden-xs">
-    <label>เลขที่เอกสาร</label>
-    <input type="text" class="width-100 e" value="" disabled />
-  </div> -->
-
   <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5">
     <label>วันที่</label>
     <input type="text" class="width-100 e text-center" name="date" id="date" value="<?php echo date('d-m-Y'); ?>" required readonly />
@@ -42,17 +37,27 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<?php endif; ?>
 	</div>
 
-  <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 padding-5">
+  <div class="col-lg-4 col-md-5-harf col-sm-5-harf col-xs-12 padding-5">
     <label>ชื่อลูกค้า</label>
     <input type="text" class="width-100 e" name="customerName" id="customerName" value="" required />
   </div>
 
-	<div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-12 padding-5">
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 padding-5">
+    <label>CSR</label>
+    <input type="text" class="width-100 text-center e" id="sale-code" value="" disabled />
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5">
+    <label>Sale</label>
+    <input type="text" class="width-100 text-center e" id="cus-type" value="" disabled />
+  </div>
+
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4 padding-5">
     <label>ลูกค้า[ออนไลน์]</label>
 		<input type="text" class="width-100 e" name="cust_ref" id="cust-ref" value="" />
   </div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-10 padding-5">
+	<div class="col-lg-2 col-md-3-harf col-sm-3-harf col-xs-10 padding-5">
     <label>ผู้ช่วยขาย</label>
 		<select class="width-100 e" name="tags" id="tags">
 			<option value="">เลือก</option>
@@ -65,12 +70,17 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<button type="button" class="btn btn-success btn-xs btn-block" onclick="newTags()"><i class="fa fa-plus"></i></button>
 	</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 padding-5">
-    <label>อ้างอิงออเดอร์</label>
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>อ้างอิง[MKP]</label>
 		<input type="text" class="width-100 e" name="reference" id="reference" value="" />
   </div>
 
-	<div class="col-lg-3 col-md-2-harf col-sm-2-harf col-xs-10 padding-5">
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>อ้างอิง[CRM]</label>
+		<input type="text" class="width-100 e" name="reference2" id="reference2" value="" />
+  </div>
+
+	<div class="col-lg-2-harf col-md-3-harf col-sm-3-harf col-xs-10 padding-5">
     <label>ช่องทางขาย</label>
 		<select class="width-100 e" name="channels" id="channels" required>
 			<option value="">เลือกช่องทางขาย</option>
@@ -87,7 +97,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<?php endif; ?>
 	</div>
 
-	<div class="col-lg-3 col-md-2-harf col-sm-2-harf col-xs-10 padding-5">
+	<div class="col-lg-2 col-md-3-harf col-sm-3-harf col-xs-10 padding-5">
     <label>การชำระเงิน</label>
 		<select class="width-100 e" name="payment" id="payment" required>
 			<option value="">เลือกการชำระเงิน</option>
@@ -104,7 +114,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<?php endif; ?>
 	</div>
 
-	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-12 padding-5">
+	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-12 padding-5">
 		<label>การจัดส่ง</label>
     <select class="width-100 e" name="sender_id" id="sender_id">
       <option value="">กรุณาเลือก</option>
@@ -112,7 +122,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
     </select>
   </div>
 
-  <div class="col-lg-10-harf col-md-8 col-sm-8 col-xs-12 padding-5">
+  <div class="col-lg-9 col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
     <label>หมายเหตุ</label>
     <input type="text" class="width-100" name="remark" id="remark" value="">
   </div>

@@ -42,6 +42,7 @@ function changeView(code, tab)
 
 function saveAdd() {
 	var code = $('#code').val();
+  var run_no = $('#code').data('runno');
 	var name = $('#name').val();
 	var tax_id = $('#Tax_id').val();
 	var group = $('#group').val();
@@ -49,6 +50,7 @@ function saveAdd() {
 	var type = $('#type').val();
 	var grade = $('#class').val();
 	var area = $('#area').val();
+  var channels = $('#channels').val();
 	var sale = $('#sale').val();
 	var credit_term = $('#credit_term').val();
 	var credit_amount = $('#CreditLine').val();
@@ -78,6 +80,7 @@ function saveAdd() {
 		cache:false,
 		data:{
 			'code' : code,
+      'run_no' : run_no,
 			'name' : name,
 			'Tax_id' : tax_id,
 			'group' : group,
@@ -85,6 +88,7 @@ function saveAdd() {
 			'type' : type,
 			'class' : grade,
 			'area' : area,
+      'channels' : channels,
 			'sale' : sale,
 			'credit_term' : credit_term,
 			'CreditLine' : credit_amount,
@@ -136,6 +140,7 @@ function update() {
 	var type = $('#type').val();
 	var grade = $('#class').val();
 	var area = $('#area').val();
+  var channels = $('#channels').val();
 	var sale = $('#sale').val();
 	var credit_term = $('#credit_term').val();
 	var credit_amount = $('#CreditLine').val();
@@ -164,6 +169,7 @@ function update() {
 			'type' : type,
 			'class' : grade,
 			'area' : area,
+      'channels' : channels,
 			'sale' : sale,
 			'credit_term' : credit_term,
 			'CreditLine' : credit_amount,

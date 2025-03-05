@@ -668,6 +668,7 @@ class Consign_order extends PS_Controller
                     'id_policy'   => NULL,
                     'id_rule'     => NULL,
                     'customer_code' => $doc->customer_code,
+                    'customer_name' => $doc->customer_name,
                     'customer_ref' => NULL,
                     'customer_group_code' => $customer->group_code,
                     'customer_group_name' => $customer->group_name,
@@ -950,7 +951,7 @@ class Consign_order extends PS_Controller
                 $price = trim($rs['H']);
                 $disc = trim($rs['J']);
                 $qty = trim($rs['I']);
-                $disc = $disc > 0 ? $disc/$qty : 0;                
+                $disc = $disc > 0 ? $disc/$qty : 0;
                 $total = trim($rs['L']);
                 $priceAfDisc = $price - $disc;
                 $exDisc = round($priceAfDisc * $billDiscPercent, 2);

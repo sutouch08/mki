@@ -194,6 +194,12 @@ select.width-100 {
   height: 31px;
 }
 
+select.width-100:disabled {
+  cursor: not-allowed;
+  background-color: #eeeeee !important;
+  opacity: 1;
+}
+
 .input-xs {
   height: 22px;
   padding: 5px 5px;

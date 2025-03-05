@@ -20,9 +20,13 @@
     <input type="text" class="form-control input-sm search" name="pd_code"  value="<?php echo $pd_code; ?>" />
   </div>
 
-  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+  <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
     <label>รหัสโซน</label>
-    <input type="text" class="form-control input-sm search" name="zone_code" value="<?php echo $zone_code; ?>" />
+		<select class="width-100" name="zone_code" id="zone_code">
+			<option value="">เลือกโซน</option>
+			<option value="all" <?php echo is_selected('all', $zone_code); ?>>ทั้งหมด</option>
+			<?php echo select_zone(NULL, $zone_code); ?>
+		</select>
   </div>
 
   <div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-6 padding-5">
@@ -75,6 +79,10 @@
     </table>
   </div>
 </div>
-<script src="<?php echo base_url(); ?>scripts/inventory/stock/stock.js"></script>
+
+<script>
+	$('#zone_code').select2();
+</script>
+<script src="<?php echo base_url(); ?>scripts/inventory/stock/stock.js?v=<?php echo date('Ymd'); ?>"></script>
 
 <?php $this->load->view('include/footer'); ?>

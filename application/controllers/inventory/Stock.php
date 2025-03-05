@@ -16,6 +16,7 @@ class Stock extends PS_Controller
     $this->load->model('stock/stock_model');
     $this->load->helper('buffer');
     $this->load->helper('cancle');
+    $this->load->helper('zone');
   }
 
 
@@ -35,7 +36,7 @@ class Stock extends PS_Controller
 		}
 
 		$segment  = 4; //-- url segment
-		$rows     = $this->stock_model->count_rows($filter);
+		$rows = $this->stock_model->count_rows($filter);
 		//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
 		$init	    = pagination_config($this->home.'/index/', $rows, $perpage, $segment);
 		$ds   = $this->stock_model->get_data($filter, $perpage, $this->uri->segment($segment));

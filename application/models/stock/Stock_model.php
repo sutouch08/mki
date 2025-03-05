@@ -8,11 +8,11 @@ class stock_model extends CI_Model
     parent::__construct();
   }
 
-  public function get_data(array $ds=array(), $perpage = NULL, $offset = NULL)
+  public function get_data(array $ds=array(), $perpage = 20, $offset = 0)
   {
-    if(!empty($ds))
+    if( ! empty($ds))
     {
-      if(!empty($ds['pd_code']) OR !empty($ds['zone_code']))
+      if(! empty($ds['pd_code']) OR ! empty($ds['zone_code']))
       {
         $this->db
         ->select('st.*, pd.name AS product_name, zone.code AS zone_code, zone.name AS zone_name')
@@ -22,22 +22,19 @@ class stock_model extends CI_Model
 
         if(!empty($ds['pd_code']))
         {
-          $this->db->group_start()->like('st.product_code', $ds['pd_code'])->or_like('pd.name', $ds['pd_code'])->group_end();
+          $this->db
+          ->group_start()
+          ->like('st.product_code', $ds['pd_code'])
+          ->or_like('pd.name', $ds['pd_code'])
+          ->group_end();
         }
 
-        if(!empty($ds['zone_code']))
+        if(isset($ds['zone_code']) && $ds['zone_code'] != 'all')
         {
-          $this->db->group_start();
-          $this->db->like('zone.code', $ds['zone_code']);
-          $this->db->or_like('zone.name', $ds['zone_code']);
-          $this->db->group_end();
+          $this->db->where('zone.code', $ds['zone_code']);
         }
 
-        if($perpage > 0)
-        {
-          $offset = $offset === NULL ? 0 : $offset;
-          $this->db->limit($perpage, $offset);
-        }
+        $this->db->limit($perpage, $offset);
 
         $rs = $this->db->get();
 
@@ -45,7 +42,7 @@ class stock_model extends CI_Model
       }
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
@@ -63,15 +60,16 @@ class stock_model extends CI_Model
 
         if(!empty($ds['pd_code']))
         {
-          $this->db->group_start()->like('st.product_code', $ds['pd_code'])->or_like('pd.name', $ds['pd_code'])->group_end();
+          $this->db
+          ->group_start()
+          ->like('st.product_code', $ds['pd_code'])
+          ->or_like('pd.name', $ds['pd_code'])
+          ->group_end();
         }
 
-        if(!empty($ds['zone_code']))
+        if(isset($ds['zone_code']) && $ds['zone_code'] != 'all')
         {
-          $this->db->group_start();
-          $this->db->like('zone.code', $ds['zone_code']);
-          $this->db->or_like('zone.name', $ds['zone_code']);
-          $this->db->group_end();
+          $this->db->where('zone.code', $ds['zone_code']);
         }
 
         return $this->db->count_all_results();

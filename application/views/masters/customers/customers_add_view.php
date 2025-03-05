@@ -1,9 +1,9 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
     <h4 class="title"><?php echo $this->title; ?></h4>
   </div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
 		<p class="pull-right top-p">
 			<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> Back</button>
 		</p>
@@ -14,12 +14,11 @@
 
 	<div class="form-group">
     <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">รหัส</label>
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-      <input type="text" class="form-control input-sm code" name="code" id="code" maxlength="15" value="" onkeyup="validCode(this)" autofocus required />			
+    <div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-12">
+      <input type="text" class="form-control input-sm" id="code" data-runno="<?php echo $run_no; ?>" maxlength="15" value="<?php echo $code; ?>" disabled />
     </div>
     <div class="help-block col-xs-12 col-sm-reset inline red" id="code-error"></div>
   </div>
-
 
 
   <div class="form-group">
@@ -112,11 +111,22 @@
     <div class="help-block col-xs-12 col-sm-reset inline red" id="area-error"></div>
   </div>
 
+	<div class="form-group">
+	 <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">ช่องทางขาย</label>
+	 <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
+		 <select name="channels" id="channels" class="form-control">
+			 <option value="">เลือก</option>
+			 <?php echo select_channels(); ?>
+		 </select>
+	 </div>
+	</div>
+
 
 	<div class="form-group">
 	 <label class="col-lg-2 col-md-2 col-sm-3 col-xs-12 control-label no-padding-right">พนักงานขาย</label>
 	 <div class="col-lg-3 col-md-4 col-sm-5 col-xs-12">
 		 <select name="sale" id="sale" class="form-control">
+			 <option value="">เลือก</option>
 			 <?php echo select_sale(); ?>
 		 </select>
 	 </div>

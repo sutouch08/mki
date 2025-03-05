@@ -48,18 +48,13 @@ $hide = $order->status == 1 ? 'hide' : '';
 
 <!--  Search Product -->
 <div class="row">
-	<!-- <div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 hide">
-    <label>รุ่นสินค้า</label>
-    <input type="text" class="form-control input-sm text-center" id="pd-box" placeholder="ค้นรหัสสินค้า" />
-  </div>
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10 hide">
-    <label class="not-show">รุ่นสินค้า</label>
-  	<button type="button" class="btn btn-xs btn-primary btn-block" onclick="getProductGrid()">แสดงสินค้า</button>
-  </div> -->
-
-  <div class="col-lg-3 col-lg-offset-4 col-md-3-harf col-md-offset-1 col-sm-4-harf col-xs-8 padding-5 margin-bottom-10">
+  <div class="col-lg-2 col-lg-offset-2 col-md-2-harf col-sm-3-harf col-xs-8 padding-5 margin-bottom-10">
     <label>รหัสสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="item-code" placeholder="ค้นหารหัสสินค้า">
+  </div>
+  <div class="col-lg-3 col-md-3-harf col-sm-4-harf col-xs-8 padding-5 margin-bottom-10">
+    <label>ชื่อสินค้า</label>
+    <input type="text" class="form-control input-sm text-center" id="item-name" readonly>
   </div>
   <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>คงเหลือ</label>

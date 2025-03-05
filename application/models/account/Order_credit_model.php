@@ -134,7 +134,7 @@ class Order_credit_model extends CI_Model
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
@@ -146,7 +146,7 @@ class Order_credit_model extends CI_Model
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 

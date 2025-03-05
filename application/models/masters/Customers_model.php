@@ -142,44 +142,46 @@ class Customers_model extends CI_Model
   }
 
 
-  public function count_rows($code = '', $name = '', $group = '', $kind = '', $type = '', $class = '', $area = '')
+  public function count_rows(array $ds = array())
   {
-
-    if($code != '')
+    if( ! empty($ds['code']))
     {
-      $this->db->like('code', $code);
+      $this->db->like('code', $ds['code']);
     }
 
-    if($name != '')
+    if( ! empty($ds['name']))
     {
-      $this->db->like('name', $name);
+      $this->db->like('name', $ds['name']);
     }
 
-
-    if($group != '')
+    if( isset($ds['group']) && $ds['group'] != 'all')
     {
-      $this->db->where('group_code', $group);
+      $this->db->where('group_code', $ds['group']);
     }
 
-
-    if($kind != '')
+    if( isset($ds['kind']) && $ds['kind'] != 'all')
     {
-      $this->db->where('kind_code', $kind);
+      $this->db->where('kind_code', $ds['kind']);
     }
 
-    if($type != '')
+    if( isset($ds['type']) && $ds['type'] != 'all')
     {
-      $this->db->where('type_code', $type);
+      $this->db->where('type_code', $ds['type']);
     }
 
-    if($class != '')
+    if( isset($ds['class']) && $ds['class'] != 'all')
     {
-      $this->db->where('class_code', $class);
+      $this->db->where('class_code', $ds['class']);
     }
 
-    if($area != '')
+    if( isset($ds['area']) && $ds['area'] != 'all')
     {
-      $this->db->where('area_code', $area);
+      $this->db->where('area_code', $ds['area']);
+    }
+
+    if( isset($ds['channels']) && $ds['channels'] != 'all')
+    {
+      $this->db->where('channels_code', $ds['channels']);
     }
 
 
@@ -192,13 +194,19 @@ class Customers_model extends CI_Model
 
   public function get($code)
   {
-    $rs = $this->db->where('code', $code)->get('customers');
+    $rs = $this->db
+    ->select('c.*, s.name AS sale_name')
+    ->from('customers AS c')
+    ->join('saleman AS s', 'c.sale_code = s.code', 'left')
+    ->where('c.code', $code)
+    ->get();
+
     if($rs->num_rows() === 1)
     {
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
@@ -228,62 +236,60 @@ class Customers_model extends CI_Model
 	}
 
 
-  public function get_data($code = '', $name = '', $group = '', $kind = '', $type = '', $class = '', $area = '', $perpage = '', $offset = '')
+  public function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
-    if($code != '')
+    if( ! empty($ds['code']))
     {
-      $this->db->like('code', $code);
+      $this->db->like('code', $ds['code']);
     }
 
-    if($name != '')
+    if( ! empty($ds['name']))
     {
-      $this->db->like('name', $name);
+      $this->db->like('name', $ds['name']);
     }
 
-
-    if($group != '')
+    if( isset($ds['group']) && $ds['group'] != 'all')
     {
-      $this->db->where('group_code', $group);
+      $this->db->where('group_code', $ds['group']);
     }
 
-
-    if($kind != '')
+    if( isset($ds['kind']) && $ds['kind'] != 'all')
     {
-      $this->db->where('kind_code', $kind);
+      $this->db->where('kind_code', $ds['kind']);
     }
 
-    if($type != '')
+    if( isset($ds['type']) && $ds['type'] != 'all')
     {
-      $this->db->where('type_code', $type);
+      $this->db->where('type_code', $ds['type']);
     }
 
-    if($class != '')
+    if( isset($ds['class']) && $ds['class'] != 'all')
     {
-      $this->db->where('class_code', $class);
+      $this->db->where('class_code', $ds['class']);
     }
 
-    if($area != '')
+    if( isset($ds['area']) && $ds['area'] != 'all')
     {
-      $this->db->where('area_code', $area);
+      $this->db->where('area_code', $ds['area']);
     }
 
-    if($perpage != '')
+    if( isset($ds['channels']) && $ds['channels'] != 'all')
     {
-      $offset = $offset === NULL ? 0 : $offset;
-      $this->db->limit($perpage, $offset);
+      $this->db->where('channels_code', $ds['channels']);
     }
 
-    $rs = $this->db->get('customers');
+    $rs = $this->db
+    ->order_by('code', 'ASC')
+    ->limit($perpage, $offset)
+    ->get('customers');
 
     if($rs->num_rows() > 0)
     {
       return $rs->result();
     }
 
-    return FALSE;
+    return NULL;
   }
-
-
 
 
   public function is_exists($code, $old_code = '')
@@ -477,5 +483,20 @@ class Customers_model extends CI_Model
 
 		return TRUE;
 	}
+
+
+  public function get_max_no()
+  {
+    $rs = $this->db
+    ->select_max('run_no')
+    ->get('customers');
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->run_no;
+    }
+
+    return 0;
+  }
 }
 ?>

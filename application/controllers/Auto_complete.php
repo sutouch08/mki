@@ -67,6 +67,33 @@ class Auto_complete extends CI_Controller
 	}
 
 
+  public function get_order_code()
+	{
+		$txt = $_REQUEST['term'];
+		$ds = array();
+
+		$qs = $this->db
+		->select('code')
+    ->where('role', 'S')			
+		->like('code', $txt)
+		->get('orders');
+
+		if($qs->num_rows() > 0)
+		{
+			foreach($qs->result() as $rs)
+			{
+				$ds[] = $rs->code;
+			}
+		}
+		else
+		{
+			$ds[] = 'Not found';
+		}
+
+		echo json_encode($ds);
+	}
+
+
 
   public function get_sender()
   {

@@ -125,6 +125,18 @@ class Orders_model extends CI_Model
     return FALSE;
   }
 
+  public function get_active_order_code_by_reference($reference)
+  {
+    $rs = $this->db->select('code')->where('reference', $reference)->where('state !=', 9)->where('status !=', 2)->get('orders');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->row()->code;
+    }
+
+    return NULL;
+  }
+
 
 	public function get_with_payment_role($code)
 	{
@@ -172,6 +184,10 @@ class Orders_model extends CI_Model
   }
 
 
+  public function remove_all_details($order_code)
+  {
+    return $this->db->where('order_code', $order_code)->delete('order_details');
+  }
 
 
   public function is_exists_detail($order_code, $item_code)
@@ -489,6 +505,16 @@ class Orders_model extends CI_Model
 			->group_end();
 		}
 
+    if( isset($ds['sale_code']) && $ds['sale_code'] != 'all')
+    {
+      $this->db->where('sale_code', $ds['sale_code']);
+    }
+
+    if( isset($ds['type_code']) && $ds['type_code'] != 'all')
+    {
+      $this->db->where('type_code', $ds['type_code']);
+    }
+
 		//---- user name / display name
 		if( isset($ds['user']) && $ds['user'] != 'all')
 		{
@@ -500,6 +526,12 @@ class Orders_model extends CI_Model
 		{
 			$this->db->like('reference', $ds['reference']);
 		}
+
+    //---- เลขที่อ้างอิงออเดอร์ภายนอก
+    if( ! empty($ds['reference2']))
+    {
+      $this->db->like('reference2', $ds['reference2']);
+    }
 
 		//---เลขที่จัดส่ง
 		if( ! empty($ds['ship_code']))
@@ -617,6 +649,16 @@ class Orders_model extends CI_Model
 			->group_end();
 		}
 
+    if( isset($ds['sale_code']) && $ds['sale_code'] != 'all')
+    {
+      $this->db->where('sale_code', $ds['sale_code']);
+    }
+
+    if( isset($ds['type_code']) && $ds['type_code'] != 'all')
+    {
+      $this->db->where('type_code', $ds['type_code']);
+    }
+
 		//---- user name / display name
 		if( isset($ds['user']) && $ds['user'] != 'all')
 		{
@@ -628,6 +670,12 @@ class Orders_model extends CI_Model
 		{
 			$this->db->like('reference', $ds['reference']);
 		}
+
+    //---- เลขที่อ้างอิงออเดอร์ภายนอก
+    if( ! empty($ds['reference2']))
+    {
+      $this->db->like('reference2', $ds['reference2']);
+    }
 
 		//---เลขที่จัดส่ง
 		if( ! empty($ds['ship_code']))

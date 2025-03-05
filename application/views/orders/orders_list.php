@@ -1,21 +1,20 @@
 <?php $this->load->view('include/header'); ?>
 <?php $can_upload = getConfig('ALLOW_UPLOAD_ORDER'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
-    <h3 class="title">
-      <?php echo $this->title; ?>
-    </h3>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-    	<p class="pull-right top-p">
-      <?php if($this->pm->can_add) : ?>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<h3 class="title"><?php echo $this->title; ?></h3>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<p class="pull-right top-p">
+			<?php if($this->pm->can_add) : ?>
 				<?php if($can_upload == 1) : ?>
 					<button type="button" class="btn btn-white btn-purple" onclick="getUploadFile()">นำเข้าออเดอร์</button>
 				<?php endif;?>
-        <button type="button" class="btn btn-white btn-success" onclick="addNew()"><i class="fa fa-plus"></i> เพิมใหม่</button>
-      <?php endif; ?>
-      </p>
-    </div>
+				<button type="button" class="btn btn-white btn-purple btn-100" onclick="getTemplate()"><i class="fa fa-download"></i> &nbsp; Template</button>
+				<button type="button" class="btn btn-white btn-success" onclick="addNew()"><i class="fa fa-plus"></i> เพิมใหม่</button>
+			<?php endif; ?>
+		</p>
+	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
@@ -30,17 +29,38 @@
     <input type="text" class="form-control input-sm search" name="customer" value="<?php echo $customer; ?>" />
   </div>
 
-	<div class="col-lg-3 col-md-2 col-sm-2 col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>อ้างอิง[MKP]</label>
+		<input type="text" class="form-control input-sm search" name="reference" value="<?php echo $reference; ?>" />
+  </div>
+
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>อ้างอิง[CRM]</label>
+		<input type="text" class="form-control input-sm search" name="reference2" value="<?php echo $reference2; ?>" />
+  </div>
+
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>CSR</label>
+		<select class="form-control input-sm filter" name="sale_code">
+			<option value="all">ทั้งหมด</option>
+			<?php echo select_saleman($sale_code); ?>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>SALE</label>
+		<select class="form-control input-sm filter" name="type_code">
+			<option value="all">ทั้งหมด</option>
+			<?php echo select_customer_type($type_code); ?>
+		</select>
+  </div>
+
+	<div class="col-lg-2-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label>พนักงาน</label>
 		<select class="width-100 filter" name="user" id="user">
 			<option value="all">ทั้งหมด</option>
 			<?php echo select_user($user); ?>
 		</select>
-  </div>
-
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label>เลขที่อ้างอิง</label>
-		<input type="text" class="form-control input-sm search" name="reference" value="<?php echo $reference; ?>" />
   </div>
 
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
@@ -64,14 +84,6 @@
 		</select>
   </div>
 
-	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
-    <label>วันที่</label>
-    <div class="input-daterange input-group">
-      <input type="text" class="form-control input-sm width-50 from-date" name="fromDate" id="fromDate" value="<?php echo $from_date; ?>" />
-      <input type="text" class="form-control input-sm width-50" name="toDate" id="toDate" value="<?php echo $to_date; ?>" />
-    </div>
-  </div>
-
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
 		<label>การชำระเงิน</label>
 		<select class="form-control input-sm" name="is_paid" onchange="getSearch()">
@@ -80,6 +92,14 @@
 			<option value="not_paid" <?php echo is_selected('not_paid', $is_paid); ?>>ยังไม่จ่าย</option>
 		</select>
 	</div>
+
+	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
+    <label>วันที่</label>
+    <div class="input-daterange input-group">
+      <input type="text" class="form-control input-sm width-50 from-date" name="fromDate" id="fromDate" value="<?php echo $from_date; ?>" />
+      <input type="text" class="form-control input-sm width-50" name="toDate" id="toDate" value="<?php echo $to_date; ?>" />
+    </div>
+  </div>
 
   <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
     <label class="display-block not-show">buton</label>
@@ -131,12 +151,14 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1200px;">
+		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1450px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
 					<th class="fix-width-100 middle text-center sorting <?php echo $sort_date; ?>" id="sort_date_add" onclick="sort('date_add')">วันที่</th>
-					<th class="fix-width-200 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
+					<th class="fix-width-150 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
+					<th class="fix-width-150 middle">อ้างอิง[MKP]</th>
+					<th class="fix-width-150 middle">อ้างอิง[CRM]</th>
 					<th class="min-width-350 middle">ลูกค้า</th>
 					<th class="fix-width-100 middle">ยอดเงิน</th>
 					<th class="fix-width-150 middle">ช่องทางขาย</th>
@@ -154,7 +176,9 @@
             <tr id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
-              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->code.$ref . $cod_txt; ?></td>
+              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->code . $cod_txt; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference2; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name . $c_ref; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->channels_name; ?></td>
@@ -178,6 +202,10 @@ endif;
 <script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('Ymd'); ?>"></script>
 <script>
 	$('#user').select2();
+
+	function getTemplate(){
+	  window.location.href = BASE_URL + 'orders/orders/get_template_file';
+	}
 </script>
 
 <?php $this->load->view('include/footer'); ?>

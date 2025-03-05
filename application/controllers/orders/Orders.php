@@ -32,6 +32,7 @@ class Orders extends PS_Controller
     $this->load->helper('sender');
     $this->load->helper('customer');
     $this->load->helper('users');
+    $this->load->helper('saleman');
     $this->load->helper('state');
     $this->load->helper('product_images');
     $this->load->helper('discount');
@@ -43,21 +44,24 @@ class Orders extends PS_Controller
   public function index()
   {
     $filter = array(
-      'code'          => get_filter('code', 'order_code', ''),
-      'customer'      => get_filter('customer', 'order_customer', ''),
-      'user'          => get_filter('user', 'order_user', 'all'),
-      'reference'     => get_filter('reference', 'order_reference', ''),
-      'ship_code'     => get_filter('shipCode', 'order_shipCode', ''),
-      'channels'      => get_filter('channels', 'order_channels', ''),
-      'payment'       => get_filter('payment', 'order_payment', ''),
-      'from_date'     => get_filter('fromDate', 'order_fromDate', ''),
-      'to_date'       => get_filter('toDate', 'order_toDate', ''),
-      'is_paid'       => get_filter('is_paid', 'is_paid', 'all'),
+      'code' => get_filter('code', 'order_code', ''),
+      'customer' => get_filter('customer', 'order_customer', ''),
+      'sale_code' => get_filter('sale_code', 'sale_code', 'all'),
+      'type_code' => get_filter('type_code', 'type_code', 'all'),
+      'user' => get_filter('user', 'order_user', 'all'),
+      'reference' => get_filter('reference', 'order_reference', ''),
+      'reference2' => get_filter('reference2', 'reference2', ''),
+      'ship_code' => get_filter('shipCode', 'order_shipCode', ''),
+      'channels' => get_filter('channels', 'order_channels', ''),
+      'payment' => get_filter('payment', 'order_payment', ''),
+      'from_date' => get_filter('fromDate', 'order_fromDate', ''),
+      'to_date' => get_filter('toDate', 'order_toDate', ''),
+      'is_paid' => get_filter('is_paid', 'is_paid', 'all'),
 			'notSave' => get_filter('notSave', 'notSave', NULL),
       'onlyMe' => get_filter('onlyMe', 'onlyMe', NULL),
       'isExpire' => get_filter('isExpire', 'isExpire', NULL),
-      'order_by'      => get_filter('order_by', 'order_by', 'code'),
-      'sort_by'       => get_filter('sort_by', 'sort_by', 'DESC')
+      'order_by' => get_filter('order_by', 'order_by', 'code'),
+      'sort_by' => get_filter('sort_by', 'sort_by', 'DESC')
     );
 
     $state = array(
@@ -401,12 +405,14 @@ class Orders extends PS_Controller
               'role' => $role,
               'bookcode' => $book_code,
               'reference' => get_null($ds->reference),
+              'reference2' => get_null($ds->reference2),
               'customer_code' => $ds->customer_code,
               'customer_name' => $ds->customer_name,
               'customer_ref' => $ds->customer_ref,
               'channels_code' => $ds->channels_code,
               'payment_code' => $ds->payment_code,
               'sale_code' => $sale_code,
+              'type_code' => get_null($ds->type_code),
               'is_term' => ($has_term === TRUE ? 1 : 0),
               'user' => $this->_user->uname,
   						'address_id' => $id_address,
@@ -470,6 +476,71 @@ class Orders extends PS_Controller
 
     echo empty($balance) ? 0 : $balance;
   }
+
+
+  public function get_csr_code()
+  {
+    $csr_code = "not_found";
+    $customer_code = $this->input->post('customer_code');
+
+    if( ! empty($customer_code))
+    {
+      $customer = $this->customers_model->get($customer_code);
+
+      if( ! empty($customer))
+      {
+        $csr_code = $customer->type_code;
+      }
+    }
+
+    echo $csr_code;
+  }
+
+
+  public function get_customer()
+  {
+    $txt = trim($_REQUEST['term']);
+    $sc = [];
+
+    $this->db
+    ->select('c.code, c.name, c.type_code, c.sale_code, c.channels_code, s.name as sale_name')
+    ->from('customers AS c')
+    ->join('saleman AS s', 'c.sale_code = s.code', 'left');
+
+		if($txt != '*')
+		{
+			$this->db
+			->group_start()
+			->like('c.code', $txt)
+			->or_like('c.name', $txt)
+			->group_end();
+		}
+
+		$rs = $this->db->order_by('c.code', 'ASC')->limit(50)->get();
+
+    if($rs->num_rows() > 0)
+    {
+      foreach($rs->result() as $rs)
+      {
+        $sc[] = array(
+          'label' => $rs->code.' | '.$rs->name,
+          'code' => $rs->code,
+          'name' => $rs->name,
+          'type_code' => $rs->type_code,
+          'channels_code' => $rs->channels_code,
+          'sale_code' => $rs->sale_code,
+          'sale_name' => $rs->sale_name
+        );
+      }
+    }
+    else
+    {
+      $sc[] = 'ไม่พบรายการ';
+    }
+
+    echo json_encode($sc);
+  }
+
 
 	//---- load quotation
 	public function load_quotation($order_code, $quotation_no)
@@ -770,24 +841,24 @@ class Orders extends PS_Controller
               }
 
               $arr = array(
-                      "order_code"	=> $order_code,
-                      "style_code"		=> $item->style_code,
-                      "product_code"	=> $item->code,
-                      "product_name"	=> addslashes($item->name),
-                      "cost"  => $item->cost,
-                      "price"	=> $item->price,
-                      "qty"		=> $qty,
-                      "unit_code" => $item->unit_code,
-                      "vat_code" => $item->vat_code,
-                      "vat_rate" => $this->vat_model->get_rate($item->vat_code),
-                      "discount1"	=> $discount['discLabel1'],
-                      "discount2" => $discount['discLabel2'],
-                      "discount3" => $discount['discLabel3'],
-                      "discount_amount" => $discount['amount'],
-                      "total_amount"	=> ($item->price * $qty) - $discount['amount'],
-                      "id_rule"	=> $discount['id_rule'],
-                      "is_count" => $item->count_stock
-                    );
+                "order_code"	=> $order_code,
+                "style_code"		=> $item->style_code,
+                "product_code"	=> $item->code,
+                "product_name"	=> addslashes($item->name),
+                "cost"  => $item->cost,
+                "price"	=> $item->price,
+                "qty"		=> $qty,
+                "unit_code" => $item->unit_code,
+                "vat_code" => $item->vat_code,
+                "vat_rate" => $this->vat_model->get_rate($item->vat_code),
+                "discount1"	=> $discount['discLabel1'],
+                "discount2" => $discount['discLabel2'],
+                "discount3" => $discount['discLabel3'],
+                "discount_amount" => $discount['amount'],
+                "total_amount"	=> ($item->price * $qty) - $discount['amount'],
+                "id_rule"	=> $discount['id_rule'],
+                "is_count" => $item->count_stock
+              );
 
               if( $this->orders_model->add_detail($arr) === FALSE )
               {
@@ -795,14 +866,6 @@ class Orders extends PS_Controller
                 $error = "Error : Insert fail";
                 $err_qty++;
               }
-              // else
-              // {
-              //   if($item->count_stock == 1 && $item->is_api == 1)
-              //   {
-              //     $this->update_api_stock($item->code);
-              //   }
-              // }
-
             }
             else  //--- ถ้ามีรายการในออเดอร์อยู่แล้ว
             {
@@ -825,15 +888,15 @@ class Orders extends PS_Controller
 
 
               $arr = array(
-                        "qty"		=> $qty,
-                        "discount1"	=> $discount['discLabel1'],
-                        "discount2" => $discount['discLabel2'],
-                        "discount3" => $discount['discLabel3'],
-                        "discount_amount" => $discount['amount'],
-                        "total_amount"	=> ($item->price * $qty) - $discount['amount'],
-                        "id_rule"	=> $discount['id_rule'],
-                        "valid" => 0
-                        );
+                "qty"		=> $qty,
+                "discount1"	=> $discount['discLabel1'],
+                "discount2" => $discount['discLabel2'],
+                "discount3" => $discount['discLabel3'],
+                "discount_amount" => $discount['amount'],
+                "total_amount"	=> ($item->price * $qty) - $discount['amount'],
+                "id_rule"	=> $discount['id_rule'],
+                "valid" => 0
+              );
 
               if( $this->orders_model->update_detail($detail->id, $arr) === FALSE )
               {
@@ -841,14 +904,6 @@ class Orders extends PS_Controller
                 $error = "Error : Update Fail";
                 $err_qty++;
               }
-              // else
-              // {
-              //   if($item->count_stock == 1 && $item->is_api == 1)
-              //   {
-              //     $this->update_api_stock($item->code);
-              //   }
-              // }
-
             }	//--- end if isExistsDetail
           }
           else 	// if getStock
@@ -889,16 +944,18 @@ class Orders extends PS_Controller
     $this->load->helper('bank');
     $ds = array();
     $rs = $this->orders_model->get($code);
-    if(!empty($rs))
+
+    if( ! empty($rs))
     {
+      $customer = $this->customers_model->get($rs->customer_code);
       $rs->channels_name = $this->channels_model->get_name($rs->channels_code);
-      $rs->payment_name  = $this->payment_methods_model->get_name($rs->payment_code);
-      $rs->payment_role  = $this->payment_methods_model->get_role($rs->payment_code);
-      $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
-      $rs->total_amount  = $this->orders_model->get_order_total_amount($rs->code);
-      $rs->user          = $this->user_model->get_name($rs->user);
-      $rs->state_name    = get_state_name($rs->state);
-      $rs->has_payment   = $this->order_payment_model->is_exists($code);
+      $rs->payment_name = $this->payment_methods_model->get_name($rs->payment_code);
+      $rs->payment_role = $this->payment_methods_model->get_role($rs->payment_code);
+      $rs->sale_name = (empty($customer) ? NULL : $customer->sale_name);
+      $rs->total_amount = $this->orders_model->get_order_total_amount($rs->code);
+      $rs->user = $this->user_model->get_name($rs->user);
+      $rs->state_name = get_state_name($rs->state);
+      $rs->has_payment = $this->order_payment_model->is_exists($code);
 
 
 			$state = $this->order_state_model->get_order_state($code);
@@ -969,13 +1026,15 @@ class Orders extends PS_Controller
       else
       {
         $ds = array(
-          'reference' => trim($this->input->post('reference')),
+          'reference' => get_null(trim($this->input->post('reference'))),
+          'reference2' => get_null(trim($this->input->post('reference2'))),
           'customer_code' => $customer_code,
           'customer_name' => $customer_name,
           'customer_ref' => $customer_ref,
           'channels_code' => $this->input->post('channels_code'),
           'payment_code' => $this->input->post('payment_code'),
           'sale_code' => $sale_code,
+          'type_code' => get_null($this->input->post('type_code')),
           'is_term' => $has_term,
 					'address_id' => $id_address,
           'sender_id' => get_null($this->input->post('sender_id')),
@@ -1043,9 +1102,11 @@ class Orders extends PS_Controller
     $this->load->helper('product_tab');
     $ds = array();
     $rs = $this->orders_model->get($code);
+
     if($rs->state <= 3)
     {
-      $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
+      $customer = $this->customers_model->get($rs->customer_code);
+      $rs->sale_name = (empty($customer) ? NULL : $customer->sale_name);
       $ds['order'] = $rs;
 
       $details = $this->orders_model->get_order_details($code);
@@ -1903,6 +1964,7 @@ class Orders extends PS_Controller
   public function print_order_sheet($code, $barcode = '')
   {
     $this->load->model('masters/products_model');
+    $this->load->model('masters/customer_type_model');
 		$this->load->model('address/customer_address_model');
     $this->load->library('printer');
 
@@ -1910,6 +1972,7 @@ class Orders extends PS_Controller
 		$customer = $this->customers_model->get($order->customer_code);
 		$customer_address = $this->customer_address_model->get_customer_bill_to_address($order->customer_code);
 		$order->emp_name = $this->user_model->get_employee_name($order->user);
+    $order->csr = $this->customer_type_model->get_name($customer->type_code);
     $details = $this->orders_model->get_order_details($code);
 
     if(!empty($details))
@@ -2868,15 +2931,21 @@ class Orders extends PS_Controller
     $this->load->model('account/order_credit_model');
     //--- ดึงยอดที่เคยตั้งหนี้ไว้ แล้วทำให้เป็นค่าลบเพื่อบวกกลับเข้ายอดใช้ไป
     $credit = $this->order_credit_model->get($order->code);
-    $amount = $credit->amount * (-1);
-    //--- คืนยอดใช้ไป
-    if($this->customers_model->update_used($order->customer_code, $amount))
+
+    if( ! empty($credit))
     {
-      //--- ลบรายการตั้งหนี้
-      return $this->order_credit_model->delete($order->code);
+      $amount = $credit->amount * (-1);
+      //--- คืนยอดใช้ไป
+      if($this->customers_model->update_used($order->customer_code, $amount))
+      {
+        //--- ลบรายการตั้งหนี้
+        return $this->order_credit_model->delete($order->code);
+      }
+
+      return FALSE;
     }
 
-    return FALSE;
+    return TRUE;
   }
 
   //--- เคลียร์ยอดค้างที่จัดเกินมาไปที่ cancle หรือ เคลียร์ยอดที่เป็น 0
@@ -3250,6 +3319,32 @@ class Orders extends PS_Controller
   }
 
 
+  public function get_template_file()
+  {
+    $path = $this->config->item('upload_path').'orders/';
+    $file_name = $path."import_order_template.xlsx";
+
+    if(file_exists($file_name))
+    {
+      header('Content-Description: File Transfer');
+      header('Content-Type:Application/octet-stream');
+      header('Cache-Control: no-cache, must-revalidate');
+      header('Expires: 0');
+      header('Content-Disposition: attachment; filename="'.basename($file_name).'"');
+      header('Content-Length: '.filesize($file_name));
+      header('Pragma: public');
+
+      flush();
+      readfile($file_name);
+      die();
+    }
+    else
+    {
+      echo "File Not Found";
+    }
+  }
+
+
   public function clear_filter()
   {
     $filter = array(
@@ -3257,6 +3352,9 @@ class Orders extends PS_Controller
       'order_customer',
       'order_user',
       'order_reference',
+      'reference2',
+      'type_code',
+      'sale_code',
       'order_shipCode',
       'order_channels',
       'order_payment',
