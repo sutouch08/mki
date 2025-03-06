@@ -18,7 +18,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 <hr class="padding-5"/>
 
 <div class="row">
-  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5">
+  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5">
     <label>วันที่</label>
     <input type="text" class="width-100 e text-center" name="date" id="date" value="<?php echo date('d-m-Y'); ?>" required readonly />
   </div>
@@ -37,7 +37,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<?php endif; ?>
 	</div>
 
-  <div class="col-lg-4 col-md-5-harf col-sm-5-harf col-xs-12 padding-5">
+  <div class="col-lg-5 col-md-5-harf col-sm-5-harf col-xs-12 padding-5">
     <label>ชื่อลูกค้า</label>
     <input type="text" class="width-100 e" name="customerName" id="customerName" value="" required />
   </div>
@@ -52,12 +52,12 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
     <input type="text" class="width-100 text-center e" id="cus-type" value="" disabled />
   </div>
 
-	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4 padding-5">
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 padding-5">
     <label>ลูกค้า[ออนไลน์]</label>
 		<input type="text" class="width-100 e" name="cust_ref" id="cust-ref" value="" />
   </div>
 
-	<div class="col-lg-2 col-md-3-harf col-sm-3-harf col-xs-10 padding-5">
+	<div class="col-lg-2-harf col-md-3-harf col-sm-3-harf col-xs-10 padding-5">
     <label>ผู้ช่วยขาย</label>
 		<select class="width-100 e" name="tags" id="tags">
 			<option value="">เลือก</option>
@@ -114,7 +114,7 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
 		<?php endif; ?>
 	</div>
 
-	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-12 padding-5">
+	<div class="col-lg-2-harf col-md-3 col-sm-3 col-xs-12 padding-5">
 		<label>การจัดส่ง</label>
     <select class="width-100 e" name="sender_id" id="sender_id">
       <option value="">กรุณาเลือก</option>
@@ -122,7 +122,29 @@ $pay_pm = get_permission('DBPAYM', $this->_user->uid, $this->_user->id_profile);
     </select>
   </div>
 
-  <div class="col-lg-9 col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
+
+	<div class="col-lg-2-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label>ตัดรอบออเดอร์</label>
+    <select class="width-100 e" id="order-round">
+      <option value="">กรุณาเลือก</option>
+      <?php echo select_order_round(); ?>
+    </select>
+  </div>
+
+	<div class="col-lg-2-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label>รอบจัดส่ง</label>
+    <select class="width-100 e" id="shipping-round">
+      <option value="">กรุณาเลือก</option>
+      <?php echo select_shipping_round(); ?>
+    </select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label>วันที่จัดส่ง</label>
+    <input type="text" class="width-100 e text-center" id="ship-date" value="<?php echo date('d-m-Y'); ?>" readonly />
+  </div>
+
+  <div class="col-lg-11 col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
     <label>หมายเหตุ</label>
     <input type="text" class="width-100" name="remark" id="remark" value="">
   </div>

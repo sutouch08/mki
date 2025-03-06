@@ -3,9 +3,15 @@ window.addEventListener('load', () => {
 })
 
 $('#date').datepicker({
-  dateFormat:'dd-mm-yy'
+  dateFormat:'dd-mm-yy',
+  onClose:function(sd) {
+    $('#ship-date').datepicker('option', 'minDate', sd)
+  }
 });
 
+$('#ship-date').datepicker({
+  dateFormat:'dd-mm-yy'
+});
 
 //---- เปลี่ยนสถานะออเดอร์  เป็นบันทึกแล้ว
 function saveOrder() {
@@ -650,6 +656,9 @@ function add() {
     'channels_code' : $('#channels').val(),
     'payment_code' : $('#payment').val(),
     'sender_id' : $('#sender_id').val(),
+    'order_round' : $('#order-round').val(),
+    'shipping_round' : $('#shipping-round').val(),
+    'shipping_date' : $('#ship-date').val(),
     'remark' : $('#remark').val().trim()
   };
 
@@ -753,10 +762,10 @@ function validUpdate(){
   }
 
 	//--- ตรวจสอบความเปลี่ยนแปลงที่สำคัญ
-	if( (date_add != date) || ( customer_code != customer ) || ( channels_code != channels ) || ( payment_code != payment ) )
-  {
-		recal = 1; //--- ระบุว่าต้องคำนวณส่วนลดใหม่
-	}
+	// if( (date_add != date) || ( customer_code != customer ) || ( channels_code != channels ) || ( payment_code != payment ) )
+  // {
+	// 	recal = 1; //--- ระบุว่าต้องคำนวณส่วนลดใหม่
+	// }
 
   updateOrder(recal);
 }
@@ -777,6 +786,9 @@ function updateOrder(recal){
 	var remark = $("#remark").val();
 	var qt_no = $('#qt_no').val();
   var tags = $('#tags').val();
+  var order_round = $('#order-round').val();
+  var shipping_round = $('#shipping-round').val();
+  var shipping_date = $('#ship-date').val();
 
 	load_in();
 
@@ -799,6 +811,9 @@ function updateOrder(recal){
       "tags" : tags,
   		"remark" : remark,
 			"qt_no" : qt_no,
+      "order_round" : order_round,
+      "shipping_round" : shipping_round,
+      "shipping_date" : shipping_date,
       "recal" : recal
     },
 		success: function(rs){

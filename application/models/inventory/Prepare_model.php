@@ -192,47 +192,68 @@ class Prepare_model extends CI_Model
 
   public function count_rows(array $ds = array(), $state = 3)
   {
-    $this->db->select('state')
-    ->from('orders')
-    ->join('channels', 'channels.code = orders.channels_code','left')
-    ->join('customers', 'customers.code = orders.customer_code', 'left')
-    ->where('orders.state', $state);
+    $this->db->where('state', $state);
 
     if(!empty($ds['code']))
     {
 			$this->db->group_start();
-      $this->db->like('orders.code', $ds['code']);
-			$this->db->or_like('orders.reference', $ds['code']);
+      $this->db->like('code', $ds['code']);
+			$this->db->or_like('reference', $ds['code']);
 			$this->db->group_end();
     }
 
-    if(!empty($ds['customer']))
+    if( ! empty($ds['customer']))
     {
-      $this->db->like('customers.name', $ds['customer']);
-      $this->db->or_like('orders.customer_ref', $ds['customer']);
+      $this->db
+      ->group_start()
+      ->like('customer_code', $ds['customer'])
+      ->or_like('customer_name', $ds['customer'])
+      ->or_like('customer_ref', $ds['customer'])
+      ->group_end();
     }
 
     //---- user name / display name
-    if(!empty($ds['user']))
+    if(isset($ds['user']) && $ds['user'] != 'all')
     {
-      $users = user_in($ds['user']);
-      $this->db->where_in('user', $users);
+      $this->db->where('user', $ds['user']);
     }
 
-    if(!empty($ds['channels']))
+    if(isset($ds['channels']) && $ds['channels'] != 'all')
     {
-      $this->db->where('orders.channels_code', $ds['channels']);
+      $this->db->where('channels_code', $ds['channels']);
     }
 
-    if($ds['from_date'] != '' && $ds['to_date'] != '')
+    if(isset($ds['order_round']) && $ds['order_round'] != 'all')
     {
-      $this->db->where('orders.date_add >=', from_date($ds['from_date']));
-      $this->db->where('orders.date_add <=', to_date($ds['to_date']));
+      $this->db->where('order_round', $ds['order_round']);
     }
 
-    $rs = $this->db->get();
+    if(isset($ds['shipping_round']) && $ds['shipping_round'] != 'all')
+    {
+      $this->db->where('shipping_round', $ds['shipping_round']);
+    }
 
-    return $rs->num_rows();
+    if( ! empty($ds['from_date']))
+    {
+      $this->db->where('date_add >=', from_date($ds['from_date']));
+    }
+
+    if( ! empty($ds['to_date']))
+    {
+      $this->db->where('date_add <=', to_date($ds['to_date']));
+    }
+
+    if( ! empty($ds['ship_from_date']))
+    {
+      $this->db->where('shipping_date >=', from_date($ds['ship_from_date']));
+    }
+
+    if( ! empty($ds['ship_to_date']))
+    {
+      $this->db->where('shipping_date <=', to_date($ds['ship_to_date']));
+    }
+
+    return $this->db->count_all_results('orders');
   }
 
 
@@ -276,11 +297,34 @@ class Prepare_model extends CI_Model
       $this->db->where('orders.channels_code', $ds['channels']);
     }
 
+    if(isset($ds['order_round']) && $ds['order_round'] != 'all')
+    {
+      $this->db->where('orders.order_round', $ds['order_round']);
+    }
 
-    if($ds['from_date'] != '' && $ds['to_date'] != '')
+    if(isset($ds['shipping_round']) && $ds['shipping_round'] != 'all')
+    {
+      $this->db->where('orders.shipping_round', $ds['shipping_round']);
+    }
+
+    if( ! empty($ds['from_date']))
     {
       $this->db->where('orders.date_add >=', from_date($ds['from_date']));
+    }
+
+    if( ! empty($ds['to_date']))
+    {
       $this->db->where('orders.date_add <=', to_date($ds['to_date']));
+    }
+
+    if( ! empty($ds['ship_from_date']))
+    {
+      $this->db->where('orders.shipping_date >=', from_date($ds['ship_from_date']));
+    }
+
+    if( ! empty($ds['ship_to_date']))
+    {
+      $this->db->where('orders.shipping_date <=', to_date($ds['ship_to_date']));
     }
 
     $rs = $this->db

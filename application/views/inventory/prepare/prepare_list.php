@@ -43,13 +43,36 @@
     </select>
   </div>
 
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>ตัดรอบออเดอร์</label>
+		<select class="width-100 filter" name="order_round">
+      <option value="all">ทั้งหมด</option>
+      <?php echo select_order_round($order_round); ?>
+    </select>
+  </div>
+
+	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label>รอบจัดส่ง</label>
+		<select class="width-100 filter" name="shipping_round">
+      <option value="all">ทั้งหมด</option>
+      <?php echo select_shipping_round($shipping_round); ?>
+    </select>
+  </div>
+
 	<div class="col-lg-2 col-md-2 col-sm-2-harf col-xs-6 padding-5">
-    <label>วันที่</label>
+    <label>วันที่ออเดอร์</label>
     <div class="input-daterange input-group">
       <input type="text" class="form-control input-sm width-50 text-center from-date" name="from_date" id="fromDate" value="<?php echo $from_date; ?>" />
       <input type="text" class="form-control input-sm width-50 text-center" name="to_date" id="toDate" value="<?php echo $to_date; ?>" />
     </div>
+  </div>
 
+	<div class="col-lg-2 col-md-2 col-sm-2-harf col-xs-6 padding-5">
+    <label>วันที่จัดส่ง</label>
+    <div class="input-daterange input-group">
+      <input type="text" class="form-control input-sm width-50 text-center from-date" name="ship_from_date" id="shipFromDate" value="<?php echo $ship_from_date; ?>" />
+      <input type="text" class="form-control input-sm width-50 text-center" name="ship_to_date" id="shipToDate" value="<?php echo $ship_to_date; ?>" />
+    </div>
   </div>
 
   <div class="col-lg-1 col-md-1 col-sm-1 col-xs-3 padding-5">
@@ -66,20 +89,23 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:1050px;">
+		<table class="table table-striped table-hover border-1" style="min-width:1200px;">
 			<thead>
 				<tr>
-					<th class="fix-width-40 middle text-center">ลำดับ</th>
 					<th class="fix-width-60 middle text-center">
 						<label>
 							<input type="checkbox" class="ace" onchange="checkAll($(this))" />
 							<span class="lbl"></span>
 						</label>
 					</th>
-					<th class="fix-width-150 middle">เลขที่เอกสาร</th>
-					<th class="min-width-250 middle">ลูกค้า</th>
+					<th class="fix-width-40 middle text-center">#</th>
+					<th class="fix-width-100 middle text-center">วันที่</th>
+					<th class="fix-width-120 middle">เลขที่</th>
+					<th class="min-width-200 middle">ลูกค้า</th>
           <th class="fix-width-150 middle">ช่องทางขาย</th>
-					<th class="fix-width-150 middle text-center">วันที่</th>
+					<th class="fix-width-120 middle">ตัดรอบออเดอร์</th>
+					<th class="fix-width-120 middle">รอบจัดส่ง</th>
+					<th class="fix-width-100 middle text-center">วันที่จัดส่ง</th>
 					<th class="fix-width-150 middle">พนักงาน</th>
 					<th class="fix-width-100 middle"></th>
 				</tr>
@@ -89,8 +115,7 @@
           <?php $no = $this->uri->segment(4) + 1; ?>
           <?php foreach($orders as $rs) : ?>
             <?php $customer_name = (!empty($rs->customer_ref)) ? $rs->customer_ref : $rs->customer_name; ?>
-            <tr id="row-<?php echo $rs->code; ?>">
-              <td class="middle text-center no"><?php echo $no; ?></td>
+            <tr class="font-size-11" id="row-<?php echo $rs->code; ?>">
 							<td class="middle text-center">
 								<?php if($rs->picked == 0) : ?>
 									<label>
@@ -99,10 +124,14 @@
 									</label>
 								<?php endif; ?>
 							</td>
+              <td class="middle text-center no"><?php echo $no; ?></td>
+							<td class="middle text-center"><?php echo thai_date($rs->date_add, FALSE,'/'); ?></td>
               <td class="middle"><?php echo $rs->code; ?></td>
               <td class="middle"><?php echo $customer_name; ?></td>
               <td class="middle"><?php echo $rs->channels_name; ?></td>
-              <td class="middle text-center"><?php echo thai_date($rs->date_add, FALSE,'/'); ?></td>
+							<td class="middle"><?php echo $rs->order_round; ?></td>
+							<td class="middle"><?php echo $rs->shipping_round; ?></td>
+              <td class="middle text-center"><?php echo empty($rs->shipping_date) ? NULL : thai_date($rs->shipping_date, FALSE,'/'); ?></td>
 							<td class="middle"><?php echo $rs->user; ?></td>
               <td class="middle text-right">
           <?php if($this->pm->can_add OR $this->pm->can_edit) : ?>
@@ -114,7 +143,7 @@
           <?php endforeach; ?>
         <?php else : ?>
           <tr>
-            <td colspan="8" class="text-center">--- No content ---</td>
+            <td colspan="11" class="text-center">--- No content ---</td>
           </tr>
         <?php endif; ?>
 			</tbody>
@@ -126,7 +155,6 @@
 <script src="<?php echo base_url(); ?>scripts/inventory/prepare/prepare_list.js?v=<?php echo date('Ymd'); ?>"></script>
 <script>
 	$('#user').select2();
-	$('#channels').select2();
 </script>
 
 <?php $this->load->view('include/footer'); ?>

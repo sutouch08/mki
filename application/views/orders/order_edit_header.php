@@ -28,7 +28,7 @@
 	    <input type="text" class="width-100 text-center e" id="cus-type" value="<?php echo $order->type_code; ?>" disabled />
 	  </div>
 
-    <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-4 padding-5">
+    <div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-4 padding-5">
     	<label>ลูกค้า[ออนไลน์]</label>
       <input type="text" class="width-100 text-center edit" id="customer_ref" name="customer_ref" value="<?php echo str_replace('"', '&quot;',$order->customer_ref); ?>" disabled />
     </div>
@@ -50,12 +50,12 @@
       <button type="button" class="btn btn-xs btn-primary btn-block edit" id="btn_qt" onclick="checkQuotation()" disabled>เพิ่ม</button>
     </div> -->
 
-		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label>อ้างอิง[MKP]</label>
 		  <input type="text" class="width-100 text-center edit" name="reference" id="reference" value="<?php echo $order->reference; ?>" disabled />
 		</div>
 
-		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label>อ้างอิง[CRM]</label>
 		  <input type="text" class="width-100 text-center edit" name="reference2" id="reference2" value="<?php echo $order->reference2; ?>" disabled />
 		</div>
@@ -75,7 +75,7 @@
 			</select>
     </div>
 
-		<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+		<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
 			<label>การจัดส่ง</label>
 	    <select class="width-100 edit" name="sender_id" id="sender_id" disabled>
 	      <option value="">กรุณาเลือก</option>
@@ -83,12 +83,33 @@
 	    </select>
 	  </div>
 
+		<div class="col-lg-2-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label>ตัดรอบออเดอร์</label>
+	    <select class="width-100 edit" id="order-round" disabled>
+	      <option value="">กรุณาเลือก</option>
+	      <?php echo select_order_round($order->order_round); ?>
+	    </select>
+	  </div>
+
+		<div class="col-lg-2-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label>รอบจัดส่ง</label>
+	    <select class="width-100 edit" id="shipping-round" disabled>
+	      <option value="">กรุณาเลือก</option>
+	      <?php echo select_shipping_round($order->shipping_round); ?>
+	    </select>
+	  </div>
+
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	    <label>วันที่จัดส่ง</label>
+	    <input type="text" class="width-100 e edit text-center" id="ship-date" value="<?php echo thai_date($order->shipping_date); ?>" readonly disabled />
+	  </div>
+
 		<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
 			<label>เลขที่จัดส่ง</label>
 		  <input type="text" class="width-100 text-center edit" name="shipping_code" id="shipping_code" value="<?php echo $order->shipping_code; ?>" disabled />
 		</div>
 
-		<div class="col-lg-8-harf col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
+		<div class="col-lg-10-harf col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
 		 	<label>หมายเหตุ</label>
 		  <input type="text" class="width-100 edit" name="remark" id="remark" value="<?php echo $order->remark; ?>" disabled />
 		</div>

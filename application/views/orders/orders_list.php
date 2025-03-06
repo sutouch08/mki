@@ -151,7 +151,7 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1450px;">
+		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1570px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
@@ -159,6 +159,7 @@
 					<th class="fix-width-150 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
 					<th class="fix-width-150 middle">อ้างอิง[MKP]</th>
 					<th class="fix-width-150 middle">อ้างอิง[CRM]</th>
+					<th class="fix-width-120 middle">เลขที่จัดส่ง</th>
 					<th class="min-width-350 middle">ลูกค้า</th>
 					<th class="fix-width-100 middle">ยอดเงิน</th>
 					<th class="fix-width-150 middle">ช่องทางขาย</th>
@@ -173,12 +174,13 @@
 						<?php $cod_txt = ($rs->payment_role == 4 && $rs->state != 9) ? ($rs->is_paid == 1 ? '' : '<span class="badge badge-danger font-size-10">รอเงินเข้า</span>') : ''; ?>
 						<?php $ref = empty($rs->reference) ? '' :' ['.$rs->reference.']'; ?>
 						<?php $c_ref = empty($rs->customer_ref) ? '' : ' ['.$rs->customer_ref.']'; ?>
-            <tr id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
+            <tr class="font-size-11" id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->code . $cod_txt; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference2; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->shipping_code; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name . $c_ref; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->channels_name; ?></td>

@@ -39,7 +39,9 @@ class Import_order extends CI_Controller
     $success = 0;
     $failed = 0;
     $skip = 0;
-          
+    $res = TRUE;
+    $message = "";
+
     $file = isset( $_FILES['uploadFile'] ) ? $_FILES['uploadFile'] : FALSE;
     $path = $this->config->item('upload_path').'orders/';
     $file	= 'uploadFile';
@@ -90,8 +92,6 @@ class Import_order extends CI_Controller
           {
             $import++;
 
-            $res = TRUE;
-            $message = "";
             //---- เช็คว่ามีออเดอร์ที่สร้างด้วย reference แล้วหรือยัง
             //---- ถ้ายังไม่มีให้สร้างใหม่
             //---- ถ้ามีแล้วและยังไม่ได้ยกเลิก ไม่สามารถเพิ่มใหม่ได้
@@ -111,6 +111,7 @@ class Import_order extends CI_Controller
                 'reference' => $order->reference,
                 'customer_code' => $order->customer_code,
                 'customer_name' => $order->customer_name,
+                'customer_ref' => $order->customer_ref,
                 'channels_code' => $order->channels_code,
                 'payment_code' => $order->payment_code,
                 'sale_code' => $order->sale_code,
@@ -118,8 +119,10 @@ class Import_order extends CI_Controller
                 'is_term' => $order->is_term,
                 'status' => $order->status,
                 'date_add' => $order->date_add,
+                'shipping_date' => $order->date_add,
                 'user' => $order->user,
-                'is_import' => $order->is_import
+                'is_import' => $order->is_import,
+                'address_id' => $order->id_address
               );
 
               //--- add order
@@ -289,6 +292,7 @@ class Import_order extends CI_Controller
                   $arr = array(
                     'customer_code' => $order->customer_code,
                     'customer_name' => $order->customer_name,
+                    'customer_ref' => $order->customer_ref,
                     'channels_code' => $order->channels_code,
                     'payment_code' => $order->payment_code,
                     'sale_code' => $order->sale_code,
@@ -296,8 +300,10 @@ class Import_order extends CI_Controller
                     'is_term' => $order->is_term,
                     'status' => $order->status,
                     'date_add' => $order->date_add,
+                    'shipping_date' => $order->date_add,
                     'user' => $order->user,
-                    'is_import' => $order->is_import
+                    'is_import' => $order->is_import,
+                    'address_id' => $order->id_address
                   );
 
                   if( ! $this->orders_model->update($order_code, $arr))
@@ -498,6 +504,7 @@ class Import_order extends CI_Controller
         else
         {
           $sc = FALSE;
+          $message = $this->error;
         }
       }
     }
@@ -541,7 +548,16 @@ class Import_order extends CI_Controller
         'H' => 'Price',
         'I' => 'Discount',
         'J' => 'ShippingFee',
-        'K' => 'ServiceFee'
+        'K' => 'ServiceFee',
+        'L' => 'forceUpdate',
+        'M' => 'Recipient',
+        'N' => 'Phone',
+        'O' => 'Zipcode',
+        'P' => 'Country',
+        'Q' => 'Province',
+        'R' => 'District',
+        'S' => 'Address',
+        'T' => 'Additional'
       );
 
       $i = 1;
@@ -590,7 +606,7 @@ class Import_order extends CI_Controller
               if( ! is_valid_date($date_add))
               {
                 $sc = FALSE;
-                $this->error = "Invalid Date format at Line {$i}";
+                $this->error .= "Invalid Date format at Line {$i}";
               }
 
               $customer_code = trim($rs['B']);
@@ -608,11 +624,14 @@ class Import_order extends CI_Controller
                   else
                   {
                     $sc = FALSE;
-                    $this->error = "Invalid customer code at Line {$i} <br/>";
+                    $this->error .= "Invalid customer code at Line {$i} <br/>";
                   }
                 }
 
-                $customer = $customerCache[$customer_code];
+                if($sc === TRUE)
+                {
+                  $customer = $customerCache[$customer_code];
+                }
               }
               else
               {
@@ -637,11 +656,14 @@ class Import_order extends CI_Controller
                   else
                   {
                     $sc = FALSE;
-                    $this->error = "Invalid channels at Line {$i} <br/>";
+                    $this->error .= "Invalid channels at Line {$i} <br/>";
                   }
                 }
 
-                $channels = $channelsCache[$channels_code];
+                if($sc === TRUE)
+                {
+                  $channels = $channelsCache[$channels_code];
+                }
               }
               else
               {
@@ -665,11 +687,14 @@ class Import_order extends CI_Controller
                   else
                   {
                     $sc = FALSE;
-                    $this->error = "Invalid Payment method at Line {$i} <br/>";
+                    $this->error .= "Invalid Payment method at Line {$i} <br/>";
                   }
                 }
 
-                $payment = $paymentsCache[$payment_code];
+                if($sc === TRUE)
+                {
+                  $payment = $paymentsCache[$payment_code];
+                }
               }
               else
               {
@@ -696,12 +721,40 @@ class Import_order extends CI_Controller
                 }
               }
 
-              $item = empty($itemsCache[$item_code]) ? NULL : $itemsCache[$item_code];
+              if($sc === TRUE)
+              {
+                $item = empty($itemsCache[$item_code]) ? NULL : $itemsCache[$item_code];
+              }
 
               if($sc === TRUE)
               {
                 //---	ถ้าเป็นออเดอร์ขาย จะมี id_sale
                 $sale_code = empty($customer) ? NULL : $customer->sale_code;
+
+                //---	หากเป็นออนไลน์ ลูกค้าออนไลน์ชื่ออะไร
+                $customer_ref = addslashes(trim($rs['M']));
+                $adr = trim($rs['S']);
+                $adr = empty($adr) ? trim($rs['T']) : (empty(trim($rs['T'])) ? $adr : $adr." ".trim($rs['T']));
+
+                $id_address = empty($customer_ref) ? NULL : $this->address_model->get_id($customer_ref, $adr);
+
+                if( empty($id_address) && ! empty($customer_ref))
+                {
+                  $arr = array(
+                    'code' => $customer_ref,
+                    'name' => $customer_ref,
+                    'address' => $adr,
+                    'sub_district' => NULL,
+                    'district' => trim($rs['R']),
+                    'province' => trim($rs['Q']),
+                    'postcode' => trim($rs['O']),
+                    'phone' => trim($rs['N']),
+                    'alias' => 'Home',
+                    'is_default' => 1
+                  );
+
+                  $id_address = $this->address_model->add_shipping_address($arr);
+                }
 
                 //--- ค่าจัดส่ง
                 $shipping_fee = empty($rs['J']) ? 0.00 : trim($rs['J']);
@@ -710,6 +763,7 @@ class Import_order extends CI_Controller
                 //--- ค่าบริการอื่นๆ
                 $service_fee = empty($rs['K']) ? 0.00 : trim($rs['K']);
                 $service_fee = is_numeric($service_fee) ? $service_fee : 0.00;
+
 
                 $qty = empty(trim($rs['G'])) ? 1 : str_replace(',', '', $rs['G']);
                 $qty = is_numeric($qty) ? $qty : 1;
@@ -735,6 +789,7 @@ class Import_order extends CI_Controller
                   'reference' => $ref_code,
                   'customer_code' => $customer_code,
                   'customer_name' => $customer->name,
+                  'customer_ref' => get_null($customer_ref),
                   'channels_code' => $channels_code,
                   'payment_code' => $payment_code,
                   'sale_code' => $sale_code,
@@ -748,6 +803,7 @@ class Import_order extends CI_Controller
                   'user' => $this->_user->uname,
                   'is_import' => 1,
                   'force_update' => empty(trim($rs['L'])) ? FALSE : TRUE,
+                  'id_address' => $id_address,
                   'hold' => FALSE,
                   'items' => array()
                 );
@@ -792,59 +848,65 @@ class Import_order extends CI_Controller
                 }
               }
 
-              $item = $itemsCache[$item_code];
-
-              $qty = empty(trim($rs['G'])) ? 1 : str_replace(',', '', $rs['G']);
-              $qty = is_numeric($qty) ? $qty : 1;
-
-              //--- ราคา ต่อหน่วย
-              $price = empty($rs['H']) ? 0.00 : str_replace(",", "", $rs['H']); //--- ราคารวมไม่หักส่วนลด
-              $price = is_numeric($price) ? $price : 0;
-
-              //--- ส่วนลด (รวม)
-              $discount_amount = empty(trim($rs['I'])) ? 0.00 : str_replace(',', '', trim($rs['I']));
-              $discount_amount = is_numeric($discount_amount) ? $discount_amount : 0;
-
-              //--- ส่วนลด (ต่อชิ้น)
-              $discount = $discount_amount > 0 ? ($discount_amount / $qty) : 0;
-
-              //--- total_amount
-              $total_amount = ($price * $qty) - $discount_amount;
-
-              if(isset($ds[$ref_code]->items[$item->code]))
+              if($sc === TRUE)
               {
-                $row = $ds[$ref_code]->items[$item->code];
-                $newPrice = ($row->price + $price) / 2; //--- เฉลี่ยราคา
-                $newQty = $row->qty + $qty;
-                $newDisc = $row->discount1 + $discount;
-                $newDiscAmount = $row->discount_amount + $discount_amount;
-                $newTotal = $row->total_amount + $total_amount;
-
-                $ds[$ref_code]->items[$item->code]->qty = $newQty;
-                $ds[$ref_code]->items[$item->code]->price = $newPrice;
-                $ds[$ref_code]->items[$item->code]->discount1 = $newDisc;
-                $ds[$ref_code]->items[$item->code]->discount_amount = $newDiscAmount;
-                $ds[$ref_code]->items[$item->code]->total_amount = $newTotal;
+                $item = $itemsCache[$item_code];
               }
-              else
-              {
-                $row = (object) array(
-                  'product_code' => $item->code,
-                  'product_name' => $item->name,
-                  'cost' => $item->cost,
-                  'price' => $price,
-                  'qty' => $qty,
-                  "discount1"	=> $discount,
-                  "discount2" => 0,
-                  "discount3" => 0,
-                  "discount_amount" => $discount_amount,
-                  "total_amount"	=> round($total_amount,2),
-                  "id_rule"	=> NULL,
-                  "is_count" => $item->count_stock,
-                  "is_import" => 1
-                );
 
-                $ds[$ref_code]->items[$item->code] = $row;
+              if($sc === TRUE)
+              {
+                $qty = empty(trim($rs['G'])) ? 1 : str_replace(',', '', $rs['G']);
+                $qty = is_numeric($qty) ? $qty : 1;
+
+                //--- ราคา ต่อหน่วย
+                $price = empty($rs['H']) ? 0.00 : str_replace(",", "", $rs['H']); //--- ราคารวมไม่หักส่วนลด
+                $price = is_numeric($price) ? $price : 0;
+
+                //--- ส่วนลด (รวม)
+                $discount_amount = empty(trim($rs['I'])) ? 0.00 : str_replace(',', '', trim($rs['I']));
+                $discount_amount = is_numeric($discount_amount) ? $discount_amount : 0;
+
+                //--- ส่วนลด (ต่อชิ้น)
+                $discount = $discount_amount > 0 ? ($discount_amount / $qty) : 0;
+
+                //--- total_amount
+                $total_amount = ($price * $qty) - $discount_amount;
+
+                if(isset($ds[$ref_code]->items[$item->code]))
+                {
+                  $row = $ds[$ref_code]->items[$item->code];
+                  $newPrice = ($row->price + $price) / 2; //--- เฉลี่ยราคา
+                  $newQty = $row->qty + $qty;
+                  $newDisc = $row->discount1 + $discount;
+                  $newDiscAmount = $row->discount_amount + $discount_amount;
+                  $newTotal = $row->total_amount + $total_amount;
+
+                  $ds[$ref_code]->items[$item->code]->qty = $newQty;
+                  $ds[$ref_code]->items[$item->code]->price = $newPrice;
+                  $ds[$ref_code]->items[$item->code]->discount1 = $newDisc;
+                  $ds[$ref_code]->items[$item->code]->discount_amount = $newDiscAmount;
+                  $ds[$ref_code]->items[$item->code]->total_amount = $newTotal;
+                }
+                else
+                {
+                  $row = (object) array(
+                    'product_code' => $item->code,
+                    'product_name' => $item->name,
+                    'cost' => $item->cost,
+                    'price' => $price,
+                    'qty' => $qty,
+                    "discount1"	=> $discount,
+                    "discount2" => 0,
+                    "discount3" => 0,
+                    "discount_amount" => $discount_amount,
+                    "total_amount"	=> round($total_amount,2),
+                    "id_rule"	=> NULL,
+                    "is_count" => $item->count_stock,
+                    "is_import" => 1
+                  );
+
+                  $ds[$ref_code]->items[$item->code] = $row;
+                }
               }
             } //--- end if( ! isset($ds[$ref_code]));
           } //--- end if($sc === TRUE && ! empty($rs['A']) && ! empty($rs['I']));

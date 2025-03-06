@@ -8,11 +8,11 @@
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-		<label>เลขที่อ้างอิง</label>
+		<label>MKP No.</label>
 		<input type="text" class="form-control input-sm search-box" name="reference" value="<?php echo $reference; ?>"/>
 	</div>
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-		<label>เลขที่ WO</label>
+		<label>Order No.</label>
 		<input type="text" class="form-control input-sm search-box" name="order_code" value="<?php echo $order_code; ?>"/>
 	</div>
 	<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
@@ -62,9 +62,9 @@
 			<thead>
 				<tr>
 					<th class="fix-width-40 middle text-center">#</th>
-					<th class="fix-width-150 middle">วันที่</th>
-					<th class="fix-width-200 middle">Reference</th>
-					<th class="fix-width-200 middle">WO No.</th>
+					<th class="fix-width-150 middle">Date</th>
+					<th class="fix-width-200 middle">MKP No</th>
+					<th class="fix-width-200 middle">Order No.</th>
 					<th class="fix-width-80 middle text-center">Action</th>
 					<th class="fix-width-80 middle text-center">Status</th>
 					<th class="min-width-150 middle">Message</th>

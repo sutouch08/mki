@@ -16,14 +16,11 @@ function clearProcessFilter() {
 }
 
 
-
 $(".search").keyup(function(e){
   if( e.keyCode == 13){
     getSearch();
   }
 });
-
-
 
 
 $("#fromDate").datepicker({
@@ -38,6 +35,21 @@ $("#toDate").datepicker({
   dateFormat: 'dd-mm-yy',
   onClose: function(sd){
     $("#fromDate").datepicker("option", "maxDate", sd);
+  }
+});
+
+$("#shipFromDate").datepicker({
+  dateFormat: 'dd-mm-yy',
+  onClose: function(sd){
+    $("#shipToDate").datepicker("option", "minDate", sd);
+  }
+});
+
+
+$("#shipToDate").datepicker({
+  dateFormat: 'dd-mm-yy',
+  onClose: function(sd){
+    $("#shipFromDate").datepicker("option", "maxDate", sd);
   }
 });
 

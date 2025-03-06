@@ -17,19 +17,25 @@ class Prepare extends PS_Controller
     $this->load->model('orders/order_state_model');
     $this->load->model('stock/stock_model');
     $this->load->model('inventory/buffer_model');
+    $this->load->helper('order_helper');
   }
 
 
   public function index()
   {
     $this->load->helper('channels');
+
     $filter = array(
-      'code'          => get_filter('code', 'pp_code', ''),
-      'customer'      => get_filter('customer', 'pp_customer', ''),
-      'user'          => get_filter('user', 'pp_user', 'all'),
-      'channels'      => get_filter('channels', 'pp_channels', 'all'),
-      'from_date'     => get_filter('from_date', 'pp_from_date', ''),
-      'to_date'       => get_filter('to_date', 'pp_to_date', '')
+      'code' => get_filter('code', 'pp_code', ''),
+      'customer' => get_filter('customer', 'pp_customer', ''),
+      'user' => get_filter('user', 'pp_user', 'all'),
+      'channels' => get_filter('channels', 'pp_channels', 'all'),
+      'order_round' => get_filter('order_round', 'pp_order_round', 'all'),
+      'shipping_round' => get_filter('shipping_round', 'pp_shipping_round', 'all'),
+      'from_date' => get_filter('from_date', 'pp_from_date', ''),
+      'to_date' => get_filter('to_date', 'pp_to_date', ''),
+      'ship_from_date' => get_filter('ship_from_date', 'pp_ship_from_date', ''),
+      'ship_to_date' => get_filter('ship_to_date', 'pp_ship_to_date', '')
     );
 
 		$this->title = "ออเดอร์รอจัด";
@@ -55,12 +61,16 @@ class Prepare extends PS_Controller
     $this->load->helper('channels');
 
     $filter = array(
-      'code'          => get_filter('code', 'pp_code', ''),
-      'customer'      => get_filter('customer', 'pp_customer', ''),
-      'user'          => get_filter('user', 'pp_user', 'all'),
-      'channels'      => get_filter('channels', 'pp_channels', 'all'),
-      'from_date'     => get_filter('from_date', 'pp_from_date', ''),
-      'to_date'       => get_filter('to_date', 'pp_to_date', '')
+      'code' => get_filter('code', 'pp_code', ''),
+      'customer' => get_filter('customer', 'pp_customer', ''),
+      'user' => get_filter('user', 'pp_user', 'all'),
+      'channels' => get_filter('channels', 'pp_channels', 'all'),
+      'order_round' => get_filter('order_round', 'pp_order_round', 'all'),
+      'shipping_round' => get_filter('shipping_round', 'pp_shipping_round', 'all'),
+      'from_date' => get_filter('from_date', 'pp_from_date', ''),
+      'to_date' => get_filter('to_date', 'pp_to_date', ''),
+      'ship_from_date' => get_filter('ship_from_date', 'pp_ship_from_date', ''),
+      'ship_to_date' => get_filter('ship_to_date', 'pp_ship_to_date', '')
     );
 
 		$this->title = "ออเดอร์กำลังจัด";
@@ -73,7 +83,7 @@ class Prepare extends PS_Controller
 		$orders = $this->prepare_model->get_list($filter, $perpage, $this->uri->segment($segment), 4);
 
     $filter['orders'] = $orders;
-    
+
     $this->pagination->initialize($init);
     $this->load->view('inventory/prepare/prepare_view_process', $filter);
   }
@@ -536,8 +546,12 @@ class Prepare extends PS_Controller
       'pp_customer',
       'pp_user',
       'pp_channels',
+      'pp_order_round',
+      'pp_shipping_round',
       'pp_from_date',
-      'pp_to_date'
+      'pp_to_date',
+      'pp_ship_from_date',
+      'pp_ship_to_date'
     );
 
     clear_filter($filter);

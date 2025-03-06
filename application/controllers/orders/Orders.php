@@ -418,7 +418,10 @@ class Orders extends PS_Controller
   						'address_id' => $id_address,
               'sender_id' => $sender_id,
               'tags' => get_null($ds->tags),
-              'remark' => get_null($ds->remark)
+              'remark' => get_null($ds->remark),
+              'shipping_date' => db_date($ds->shipping_date),
+              'order_round' => get_null($ds->order_round),
+              'shipping_round' => get_null($ds->shipping_round)
             );
 
             if( ! $this->orders_model->add($arr))
@@ -1041,6 +1044,9 @@ class Orders extends PS_Controller
           'date_add' => db_date($this->input->post('date_add')),
           'remark' => trim($this->input->post('remark')),
           'tags' => $tags,
+          'order_round' => get_null($this->input->post('order_round')),
+          'shipping_round' => get_null($this->input->post('shipping_round')),
+          'shipping_date' => db_date($this->input->post('shipping_date')),
 					'qt_no' => $this->input->post('qt_no'),
           'status' => 0
         );

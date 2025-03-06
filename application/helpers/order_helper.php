@@ -204,4 +204,43 @@ function select_order_tags($name = NULL)
 	return $sc;
 }
 
+
+function select_order_round($name = NULL)
+{
+	$sc = '';
+	$ci =& get_instance();
+	$ci->load->model('masters/order_round_model');
+
+	$list = $ci->order_round_model->get_all();
+
+	if( ! empty($list))
+	{
+		foreach($list as $rs)
+		{
+			$sc .= '<option value="'.$rs->name.'" '.is_selected($name, $rs->name).'>'.$rs->name.'</option>';
+		}
+	}
+
+	return $sc;
+}
+
+function select_shipping_round($name = NULL)
+{
+	$sc = '';
+	$ci =& get_instance();
+	$ci->load->model('masters/shipping_round_model');
+
+	$list = $ci->shipping_round_model->get_all();
+
+	if( ! empty($list))
+	{
+		foreach($list as $rs)
+		{
+			$sc .= '<option value="'.$rs->name.'" '.is_selected($name, $rs->name).'>'.$rs->name.'</option>';
+		}
+	}
+
+	return $sc;
+}
+
  ?>
