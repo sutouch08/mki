@@ -19,6 +19,7 @@ class Orders extends PS_Controller
     $this->load->model('masters/channels_model');
     $this->load->model('masters/payment_methods_model');
     $this->load->model('masters/customers_model');
+    $this->load->model('masters/customer_type_model');
     $this->load->model('masters/product_tab_model');
     $this->load->model('masters/product_style_model');
     $this->load->model('masters/products_model');
@@ -103,7 +104,7 @@ class Orders extends PS_Controller
       redirect($this->home);
     }
     else
-    {      
+    {
       //--- แสดงผลกี่รายการต่อหน้า
       $perpage = get_rows();
       //--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
@@ -373,7 +374,7 @@ class Orders extends PS_Controller
           $code = $this->get_new_code($date_add);
 
           $has_term = $this->payment_methods_model->has_term($ds->payment_code);
-          $sale_code = get_null($this->customers_model->get_sale_code($ds->customer_code));
+          $customer = $this->customers_model->get($ds->customer_code);
           $sender_id = get_null($ds->sender_id);
   				$id_address = empty($ds->customer_ref) ? $this->address_model->get_shipping_address_id($ds->customer_code) : $this->address_model->get_shipping_address_id($ds->customer_ref);
 
@@ -403,8 +404,8 @@ class Orders extends PS_Controller
               'customer_ref' => $ds->customer_ref,
               'channels_code' => $ds->channels_code,
               'payment_code' => $ds->payment_code,
-              'sale_code' => $sale_code,
-              'type_code' => get_null($ds->type_code),
+              'sale_code' => empty($customer) ? NULL : $customer->sale_code,
+              'type_code' => empty($customer) ? NULL : $customer->type_code,
               'is_term' => ($has_term === TRUE ? 1 : 0),
               'user' => $this->_user->uname,
   						'address_id' => $id_address,
@@ -498,8 +499,9 @@ class Orders extends PS_Controller
     $sc = [];
 
     $this->db
-    ->select('c.code, c.name, c.type_code, c.sale_code, c.channels_code, s.name as sale_name')
+    ->select('c.code, c.name, c.type_code, ct.name AS type_name, c.sale_code, c.channels_code, s.name as sale_name')
     ->from('customers AS c')
+    ->join('customer_type AS ct', 'c.type_code = ct.code', 'left')
     ->join('saleman AS s', 'c.sale_code = s.code', 'left');
 
 		if($txt != '*')
@@ -521,7 +523,7 @@ class Orders extends PS_Controller
           'label' => $rs->code.' | '.$rs->name,
           'code' => $rs->code,
           'name' => $rs->name,
-          'type_code' => $rs->type_code,
+          'type_code' => $rs->type_name,
           'channels_code' => $rs->channels_code,
           'sale_code' => $rs->sale_code,
           'sale_name' => $rs->sale_name
@@ -947,6 +949,7 @@ class Orders extends PS_Controller
       $rs->payment_name = $this->payment_methods_model->get_name($rs->payment_code);
       $rs->payment_role = $this->payment_methods_model->get_role($rs->payment_code);
       $rs->sale_name = (empty($customer) ? NULL : $customer->sale_name);
+      $rs->type_name = empty($rs->type_code) ? NULL : $this->customer_type_model->get_name($rs->type_code);
       $rs->total_amount = $this->orders_model->get_order_total_amount($rs->code);
       $rs->user = $this->user_model->get_name($rs->user);
       $rs->state_name = get_state_name($rs->state);
@@ -1002,7 +1005,7 @@ class Orders extends PS_Controller
       $code = $this->input->post('order_code');
       $recal = $this->input->post('recal');
       $has_term = $this->payment_methods_model->has_term($this->input->post('payment_code'));
-      $sale_code = $this->customers_model->get_sale_code($customer_code);
+      $customer = $this->customers_model->get($customer_code);
 			$id_address = empty($customer_ref) ? $this->address_model->get_shipping_address_id($customer_code) : $this->address_model->get_shipping_address_id($customer_ref);
       $tags = get_null($this->input->post('tags'));
 
@@ -1028,8 +1031,8 @@ class Orders extends PS_Controller
           'customer_ref' => $customer_ref,
           'channels_code' => $this->input->post('channels_code'),
           'payment_code' => $this->input->post('payment_code'),
-          'sale_code' => $sale_code,
-          'type_code' => get_null($this->input->post('type_code')),
+          'sale_code' => empty($customer) ? NULL : $customer->sale_code,
+          'type_code' => empty($customer) ? NULL : $customer->type_code,
           'is_term' => $has_term,
 					'address_id' => $id_address,
           'sender_id' => get_null($this->input->post('sender_id')),
@@ -1105,6 +1108,7 @@ class Orders extends PS_Controller
     {
       $customer = $this->customers_model->get($rs->customer_code);
       $rs->sale_name = (empty($customer) ? NULL : $customer->sale_name);
+      $rs->type_name = empty($rs->type_code) ? NULL : $this->customer_type_model->get_name($rs->type_code);
       $ds['order'] = $rs;
 
       $details = $this->orders_model->get_order_details($code);

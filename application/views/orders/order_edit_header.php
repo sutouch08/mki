@@ -25,7 +25,7 @@
 
 		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4 padding-5">
 	    <label>Sale</label>
-	    <input type="text" class="width-100 text-center e" id="cus-type" value="<?php echo $order->type_code; ?>" disabled />
+	    <input type="text" class="width-100 text-center e" id="cus-type" value="<?php echo $order->type_name; ?>" disabled />
 	  </div>
 
     <div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-4 padding-5">
@@ -108,6 +108,11 @@
 			<label>เลขที่จัดส่ง</label>
 		  <input type="text" class="width-100 text-center edit" name="shipping_code" id="shipping_code" value="<?php echo $order->shipping_code; ?>" disabled />
 		</div>
+
+		<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+    	<label>ผู้ดำเนินการ</label>
+			<input type="text" class="width-100" value="<?php echo get_display_name($order->user); ?>" disabled/>
+    </div>
 
 		<div class="col-lg-10-harf col-md-10-harf col-sm-10-harf col-xs-12 padding-5">
 		 	<label>หมายเหตุ</label>

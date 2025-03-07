@@ -56,7 +56,7 @@
   </div>
 
 	<div class="col-lg-2-harf col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label>พนักงาน</label>
+    <label>ผู้ดำเนินการ</label>
 		<select class="width-100 filter" name="user" id="user">
 			<option value="all">ทั้งหมด</option>
 			<?php echo select_user($user); ?>
@@ -174,9 +174,11 @@
 			<tbody>
         <?php if(!empty($orders)) : ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
-					<?php $ch = channels_array(); ?>
-					<?php $pm = payment_method_array(); ?>
-					<?php $sa = saleman_array(); ?>
+					<?php $ch = channels_array(); /// channels_helper ?>
+					<?php $pm = payment_method_array(); //-- payment_method_helper ?>
+					<?php $sa = saleman_array(); //-- saleman_helper ?>
+					<?php $user = user_array(); //-- user_helper ?>
+					<?php $type = customer_type_array(); //--- customer_helper ?>
           <?php foreach($orders as $rs) : ?>
 						<?php $payment = empty($pm[$rs->payment_code]) ? NULL : $pm[$rs->payment_code]; ?>
 						<?php $cod_txt = empty($payment) ? "" : (($payment->role == 4 && $rs->state != 9) ? ($rs->is_paid == 1 ? '' : '<span class="badge badge-danger font-size-10">รอเงินเข้า</span>') : ''); ?>
@@ -184,6 +186,8 @@
 						<?php $channels_name = empty($ch[$rs->channels_code]) ? NULL : $ch[$rs->channels_code]; ?>
 						<?php $payment_name = empty($payment) ? NULL : $payment->name; ?>
 						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
+						<?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
+						<?php $type_name = empty($type[$rs->type_code]) ? NULL : $type[$rs->type_code]; ?>
             <tr class="font-size-11" id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
@@ -192,8 +196,8 @@
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference2; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->shipping_code; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $csr; ?></td>
-							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->type_code; ?></td>
-							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->user; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $type_name; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $dname; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name . $c_ref; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $channels_name; ?></td>

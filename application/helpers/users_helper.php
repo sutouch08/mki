@@ -154,4 +154,21 @@ function selece_profile($id = NULL)
 }
 
 
+function user_array()
+{
+  $ds = [];
+  $ci =& get_instance();
+  $list = $ci->user_model->get_all();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds[$rs->uname] = $rs->name;
+    }
+  }
+
+  return $ds;
+}
+
  ?>

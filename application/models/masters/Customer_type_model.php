@@ -18,7 +18,6 @@ class Customer_type_model extends CI_Model
   }
 
 
-
   public function update($code, array $ds = array())
   {
     if(!empty($ds))
@@ -57,15 +56,11 @@ class Customer_type_model extends CI_Model
   }
 
 
-
-
   public function get($code)
   {
     $rs = $this->db->where('code', $code)->get('customer_type');
     return $rs->row();
   }
-
-
 
 
   public function get_name($code)
@@ -74,13 +69,23 @@ class Customer_type_model extends CI_Model
     {
       return $code;
     }
-    
+
     $rs = $this->db->select('name')->where('code', $code)->get('customer_type');
     return $rs->row()->name;
   }
 
 
+  public function get_all()
+  {
+    $rs = $this->db->get('customer_type');
 
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
 
   public function get_data($code = '', $name = '', $perpage = '', $offset = '')
   {
@@ -106,8 +111,6 @@ class Customer_type_model extends CI_Model
   }
 
 
-
-
   public function is_exists($code, $old_code = '')
   {
     if($old_code != '')
@@ -126,7 +129,6 @@ class Customer_type_model extends CI_Model
   }
 
 
-
   public function is_exists_name($name, $old_name = '')
   {
     if($old_name != '')
@@ -143,8 +145,6 @@ class Customer_type_model extends CI_Model
 
     return FALSE;
   }
-
-
 
 }
 ?>

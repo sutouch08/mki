@@ -193,5 +193,22 @@ function customer_in($txt)
 }
 
 
+function customer_type_array()
+{
+  $ds = [];
+  $ci =& get_instance();
+  $ci->load->model('masters/customer_type_model');
+  $list = $ci->customer_type_model->get_all();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds[$rs->code] = $rs->name;
+    }
+  }
+
+  return $ds;
+}
 
  ?>
