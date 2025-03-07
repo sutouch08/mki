@@ -82,9 +82,9 @@
 			<button type="button" class="btn btn-xs btn-warning btn-block" onclick="clearProcessFilter()">Reset</button>
 		</div>
 	</div>
-
 </form>
 <hr class="margin-top-15 padding-5">
+<?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
 		<table class="table table-striped table-hover border-1" style="min-width:1250px;">
