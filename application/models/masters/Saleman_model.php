@@ -169,10 +169,23 @@ class Saleman_model extends CI_Model
   }
 
 
+  public function get_all()
+  {
+    $rs = $this->db->get('saleman');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
 	public function is_exists_name($name, $code = NULL)
 	{
 		$this->db->where('name', $name);
-		
+
 		if($code != NULL)
 		{
 			$this->db->where('code !=', $code);

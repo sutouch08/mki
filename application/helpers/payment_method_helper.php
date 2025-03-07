@@ -5,7 +5,7 @@ function select_payment_method($code = '')
   $CI =& get_instance();
   $CI->load->model('masters/payment_methods_model');
   $payments = $CI->payment_methods_model->get_active_list();
-  
+
   if(!empty($payments))
   {
     foreach($payments as $rs)
@@ -72,6 +72,26 @@ function payment_method_array()
   }
 
   return $sc;
+}
+
+
+function payment_array()
+{
+  $pm = [];
+
+  $ci =& get_instance();
+  $ci->load->model('masters/payment_methods_model');
+  $list = $ci->payment_methods_model->get_all();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $pm[$rs->code] = $rs->name;
+    }
+  }
+
+  return $pm;
 }
 
  ?>

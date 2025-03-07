@@ -4,7 +4,7 @@ function select_channels($code = '')
   $sc = '';
   $CI =& get_instance();
   $CI->load->model('masters/channels_model');
-  $channels = $CI->channels_model->get_data();
+  $channels = $CI->channels_model->get_all();
   if(!empty($channels))
   {
     foreach($channels as $rs)
@@ -16,4 +16,23 @@ function select_channels($code = '')
   return $sc;
 }
 
+
+function channels_array()
+{
+  $ch = [];
+
+  $ci =& get_instance();
+  $ci->load->model('masters/channels_model');
+  $channels = $ci->channels_model->get_all();
+
+  if( ! empty($channels))
+  {
+    foreach($channels as $rs)
+    {
+      $ch[$rs->code] = $rs->name;
+    }
+  }
+
+  return $ch;
+}
  ?>

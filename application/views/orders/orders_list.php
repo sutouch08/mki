@@ -143,6 +143,7 @@
 
 <input type="hidden" name="order_by" id="order_by" value="<?php echo $order_by; ?>">
 <input type="hidden" name="sort_by" id="sort_by" value="<?php echo $sort_by; ?>">
+<input type="hidden" name="search" value="1" />
 <hr class="padding-5">
 </form>
 <?php echo $this->pagination->create_links(); ?>
@@ -151,16 +152,19 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1570px;">
+		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1830px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
 					<th class="fix-width-100 middle text-center sorting <?php echo $sort_date; ?>" id="sort_date_add" onclick="sort('date_add')">วันที่</th>
-					<th class="fix-width-150 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
+					<th class="fix-width-120 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
 					<th class="fix-width-150 middle">อ้างอิง[MKP]</th>
 					<th class="fix-width-150 middle">อ้างอิง[CRM]</th>
 					<th class="fix-width-120 middle">เลขที่จัดส่ง</th>
-					<th class="min-width-350 middle">ลูกค้า</th>
+					<th class="fix-width-200 middle">CSR</th>
+					<th class="fix-width-120 middle">SALE</th>
+					<th class="fix-width-120 middle">ผู้ดำเนินการ</th>
+					<th class="min-width-250 middle">ลูกค้า</th>
 					<th class="fix-width-100 middle">ยอดเงิน</th>
 					<th class="fix-width-150 middle">ช่องทางขาย</th>
 					<th class="fix-width-150 middle">การชำระเงิน</th>
@@ -170,10 +174,16 @@
 			<tbody>
         <?php if(!empty($orders)) : ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
+					<?php $ch = channels_array(); ?>
+					<?php $pm = payment_method_array(); ?>
+					<?php $sa = saleman_array(); ?>
           <?php foreach($orders as $rs) : ?>
-						<?php $cod_txt = ($rs->payment_role == 4 && $rs->state != 9) ? ($rs->is_paid == 1 ? '' : '<span class="badge badge-danger font-size-10">รอเงินเข้า</span>') : ''; ?>
-						<?php $ref = empty($rs->reference) ? '' :' ['.$rs->reference.']'; ?>
+						<?php $payment = empty($pm[$rs->payment_code]) ? NULL : $pm[$rs->payment_code]; ?>
+						<?php $cod_txt = empty($payment) ? "" : (($payment->role == 4 && $rs->state != 9) ? ($rs->is_paid == 1 ? '' : '<span class="badge badge-danger font-size-10">รอเงินเข้า</span>') : ''); ?>
 						<?php $c_ref = empty($rs->customer_ref) ? '' : ' ['.$rs->customer_ref.']'; ?>
+						<?php $channels_name = empty($ch[$rs->channels_code]) ? NULL : $ch[$rs->channels_code]; ?>
+						<?php $payment_name = empty($payment) ? NULL : $payment->name; ?>
+						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
             <tr class="font-size-11" id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
@@ -181,11 +191,14 @@
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->reference2; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->shipping_code; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $csr; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->type_code; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->user; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name . $c_ref; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>
-              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->channels_name; ?></td>
-              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->payment_name; ?></td>
-              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->state_name; ?></td>
+              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $channels_name; ?></td>
+              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $payment_name; ?></td>
+              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo get_state_name($rs->state); ?></td>
               </td>
             </tr>
             <?php $no++; ?>

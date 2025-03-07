@@ -98,40 +98,32 @@ class Orders extends PS_Controller
 
     $filter['state_list'] = empty($state_list) ? NULL : $state_list;
 
-		//--- แสดงผลกี่รายการต่อหน้า
-		$perpage = get_rows();
-		//--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
-		if($perpage > 300)
-		{
-			$perpage = 20;
-		}
-
-		$segment  = 4; //-- url segment
-		$rows     = $this->orders_model->count_rows($filter);
-		//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
-		$init	    = pagination_config($this->home.'/index/', $rows, $perpage, $segment);
-		$orders   = $this->orders_model->get_data($filter, $perpage, $this->uri->segment($segment));
-    $ds       = array();
-    if(!empty($orders))
+    if($this->input->post('search'))
     {
-      foreach($orders as $rs)
-      {
-        $rs->channels_name = $this->channels_model->get_name($rs->channels_code);
-        $rs->payment_name  = $this->payment_methods_model->get_name($rs->payment_code);
-        $rs->payment_role  = $this->payment_methods_model->get_role($rs->payment_code);
-        $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
-        $rs->total_amount  = $rs->total_amount + $rs->shipping_fee + $rs->service_fee;
-        $rs->state_name    = get_state_name($rs->state);
-        $ds[] = $rs;
-      }
+      redirect($this->home);
     }
+    else
+    {      
+      //--- แสดงผลกี่รายการต่อหน้า
+      $perpage = get_rows();
+      //--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
+      if($perpage > 300)
+      {
+        $perpage = 20;
+      }
 
-    $filter['orders'] = $ds;
-    $filter['state'] = $state;
-    $filter['btn'] = $button;
+      $segment  = 4; //-- url segment
+      $rows     = $this->orders_model->count_rows($filter);
+      //--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
+      $init	    = pagination_config($this->home.'/index/', $rows, $perpage, $segment);
 
-		$this->pagination->initialize($init);
-    $this->load->view('orders/orders_list', $filter);
+      $filter['orders'] = $this->orders_model->get_data($filter, $perpage, $this->uri->segment($segment));
+      $filter['state'] = $state;
+      $filter['btn'] = $button;
+
+      $this->pagination->initialize($init);
+      $this->load->view('orders/orders_list', $filter);
+    }
   }
 
 

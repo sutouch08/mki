@@ -16,4 +16,22 @@ function select_saleman($code = "")
 
   return $ds;
 }
+
+function saleman_array()
+{
+  $ds = [];
+  $ci =& get_instance();
+  $ci->load->model('masters/saleman_model');
+  $list = $ci->saleman_model->get_all();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds[$rs->code] = $rs->name;
+    }
+  }
+
+  return $ds;
+}
  ?>

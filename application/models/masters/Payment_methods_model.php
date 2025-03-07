@@ -18,7 +18,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
   public function update($code, array $ds = array())
   {
     if(!empty($ds))
@@ -101,7 +100,6 @@ class Payment_methods_model extends CI_Model
       $this->db->where('pm.role', $ds['role']);
     }
 
-
     if(!empty($perpage))
     {
       $this->db->limit($perpage, $offset);
@@ -118,7 +116,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
 	public function get_data()
 	{
 		$rs = $this->db->get('payment_method');
@@ -131,13 +128,24 @@ class Payment_methods_model extends CI_Model
 	}
 
 
+  public function get_all()
+  {
+    $rs = $this->db->get('payment_method');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+  
 
   public function get_payment_methods($code)
   {
     $rs = $this->db->where('code', $code)->get('payment_method');
     return $rs->row();
   }
-
 
 
   public function get($code)
@@ -164,7 +172,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
   public function get_role($code)
   {
     $rs = $this->db->select('role')->where('code', $code)->get('payment_method');
@@ -177,7 +184,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
   public function get_role_list()
   {
     $rs = $this->db->get('payment_role');
@@ -188,12 +194,6 @@ class Payment_methods_model extends CI_Model
 
     return FALSE;
   }
-
-
-
-
-
-
 
 
   public function is_exists($code, $old_code = '')
@@ -214,7 +214,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
   public function is_exists_name($name, $old_name = '')
   {
     if($old_name != '')
@@ -233,8 +232,6 @@ class Payment_methods_model extends CI_Model
   }
 
 
-
-
   public function get_name($code)
   {
     $rs = $this->db->select('name')->where('code', $code)->get('payment_method');
@@ -245,7 +242,6 @@ class Payment_methods_model extends CI_Model
 
     return FALSE;
   }
-
 
 
 	public function get_payment_name_list($ds = array())
