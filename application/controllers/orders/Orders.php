@@ -3320,7 +3320,7 @@ class Orders extends PS_Controller
     $bank = $this->bank_model->get_active_bank();
     if(!empty($details))
     {
-      echo get_summary($order, $details, $bank); //--- order_helper;
+      echo get_summary($order, $details, $bank, $this->_user->uname); //--- order_helper;
     }
   }
 

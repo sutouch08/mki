@@ -81,7 +81,7 @@ function getSpace($amount, $length)
 }
 
 
-function get_summary($order, $details, $banks)
+function get_summary($order, $details, $banks, $uname)
 {
 	$useName = getConfig('USE_PRODUCT_NAME');
 	$payAmount = 0;
@@ -90,6 +90,8 @@ function get_summary($order, $details, $banks)
 	$totalAmount = 0;
 
 	$orderTxt = '<div>สรุปการสั่งซื้อ</div>';
+	$orderTxt .= '<div>CSR : '.$order->sale_name.'</div>';
+	$orderTxt .= '<div>ผู้ทำรายการ : '.$uname.'</div>';
 	$orderTxt .= '<div>Order No : '.$order->code.'</div>';
 	$orderTxt .= '##############################<br/>';
 

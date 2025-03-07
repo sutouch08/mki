@@ -111,9 +111,9 @@ class Orders_model extends CI_Model
   public function get($code)
   {
 		$rs = $this->db
-		->select('o.*, c.name AS customer_name')
+		->select('o.*, s.name AS sale_name')
 		->from('orders AS o')
-		->join('customers AS c', 'o.customer_code = c.code', 'left')
+		->join('saleman AS s', 'o.sale_code = s.code', 'left')
 		->where('o.code', $code)
 		->get();
 
@@ -122,7 +122,7 @@ class Orders_model extends CI_Model
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
   public function get_active_order_code_by_reference($reference)
