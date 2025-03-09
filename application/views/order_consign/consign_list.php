@@ -95,6 +95,8 @@
 					<th class="fix-width-100 middle text-center">วันที่</th>
 					<th class="fix-width-150 middle">เลขที่เอกสาร</th>
 					<th class="min-wdith-250 middle">ลูกค้า</th>
+					<th class="fix-width-150 middle">CSR</th>
+					<th class="fix-width-150 middle">ผู้ดำเนินการ</th>
 					<th class="fix-width-200 middle">โซน</th>
 					<th class="fix-width-100 middle">ยอดเงิน</th>
 					<th class="fix-width-100 middle">สถานะ</th>
@@ -103,15 +105,22 @@
 			<tbody>
         <?php if(!empty($orders)) : ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
+					<?php $sa = saleman_array(); ?>
+					<?php $user = user_array(); ?>
+					<?php $zone_name = zone_name_array(); ?>
           <?php foreach($orders as $rs) : ?>
+						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
+						<?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
             <tr id="row-<?php echo $rs->code; ?>" class="font-size-12" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->code; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name; ?></td>
-							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->zone_name; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $csr; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $dname; ?></td>
+							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $zone_name[$rs->zone_code]; ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>
-              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->state_name; ?></td>
+              <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo get_state_name($rs->state); ?></td>
               </td>
             </tr>
             <?php $no++; ?>

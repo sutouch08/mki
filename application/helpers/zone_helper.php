@@ -75,4 +75,22 @@ function select_consign_zone($se = NULL)
 }
 
 
+function zone_name_array()
+{
+  $ds = [];
+  $ci =& get_instance();
+  $ci->load->model('masters/zone_model');
+  $list = $ci->zone_model->get_all_zone();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds[$rs->code] = $rs->name;
+    }
+  }
+
+  return $ds;
+}
+
  ?>

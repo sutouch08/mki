@@ -16,6 +16,7 @@ class Order_payment extends PS_Controller
     $this->load->model('masters/bank_model');
     $this->load->helper('bank');
     $this->load->helper('order');
+    $this->load->helper('saleman');
   }
 
 
@@ -342,7 +343,7 @@ class Order_payment extends PS_Controller
       {
         $sc = FALSE;
         $this->error = 'ไม่พบรายการชำระเงิน';
-      }      
+      }
     }
     else
     {

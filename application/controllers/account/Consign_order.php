@@ -19,6 +19,7 @@ class Consign_order extends PS_Controller
     $this->load->model('stock/stock_model');
     $this->load->helper('discount');
     $this->load->helper('zone');
+    $this->load->helper('saleman');
   }
 
 
@@ -1562,6 +1563,7 @@ class Consign_order extends PS_Controller
       $doc->warehouse_name = $this->warehouse_model->get_name($doc->warehouse_code);
       $details = $this->consign_order_model->get_details($code);
       $doc->emp_name = $this->user_model->get_name($doc->user);
+      $doc->csr = get_saleman_name($doc->sale_code);
 
       $ds = array(
         'doc' => $doc,

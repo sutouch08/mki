@@ -56,7 +56,7 @@ $header['right']['A'] = array(
 	array('label' => 'เลขที่', 'value' => $doc->code),
 	array('label' => 'วันที่', 'value' => thai_date($doc->date_add, FALSE, '/')),
 	array('label' => 'พนักงาน', 'value' => $doc->emp_name),
-  array('label' => 'คลัง', 'value' => $doc->warehouse_name),
+  array('label' => 'CSR', 'value' => $doc->csr),
   array('label' => 'โซน', 'value' => $doc->zone_name)
 );
 

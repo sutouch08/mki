@@ -28,6 +28,7 @@ class Consign_tr extends PS_Controller
     $this->load->helper('product_images');
     $this->load->helper('discount');
     $this->load->helper('zone');
+    $this->load->helper('saleman');
 
     $this->filter = getConfig('STOCK_FILTER');
   }
@@ -92,36 +93,17 @@ class Consign_tr extends PS_Controller
 		$rows     = $this->orders_model->count_rows($filter, 'N');
 		//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
 		$init	    = pagination_config($this->home.'/index/', $rows, $perpage, $segment);
-		$orders   = $this->orders_model->get_data($filter, $perpage, $this->uri->segment($segment), 'N');
-    $ds       = array();
-    if(!empty($orders))
-    {
-      foreach($orders as $rs)
-      {
-        $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
-        $rs->total_amount  = $this->orders_model->get_order_total_amount($rs->code);
-        $rs->state_name    = get_state_name($rs->state);
-        $rs->zone_name     = $this->zone_model->get_name($rs->zone_code);
-        $ds[] = $rs;
-      }
-    }
-
-    $filter['orders'] = $ds;
+		$filter['orders']  = $this->orders_model->get_data($filter, $perpage, $this->uri->segment($segment), 'N');
     $filter['state'] = $state;
     $filter['btn'] = $button;
 		$this->pagination->initialize($init);
     $this->load->view('order_consign/consign_list', $filter);
   }
 
-
-
   public function add_new()
   {
-
     $this->load->view('order_consign/consign_add');
   }
-
-
 
   public function add()
   {
@@ -136,6 +118,7 @@ class Consign_tr extends PS_Controller
       $date_add = db_date($ds->date);
       $code = $this->get_new_code($date_add);
       $zone = $this->zone_model->get($ds->zone_code);
+      $customer = $this->customers_model->get($ds->customer_code);
 
       if( ! empty($zone))
       {
@@ -147,6 +130,7 @@ class Consign_tr extends PS_Controller
           'customer_name' => $ds->customer_name,
           'gp' => empty($ds->gp) ? 0 : $ds->gp,
           'user' => $this->_user->uname,
+          'sale_code' => empty($customer) ? NULL : $customer->sale_code,
           'remark' => get_null($ds->remark),
           'zone_code' => $zone->code,
           'warehouse_code' => NULL
@@ -190,21 +174,22 @@ class Consign_tr extends PS_Controller
   }
 
 
-
   public function edit_order($code)
   {
     $ds = array();
     $rs = $this->orders_model->get($code);
-    if(!empty($rs))
+
+    if( ! empty($rs))
     {
-      $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
-      $rs->total_amount  = $this->orders_model->get_order_total_amount($rs->code);
       $rs->user          = $this->user_model->get_name($rs->user);
       $rs->state_name    = get_state_name($rs->state);
       $rs->zone_name = $this->zone_model->get_name($rs->zone_code);
     }
+
     $state = $this->order_state_model->get_order_state($code);
+
     $ost = array();
+
     if(!empty($state))
     {
       foreach($state as $st)
@@ -214,6 +199,7 @@ class Consign_tr extends PS_Controller
     }
 
     $details = $this->orders_model->get_order_details($code);
+
     $ds['state'] = $ost;
     $ds['order'] = $rs;
     $ds['details'] = $details;
@@ -231,7 +217,6 @@ class Consign_tr extends PS_Controller
     $rs = $this->orders_model->get($code);
     if($rs->state <= 3)
     {
-      $rs->customer_name = $this->customers_model->get_name($rs->customer_code);
       $rs->zone_name = $this->zone_model->get_name($rs->zone_code);
       $ds['order'] = $rs;
 
@@ -260,6 +245,7 @@ class Consign_tr extends PS_Controller
       if( ! empty($order))
       {
         $zone = $this->zone_model->get($ds->zone_code);
+        $customer = $this->customers_model->get($ds->customer_code);
 
         if( ! empty($zone))
         {
@@ -267,6 +253,7 @@ class Consign_tr extends PS_Controller
             'date_add' => db_date($ds->date),
             'customer_code' => $ds->customer_code,
             'customer_name' => $ds->customer_name,
+            'sale_code' => empty($customer) ? NULL : $customer->sale_code,
             'gp' => empty($ds->gp) ? 0 : $ds->gp,
             'zone_code' => $zone->code,
             'remark' => get_null($ds->remark)

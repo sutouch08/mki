@@ -87,42 +87,46 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:1250px;">
+		<table class="table table-striped table-hover border-1" style="min-width:1400px;">
 			<thead>
 				<tr>
-					<th class="fix-width-40 middle text-center">#</th>
 					<th class="fix-width-150 middle"></th>
+					<th class="fix-width-40 middle text-center">#</th>
+					<th class="fix-width-100 middle text-center">วันที่จัดส่ง</th>
+					<th class="fix-width-120 middle">ตัดรอบออเดอร์</th>
+					<th class="fix-width-120 middle">รอบจัดส่ง</th>
 					<th class="fix-width-100 middle text-center">วันที่</th>
 					<th class="fix-width-120 middle">เลขที่</th>
 					<th class="min-width-200 middle">ลูกค้า</th>
 					<th class="fix-width-150 middle">ช่องทางขาย</th>
-					<th class="fix-width-120 middle">ตัดรอบออเดอร์</th>
-					<th class="fix-width-120 middle">รอบจัดส่ง</th>
-					<th class="fix-width-100 middle text-center">วันที่จัดส่ง</th>
 					<th class="fix-width-150 middle">พนักงาน</th>
+					<th class="fix-width-150 middle">CSR</th>
 				</tr>
 			</thead>
 			<tbody>
         <?php if(!empty($orders)) : ?>
+					<?php $sa = saleman_array(); //-- saleman_helper ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
           <?php foreach($orders as $rs) : ?>
-            <?php $customer_name = (!empty($rs->customer_ref)) ? $rs->customer_ref : $rs->customer_name; ?>
+						<?php $c_ref = empty($rs->customer_ref) ? '' : ' ['.$rs->customer_ref.']'; ?>
+						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
             <tr class="font-size-11" id="row-<?php echo $rs->code; ?>">
-							<td class="middle text-center no"><?php echo $no; ?></td>
 							<td class="middle">
-          <?php if($this->pm->can_add OR $this->pm->can_edit) : ?>
-                <button type="button" class="btn btn-xs btn-info" onClick="goPrepare('<?php echo $rs->code; ?>')">จัดสินค้า</button>
-								<button type="button" class="btn btn-xs btn-warning" onClick="pullBack('<?php echo $rs->code; ?>')">ดึงกลับ</button>
-          <?php endif; ?>
-              </td>
-							<td class="middle text-center"><?php echo thai_date($rs->date_add, FALSE,'/'); ?></td>
-              <td class="middle"><?php echo $rs->code; ?></td>
-              <td class="middle"><?php echo $customer_name; ?></td>
-              <td class="middle"><?php echo $rs->channels_name; ?></td>
+								<?php if($this->pm->can_add OR $this->pm->can_edit) : ?>
+									<button type="button" class="btn btn-xs btn-info" onClick="goPrepare('<?php echo $rs->code; ?>')">จัดสินค้า</button>
+									<button type="button" class="btn btn-xs btn-warning" onClick="pullBack('<?php echo $rs->code; ?>')">ดึงกลับ</button>
+								<?php endif; ?>
+							</td>
+							<td class="middle text-center no"><?php echo $no; ?></td>
+							<td class="middle text-center"><?php echo empty($rs->shipping_date) ? NULL : thai_date($rs->shipping_date, FALSE,'/'); ?></td>
 							<td class="middle"><?php echo $rs->order_round; ?></td>
 							<td class="middle"><?php echo $rs->shipping_round; ?></td>
-              <td class="middle text-center"><?php echo empty($rs->shipping_date) ? NULL : thai_date($rs->shipping_date, FALSE,'/'); ?></td>
+							<td class="middle text-center"><?php echo thai_date($rs->date_add, FALSE,'/'); ?></td>
+              <td class="middle"><?php echo $rs->code; ?></td>
+              <td class="middle"><?php echo $rs->customer_name . $c_ref; ?></td>
+              <td class="middle"><?php echo $rs->channels_name; ?></td>
 							<td class="middle"><?php echo $rs->user; ?></td>
+							<td class="middle"><?php echo $csr; ?></td>
             </tr>
             <?php $no++; ?>
           <?php endforeach; ?>

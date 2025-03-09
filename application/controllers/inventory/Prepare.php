@@ -24,6 +24,7 @@ class Prepare extends PS_Controller
   public function index()
   {
     $this->load->helper('channels');
+    $this->load->helper('saleman');
 
     $filter = array(
       'code' => get_filter('code', 'pp_code', ''),
@@ -59,7 +60,8 @@ class Prepare extends PS_Controller
   public function view_process()
   {
     $this->load->helper('channels');
-
+    $this->load->helper('saleman');
+    
     $filter = array(
       'code' => get_filter('code', 'pp_code', ''),
       'customer' => get_filter('customer', 'pp_customer', ''),

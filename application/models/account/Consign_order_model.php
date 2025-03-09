@@ -98,13 +98,19 @@ class Consign_order_model extends CI_Model
 
   public function get($code)
   {
-    $rs = $this->db->where('code', $code)->get($this->tb);
+    $rs = $this->db
+    ->select('o.*, c.sale_code, c.type_code')
+    ->from('consign_order AS o')
+    ->join('customers AS c', 'o.customer_code = c.code', 'left')
+    ->where('o.code', $code)
+    ->get();
+
     if($rs->num_rows() === 1)
     {
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
@@ -245,43 +251,49 @@ class Consign_order_model extends CI_Model
 
   public function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
+    $this->db
+    ->select('o.*, c.sale_code, c.type_code')
+    ->from('consign_order AS o')
+    ->join('customers AS c', 'o.customer_code = c.code', 'left');
+
     //--- status
     if($ds['status'] !== 'all')
     {
-      $this->db->where('status', $ds['status']);
+      $this->db->where('o.status', $ds['status']);
     }
-
 
     //--- document date
     if( ! empty($ds['from_date']) && ! empty($ds['to_date']))
     {
-      $this->db->where('date_add >=', from_date($ds['from_date']))->where('date_add <=', to_date($ds['to_date']));
+      $this->db->where('o.date_add >=', from_date($ds['from_date']))->where('o.date_add <=', to_date($ds['to_date']));
     }
-
 
     if(! empty($ds['code']))
     {
-      $this->db->like('code', $ds['code']);
+      $this->db->like('o.code', $ds['code']);
     }
 
     //--- อ้างอิงเลขที่กระทบยอดสินค้า
     if(! empty($ds['ref_code']))
     {
-      $this->db->like('ref_code', $ds['ref_code']);
+      $this->db->like('o.ref_code', $ds['ref_code']);
     }
 
 
     if(!empty($ds['customer']))
     {
-      $this->db->like('customer_code', $ds['customer'])->or_like('customer_name', $ds['customer']);
+      $this->db->like('o.customer_code', $ds['customer'])->or_like('o.customer_name', $ds['customer']);
     }
 
     if( isset($ds['zone']) && $ds['zone'] != 'all')
     {
-      $this->db->where('zone_code', $ds['zone']);
+      $this->db->where('o.zone_code', $ds['zone']);
     }
 
-    $rs = $this->db->order_by('code', 'DESC')->limit($perpage, $offset)->get($this->tb);
+    $rs = $this->db
+    ->order_by('o.code', 'DESC')
+    ->limit($perpage, $offset)
+    ->get();
 
     if($rs->num_rows() > 0)
     {

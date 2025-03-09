@@ -56,7 +56,7 @@ class Order_payment_model extends CI_Model
 
   public function get_data(array $ds = array(), $perpage = '', $offset = '')
   {
-    $this->db->select('order_payment.*, customers.name AS customer_name, orders.customer_ref, channels.name AS channels')
+    $this->db->select('order_payment.*, customers.name AS customer_name, orders.customer_ref, orders.sale_code, channels.name AS channels')
     ->from('order_payment')
     ->join('orders', 'orders.code = order_payment.order_code', 'left')
     ->join('customers', 'customers.code = orders.customer_code', 'left')

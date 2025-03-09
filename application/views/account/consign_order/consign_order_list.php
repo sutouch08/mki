@@ -79,24 +79,30 @@
 
 <div class="row">
    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-     <table class="table table-striped border-1" style="min-width:990px;">
+     <table class="table table-striped border-1" style="min-width:1230px;">
        <thead>
          <tr class="font-size-12">
            <th class="fix-width-100"></th>
            <th class="fix-width-50 text-center">#</th>
-           <th class="fix-width-100">วันที่</th>
-           <th class="fix-width-120">เลขที่เอกสาร</th>
-           <th class="fix-width-120 text-right">มูลค่า</th>
+           <th class="fix-width-80">วันที่</th>
+           <th class="fix-width-100">เลขที่เอกสาร</th>
+           <th class="fix-width-100 text-right">มูลค่า</th>
            <th class="fix-width-50 text-center">สถานะ</th>
            <th class="min-width-200">ลูกค้า</th>
+           <th class="fix-width-150">CSR</th>
+           <th class="fix-width-150">ผู้ดำเนินการ</th>
            <th class="fix-width-250">โซน</th>
          </tr>
        </thead>
        <tbody>
 <?php if(!empty($docs)) : ?>
 <?php   $no = $this->uri->segment(4) + 1; ?>
+<?php   $sa = saleman_array(); ?>
+<?php   $user = user_array(); ?>
 <?php   foreach($docs as $rs) : ?>
-        <tr class="font-size-12" id="row-<?php echo $rs->code; ?>">
+  <?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
+  <?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
+        <tr class="font-size-11" id="row-<?php echo $rs->code; ?>">
           <td class="middle">
             <button type="button" class="btn btn-minier btn-info" onclick="viewDetail('<?php echo $rs->code; ?>')"><i class="fa fa-eye"></i></button>
             <?php if($rs->status == 0 && $this->pm->can_edit) : ?>
@@ -119,6 +125,8 @@
             <?php endif; ?>
           </td>
           <td class="middle"><?php echo $rs->customer_name; ?></td>
+          <td class="middle"><?php echo $csr; ?></td>
+          <td class="middle"><?php echo $dname; ?></td>
           <td class="middle"><?php echo $rs->zone_name; ?></td>
         </tr>
 <?php    $no++; ?>

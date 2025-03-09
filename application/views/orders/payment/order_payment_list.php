@@ -62,43 +62,47 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:900px;">
+		<table class="table table-bordered border-1" style="min-width:1090px;">
 			<thead>
 				<tr>
-					<th class="fix-width-40 middle text-center">ลำดับ</th>
+					<th class="fix-width-80 middle"></th>
+					<th class="fix-width-40 middle text-center">#</th>
 					<th class="fix-width-120 middle">เลขที่เอกสาร</th>
-          <th class="fix-width-120 middle">ช่องทาง</th>
+          <th class="fix-width-150 middle">ช่องทาง</th>
 					<th class="min-width-200 middle">ลูกค้า</th>
-          <th class="fix-width-120 middle">พนักงาน</th>
 					<th class="fix-width-100 middle text-right">ยอดเงิน</th>
+					<th class="fix-width-150 middle">CSR</th>
+          <th class="fix-width-150 middle">พนักงาน</th>
 					<th class="fix-width-100 middle text-center">เลขที่บัญชี</th>
-					<th class="fix-width-100 middle"></th>
 				</tr>
 			</thead>
 			<tbody>
         <?php if(!empty($orders)) : ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
+						<?php $sa = saleman_array(); //-- saleman_helper ?>
           <?php foreach($orders as $rs) : ?>
+						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
             <?php $customer_name = (!empty($rs->customer_ref)) ? $rs->customer_ref : $rs->customer_name; ?>
-            <tr id="row-<?php echo $rs->id; ?>" sytle="font-size:12px;">
+            <tr class="font-size-11" id="row-<?php echo $rs->id; ?>">
+							<td class="middle">
+								<button type="button" class="btn btn-xs btn-info" onClick="viewDetail(<?php echo $rs->id; ?>)"><i class="fa fa-eye"></i></button>
+								<?php if($this->pm->can_delete && $rs->valid == 0) : ?>
+									<button type="button" class="btn btn-xs btn-danger" onClick="removePayment(<?php echo $rs->id; ?>, '<?php echo $rs->order_code; ?>')"><i class="fa fa-trash"></i></button>
+								<?php endif; ?>
+							</td>
               <td class="middle text-center"><?php echo $no; ?></td>
-              <td class="middle" style="font-size:12px;"><?php echo $rs->order_code; ?></td>
-              <td class="middle" style="font-size:12px;"><?php echo $rs->channels; ?></td>
-              <td class="middle" style="font-size:12px;"><?php echo $customer_name; ?></td>
-              <td class="middle hidden-md" style="font-size:12px;"><?php echo $rs->user; ?></td>
-              <td class="middle text-right" style="font-size:12px;">
+              <td class="middle"><?php echo $rs->order_code; ?></td>
+              <td class="middle"><?php echo $rs->channels; ?></td>
+              <td class="middle"><?php echo $customer_name; ?></td>
+							<td class="middle text-right">
 								<?php if($rs->is_deposit == 1) : ?>
 									[มัดจำ] &nbsp;&nbsp;
 								<?php endif; ?>
 								<?php echo number($rs->pay_amount,2); ?>
 							</td>
-              <td class="middle text-center" style="font-size:12px;"><?php echo $rs->acc_no; ?></td>
-              <td class="middle text-right">
-                <button type="button" class="btn btn-xs btn-info" onClick="viewDetail(<?php echo $rs->id; ?>)"><i class="fa fa-eye"></i></button>
-          <?php if($this->pm->can_delete && $rs->valid == 0) : ?>
-                <button type="button" class="btn btn-xs btn-danger" onClick="removePayment(<?php echo $rs->id; ?>, '<?php echo $rs->order_code; ?>')"><i class="fa fa-trash"></i></button>
-          <?php endif; ?>
-              </td>
+              <td class="middle"><?php echo $rs->user; ?></td>
+							<td class="middle"><?php echo $csr; ?></td>
+              <td class="middle text-center"><?php echo $rs->acc_no; ?></td>
             </tr>
             <?php $no++; ?>
           <?php endforeach; ?>
