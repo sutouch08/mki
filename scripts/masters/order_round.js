@@ -17,6 +17,7 @@ function goEdit(id){
 function saveAdd() {
   clearErrorByClass('e');
 	let name = $('#name').val().trim();
+  let pos = $('#position').val();
 	let active = $('#active').is(':checked') ? 1 : 0;
 
 	if(name.length == 0) {
@@ -30,6 +31,7 @@ function saveAdd() {
 		cache:false,
 		data:{
 			'name' : name,
+      'position' : pos,
 			'active' : active
 		},
 		success:function(rs) {
@@ -56,6 +58,7 @@ function update() {
   clearErrorByClass('e');
 	let id = $('#id').val();
 	let name = $('#name').val().trim();
+  let pos = $('#position').val();
 	let active = $('#active').is(':checked') ? 1 : 0;
 
   if(name.length == 0) {
@@ -70,6 +73,7 @@ function update() {
     data:{
       'id' : id,
       'name' : name,
+      'position' : pos,
       'active' : active
     },
     success:function(rs) {

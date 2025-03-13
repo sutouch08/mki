@@ -58,6 +58,7 @@ class Order_round extends PS_Controller{
 		if($this->pm->can_add)
 		{
 			$name = trim($this->input->post('name'));
+			$pos = $this->input->post('position');
 			$active = $this->input->post('active') == 1 ? 1 : 0;
 
 			if(empty($name))
@@ -78,6 +79,7 @@ class Order_round extends PS_Controller{
 				{
 					$arr = array(
 						'name' => $name,
+						'position' => empty($pos) ? 10 : $pos,
 						'active' => $active
 					);
 
@@ -116,6 +118,7 @@ class Order_round extends PS_Controller{
 		$id = $this->input->post('id');
 		$name = trim($this->input->post('name'));
 		$active = $this->input->post('active');
+		$pos = $this->input->post('position');
 
 		if(empty($name))
 		{
@@ -135,6 +138,7 @@ class Order_round extends PS_Controller{
 			{
 				$arr = array(
 					'name' => $name,
+					'position' => empty($pos) ? 10 : $pos,
 					'active' => $active
 				);
 
@@ -163,7 +167,7 @@ class Order_round extends PS_Controller{
 
 		$this->response($sc);
 	}
-	
+
 
 	public function clear_filter()
 	{

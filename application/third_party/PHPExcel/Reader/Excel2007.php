@@ -478,7 +478,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
                     $macros = $customUI = NULL;
 					foreach ($relsWorkbook->Relationship as $ele) {
 						switch($ele['Type']){
-						case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet": 
+						case "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet":
 							$worksheets[(string) $ele["Id"]] = $ele["Target"];
 							break;
 						// a vbaProject ? (: some macros)
@@ -1692,7 +1692,8 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 
 					if ((!$this->_readDataOnly) || (!empty($this->_loadSheetsOnly))) {
 						// active sheet index
-						$activeTab = intval($xmlWorkbook->bookViews->workbookView["activeTab"]); // refers to old sheet index
+						$activeTab =isset($xmlWorkbook->bookViews->workbookView["activeTab"])? intval($xmlWorkbook->bookViews->workbookView["activeTab"]):"sheet1";
+						// $activeTab = intval($xmlWorkbook->bookViews->workbookView["activeTab"]); // refers to old sheet index
 
 						// keep active sheet index if sheet is still loaded, else first sheet is set as the active
 						if (isset($mapSheetId[$activeTab]) && $mapSheetId[$activeTab] !== null) {
@@ -1984,7 +1985,7 @@ class PHPExcel_Reader_Excel2007 extends PHPExcel_Reader_Abstract implements PHPE
 		$nameCustomUI = basename($customUITarget);
         // get the xml file (ribbon)
 		$localRibbon = $this->_getFromZipArchive($zip, $customUITarget);
-		$customUIImagesNames = array(); 
+		$customUIImagesNames = array();
         $customUIImagesBinaries = array();
         // something like customUI/_rels/customUI.xml.rels
 		$pathRels = $baseDir . '/_rels/' . $nameCustomUI . '.rels';

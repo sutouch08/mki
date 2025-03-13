@@ -18,6 +18,24 @@
 	</div>
 	<div class="divider-hidden hidden-xs"></div>
 
+	<div class="col-lg-3 col-md-3 col-sm-3 control-label text-right hidden-xs">ลำดับ</div>
+	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label class="visible-xs">ลำดับ</label>
+		<select class="width-100" name="postition" id="position">
+			<option value="10">10</option>
+			<option value="9">9</option>
+			<option value="8">8</option>
+			<option value="7">7</option>
+			<option value="6">6</option>
+			<option value="5">5</option>
+			<option value="4">4</option>
+			<option value="3">3</option>
+			<option value="2">2</option>
+			<option value="1">1</option>
+		</select>
+	</div>
+	<div class="divider-hidden hidden-xs"></div>
+
 	<div class="col-lg-3 col-md-3 col-sm-3 control-label text-right hidden-xs"></div>
 	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
 		<label class="visible-xs">&nbsp;</label>

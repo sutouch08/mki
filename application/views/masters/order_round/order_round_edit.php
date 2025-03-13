@@ -18,6 +18,24 @@
 	</div>
 	<div class="divider-hidden hidden-xs"></div>
 
+	<div class="col-lg-3 col-md-3 col-sm-3 control-label text-right hidden-xs">ลำดับ</div>
+	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label class="visible-xs">ลำดับ</label>
+		<select class="width-100" name="postition" id="position">
+			<option value="10" <?php echo is_selected('10', $ds->position); ?>>10</option>
+			<option value="9" <?php echo is_selected('9', $ds->position); ?>>9</option>
+			<option value="8" <?php echo is_selected('8', $ds->position); ?>>8</option>
+			<option value="7" <?php echo is_selected('7', $ds->position); ?>>7</option>
+			<option value="6" <?php echo is_selected('6', $ds->position); ?>>6</option>
+			<option value="5" <?php echo is_selected('5', $ds->position); ?>>5</option>
+			<option value="4" <?php echo is_selected('4', $ds->position); ?>>4</option>
+			<option value="3" <?php echo is_selected('3', $ds->position); ?>>3</option>
+			<option value="2" <?php echo is_selected('2', $ds->position); ?>>2</option>
+			<option value="1" <?php echo is_selected('1', $ds->position); ?>>1</option>
+		</select>
+	</div>
+	<div class="divider-hidden hidden-xs"></div>
+
 	<div class="col-lg-3 col-md-3 col-sm-3 control-label text-right hidden-xs"></div>
 	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
 		<label class="visible-xs">&nbsp;</label>

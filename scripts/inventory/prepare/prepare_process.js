@@ -77,7 +77,6 @@ function doPrepare(){
 }
 
 
-
 //---- จัดเสร็จแล้ว
 function finishPrepare(){
   var order_code = $("#order_code").val();
@@ -102,9 +101,6 @@ function finishPrepare(){
 }
 
 
-
-
-
 function forceClose(){
   swal({
     title: "Are you sure ?",
@@ -122,41 +118,6 @@ function forceClose(){
 }
 
 
-//---- เมื่อมีการยิงบาร์โค้ดโซน เพื่อระบุว่าจะจัดสินค้าออกจากโซนนี้
-$("#barcode-zone").keyup(function(e){
-  if(e.keyCode == 13){
-    if( $(this).val() != ""){
-      $.ajax({
-        url: BASE_URL + 'masters/zone/get_zone_code',
-        type:"GET",
-        cache:"false",
-        data:{
-          "barcode" : $(this).val()
-        },
-        success: function(rs){
-            var rs = $.trim(rs);
-            if(rs != 'not_exists'){
-              $("#zone_code").val(rs);
-              $("#barcode-zone").attr('disabled', 'disabled');
-              $("#qty").removeAttr('disabled');
-              $("#barcode-item").removeAttr('disabled');
-              $("#btn-submit").removeAttr('disabled');
-
-              $("#barcode-item").focus();
-            }else{
-              beep();
-              swal("Error!", 'โซนไม่ถูกต้อง', "error");
-              $("#zone_code").val('');
-            }
-        }
-      });
-    }
-  }
-});
-
-
-
-
 $('.b-click').click(function(){
   if(!$('#barcode-item').prop('disabled'))
   {
@@ -166,21 +127,6 @@ $('.b-click').click(function(){
   }
 
 });
-
-
-function changeZone(){
-  $("#zone_code").val('');
-  $("#barcode-item").val('');
-  $("#barcode-item").attr('disabled','disabled');
-  $("#qty").val(1);
-  $("#qty").attr('disabled', 'disabled');
-  $("#btn-submit").attr('disabled', 'disabled');
-  $("#barcode-zone").val('');
-  $("#barcode-zone").removeAttr('disabled');
-  $("#barcode-zone").focus();
-}
-
-
 
 
 //---- ถ้าใส่จำนวนไม่ถูกต้อง
@@ -196,6 +142,10 @@ $("#qty").keyup(function(e){
 });
 
 
+function set_focus() {
+  $('#barcode-item').val('').focus();
+}
+
 
 //--- เมื่อยิงบาร์โค้ดสินค้าหรือกดปุ่ม Enter
 $("#barcode-item").keyup(function(e){
@@ -205,6 +155,7 @@ $("#barcode-item").keyup(function(e){
     }
   }
 })
+
 
 //--- เปิด/ปิด การแสดงที่เก็บ
 function toggleForceClose(){
@@ -216,13 +167,10 @@ function toggleForceClose(){
 }
 
 
-
 //---- กำหนดค่าการแสดงผลที่เก็บสินค้า เมื่อมีการคลิกปุ่มที่เก็บ
 $(function () {
   $('.btn-pop').popover({html:true});
 });
-
-
 
 
 $("#showZone").change(function(){
@@ -242,7 +190,6 @@ function setZoneLabel(showZone){
   //---- 1 = show , 0 == not show;
   $.get(BASE_URL + 'inventory/prepare/set_zone_label/'+showZone);
 }
-
 
 
 function removeBuffer(id) {

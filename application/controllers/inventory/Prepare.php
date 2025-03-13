@@ -61,7 +61,7 @@ class Prepare extends PS_Controller
   {
     $this->load->helper('channels');
     $this->load->helper('saleman');
-    
+
     $filter = array(
       'code' => get_filter('code', 'pp_code', ''),
       'customer' => get_filter('customer', 'pp_customer', ''),
@@ -96,6 +96,7 @@ class Prepare extends PS_Controller
   {
     $this->load->model('masters/customers_model');
     $this->load->model('masters/channels_model');
+    $this->load->helper('zone');
     $state = $this->orders_model->get_state($code);
 
     if($state == 3)

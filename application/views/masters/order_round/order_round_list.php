@@ -49,7 +49,8 @@
 					<th class="fix-width-100 middle"></th>
 					<th class="fix-width-50 middle text-center">#</th>
 					<th class="fix-width-60 middle text-center">Status</th>
-					<th class="min-width-200 middle">Name</th>
+					<th class="fix-width-200 middle">Name</th>
+					<th class="min-width-100 middle">Position</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -74,6 +75,7 @@
 							<?php echo is_active($rs->active); ?>
 						</td>
 						<td class="middle"><?php echo $rs->name; ?></td>
+						<td class="middle"><?php echo $rs->position; ?></td>
 					</tr>
 					<?php $no++; ?>
 				<?php endforeach; ?>

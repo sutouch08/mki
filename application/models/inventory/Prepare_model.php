@@ -261,9 +261,10 @@ class Prepare_model extends CI_Model
   public function get_list(array $ds = array(), $perpage = 20, $offset = 0, $state = 3)
   {
     $this->db
-    ->select('orders.*, channels.name AS channels_name')
+    ->select('orders.*, channels.name AS channels_name, order_round.position')
     ->from('orders')
     ->join('channels', 'channels.code = orders.channels_code','left')
+    ->join('order_round', 'orders.order_round = order_round.name', 'left')
     ->where('orders.state', $state);
 
     if(!empty($ds['code']))
@@ -328,7 +329,8 @@ class Prepare_model extends CI_Model
     }
 
     $rs = $this->db
-    ->order_by('orders.date_add', 'ASC')
+    ->order_by('orders.shipping_date', 'ASC')
+    ->order_by('order_round.position', 'ASC')
     ->limit($perpage, $offset)
     ->get();
 

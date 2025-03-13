@@ -9,7 +9,7 @@
       <thead>
         <tr><td colspan="6" align="center">รายการรอจัด</td></tr>
         <tr>
-          <th class="fix-width-120 middle hidden-xs">บาร์โค้ด</th>
+          <th class="fix-width-120 middle">บาร์โค้ด</th>
           <th class="min-width-300 middle">สินค้า</th>
           <th class="fix-width-100 middle text-center">จำนวน</th>
           <th class="fix-width-100 middle text-center">จัดแล้ว</th>
@@ -22,11 +22,8 @@
         <?php  if(!empty($uncomplete_details)) : ?>
           <?php   foreach($uncomplete_details as $rs) : ?>
             <tr class="font-size-12 incomplete" id="incomplete-<?php echo $rs->id; ?>">
-              <td class="middle b-click hidden-xs"><?php echo $rs->barcode; ?></td>
-              <td class="middle">
-                <span class="hidden-xs"><?php echo $rs->product_code .' : '.$rs->product_name; ?></span>
-                <span class="visible-xs"><?php echo $rs->product_code; ?></span>
-              </td>
+              <td class="middle b-click"><?php echo $rs->barcode; ?></td>
+              <td class="middle"><?php echo $rs->product_code .' : '.$rs->product_name; ?></td>
               <td class="middle text-center" id="order-qty-<?php echo $rs->id; ?>"><?php echo number($rs->qty); ?></td>
               <td class="middle text-center" id="prepared-qty-<?php echo $rs->id; ?>"><?php echo number($rs->prepared); ?></td>
               <td class="middle text-center" id="balance-qty-<?php echo $rs->id; ?>"><?php echo number($rs->qty - $rs->prepared); ?></td>
