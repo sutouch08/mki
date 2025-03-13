@@ -23,10 +23,11 @@ class Po_model extends CI_Model
   public function get_details($code)
   {
     $this->db
-    ->select('po_detail.*')
+    ->select('po_detail.*, products.name AS product_name, unit.name AS unit_name')
     ->from('po_detail')
     ->join('products', 'po_detail.product_code = products.code', 'left')
     ->join('product_size', 'products.size_code = product_size.code', 'left')
+    ->join('unit', 'products.unit_code = unit.code', 'left')
     ->where('po_detail.po_code', $code)
     ->order_by('products.style_code', 'ASC')
     ->order_by('products.color_code', 'ASC')

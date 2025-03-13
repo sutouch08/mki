@@ -4,14 +4,14 @@
 		<h4 class="title"><?php echo $this->title; ?></h4>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right top-p">
-		<button type="button" class="btn btn-xs btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> กลับ</button>
+		<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> กลับ</button>
 		<?php if(($this->pm->can_add OR $this->pm->can_edit) && $doc->status == 0) : ?>
 			<button type="button" class="btn btn-sm btn-success" onclick="saveConsign()">
 				<i class="fa fa-save"></i> บันทึก
 			</button>
 		<?php endif; ?>
 		<div class="btn-group">
-			<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">
+			<button data-toggle="dropdown" class="btn btn-white btn-primary dropdown-toggle" aria-expanded="false">
 				ตัวเลือก
 				<i class="ace-icon fa fa-angle-down icon-on-right"></i>
 			</button>

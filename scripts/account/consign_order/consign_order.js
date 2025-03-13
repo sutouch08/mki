@@ -20,6 +20,47 @@ function goEdit(code) {
 }
 
 
+function rollback(code) {
+  swal({
+    title:'ย้อนสถานะ',
+    text:'ต้องการย้อนสถานะกลับมาแก้ไขหรือไม่ ?',
+    type:'warning',
+    html:true,
+    showCancelButton:true,
+    cancelButtonText:'No',
+    confirmButtonText:'Yes',
+    closeOnConfirm:true
+  }, function() {
+    setTimeout(() => {
+      load_in();
+
+      $.ajax({
+        url:HOME + 'unsave_consign',
+        type:'POST',
+        cache:false,
+        data:{
+          'code' : code
+        },
+        success:function(rs) {
+          load_out();
+
+          if(rs.trim() === 'success') {
+            goEdit(code);
+          }
+          else {
+            showError(rs);
+          }
+        },
+        error:function(rs) {
+          showError(rs);
+        }
+      })
+    }, 100)
+  })
+}
+
+
+
 function goCancel(code) {
   swal({
 		title: "คุณแน่ใจ ?",

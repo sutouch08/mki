@@ -69,6 +69,7 @@
 
   <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 text-right">
+      <button type="button" class="btn btn-white btn-grey top-btn" onClick="inputDeliveryNo()"><i class="fa fa-truck"></i> บันทึกการจัดส่ง</button>
       <button type="button" class="btn btn-sm btn-info top-btn" onclick="printAddress()"><i class="fa fa-print"></i> ใบนำส่ง</button>
 			<?php if(!empty($order->invoice_code)) : ?>
 				<?php if($this->_use_vat) : ?>
@@ -266,6 +267,67 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="deliveryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  	<div class="modal-dialog " style="max-width:350px;">
+  		<div class="modal-content">
+  			<div class="modal-header">
+  				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+  				<h4 class="modal-title-site" >บันทึกเลขที่การจัดส่ง</h4>
+  			</div>
+  			<div class="modal-body">
+  				<div class="row">
+            <div class="col-sm-12 col-xs-12">
+              <input type="text" class="form-control input-sm text-center" name="emsNo" id="emsNo" placeholder="เลขที่ EMS หรือ เลขที่การจัดส่ง" />
+            </div>
+          </div>
+  			</div>
+  			<div class="modal-footer">
+              	<button type="button" class="btn btn-sm btn-primary btn-block" onClick="saveDeliveryNo()">บันทึก</button>
+  			</div>
+  		</div>
+  	</div>
+  </div>
+
+  <script>
+
+  $("#emsNo").keyup(function(e) {
+    if( e.keyCode == 13 )	{
+      saveDeliveryNo();
+    }
+  });
+
+
+  function inputDeliveryNo() {
+    $("#deliveryModal").modal('show');
+  }
+
+
+  function saveDeliveryNo() {
+    var deliveryNo 	= $("#emsNo").val();
+    var order_code 	= $("#order_code").val();
+    if( deliveryNo != '') {
+
+      $("#deliveryModal").modal('hide');
+
+      $.ajax({
+        url: BASE_URL + 'orders/orders/update_shipping_code/',
+        type:"POST",
+        cache:"false",
+        data:{
+          "shipping_code" : deliveryNo,
+          "order_code" : order_code
+        },
+        success: function(rs){
+          var rs = $.trim(rs);
+          if( rs == 'success') {
+            window.location.reload();
+          }
+        }
+      });
+    }
+  }
+  </script>
 
   <?php if($use_qc) : ?>
   <?php $this->load->view('inventory/order_closed/box_list');  ?>

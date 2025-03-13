@@ -11,6 +11,9 @@
 			<?php if($doc->status != 2 && $this->pm->can_delete) : ?>
 				<button type="button" class="btn btn-sm btn-danger" onclick="goCancel('<?php echo $doc->code; ?>')"><i class="fa fa-times"></i> ยกเลิก</button>
 			<?php endif; ?>
+			<?php if($doc->status == 1 && $this->pm->can_edit) : ?>
+				<button type="button" class="btn btn-sm btn-primary" onclick="rollback('<?php echo $doc->code; ?>')">ย้อนสถานะมาแก้ไข</button>
+			<?php endif; ?>
 			<?php if($doc->status == 1) : ?>
 			<button type="button" class="btn btn-sm btn-info" onclick="printConsignOrder()"><i class="fa fa-print"></i> พิมพ์</button>
 			<?php endif; ?>

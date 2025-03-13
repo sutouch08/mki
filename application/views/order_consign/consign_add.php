@@ -25,15 +25,36 @@
 		<label>ลูกค้า[ในระบบ]</label>
 		<input type="text" class="form-control input-sm edit" id="customer-name" name="customer" value="" />
 	</div>
-	<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
+	<div class="col-lg-4 col-md-4-harf col-sm-4-harf col-xs-6 padding-5">
 		<label>โซน[ฝากขาย]</label>
 		<input type="text" class="form-control input-sm edit" name="zone" id="zone" value="" />
 	</div>
-	<div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-3 padding-5">
+	<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label>ตัดรอบออเดอร์</label>
+    <select class="width-100 e" id="order-round">
+      <option value="">กรุณาเลือก</option>
+      <?php echo select_order_round(); ?>
+    </select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+		<label>รอบจัดส่ง</label>
+    <select class="width-100 e" id="shipping-round">
+      <option value="">กรุณาเลือก</option>
+      <?php echo select_shipping_round(); ?>
+    </select>
+  </div>
+
+	<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label>วันที่จัดส่ง</label>
+    <input type="text" class="width-100 e text-center" id="ship-date" value="<?php echo date('d-m-Y'); ?>" readonly />
+  </div>
+
+	<div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-3 padding-5 hide">
 		<label>GP[%]</label>
 		<input type="text" class="form-control input-sm text-center edit" name="gp" id="gp" value="0" />
 	</div>
-	<div class="col-lg-10 col-md-6 col-sm-5 col-xs-9 padding-5">
+	<div class="col-lg-7 col-md-11 col-sm-10-harf col-xs-9 padding-5">
 		<label>หมายเหตุ</label>
 		<input type="text" class="form-control input-sm edit" name="remark" id="remark" value="" />
 	</div>

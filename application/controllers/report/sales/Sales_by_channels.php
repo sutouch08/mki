@@ -26,113 +26,140 @@ class Sales_by_channels extends PS_Controller
 
   public function get_report()
   {
-    $allChannels = $this->input->get('allChannels');
-    $channels = $this->input->get('channels');
+    $sc = TRUE;
+    $bs = [];
 
-    $fromDate = $this->input->get('fromDate');
-    $toDate = $this->input->get('toDate');
+    $ds = json_decode($this->input->post('data'));
 
-		$orderBy = empty($this->input->get('orderBy')) ? 'amount' : $this->input->get('orderBy');
-
-		$ch_list = '';
-    if(!empty($channels))
+    if( ! empty($ds))
     {
-      $i = 1;
-      foreach($channels as $ch)
+      $ch_list = empty($ds->wm_channels) ? "" : "ฝากขาย";
+
+      if( ! empty($ds->channels))
       {
-        $ch_list .= $i === 1 ? $ch : ', '.$ch;
-        $i++;
+        $i = empty($ch_list) ? 1 : 2;
+
+        foreach($ds->channels as $ch)
+        {
+          $ch_list .= $i === 1 ? $ch->name : ', '.$ch->name;
+          $i++;
+        }
       }
-    }
 
-    //---  Report title
-    $sc['reportDate'] = thai_date($fromDate, FALSE, '/').' - '.thai_date($toDate, FALSE, '/');
-		$sc['chList']   = $allChannels == 1 ? 'ทั้งหมด' : $ch_list;
+      //---  Report title
+      $bs['reportDate'] = thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/');
+  		$bs['chList']   = $ds->allChannels == 1 ? 'ทั้งหมด' : $ch_list;
 
+      $channels = $ds->allChannels == 1 ? $this->channels_model->get_all() : $ds->channels;
 
-    $ds = array(
-      'allChannels' => is_true($allChannels),
-			'channels' => $channels,
-      'fromDate' => from_date($fromDate),
-      'toDate' => to_date($toDate),
-			'orderBy' => $orderBy
-    );
-
-    $result = $this->sales_report_model->get_sum_channels_sales_by_date_upd($ds);
-
-    $bs = array();
-
-    if(!empty($result))
-    {
-      $no = 1;
+      $res = [];
       $totalQty = 0;
       $totalAmount = 0;
-      foreach($result as $rs)
+      $no = 1;
+
+      if($ds->allChannels == 1 OR ! empty($ds->wm_channels))
       {
-        $arr = array(
-          'no' => number($no),
-          'code' => $rs->code,
-          'name' => $rs->name,
-          'qty' => number($rs->qty),
-          'amount' => number($rs->amount, 2)
-        );
+        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate);
 
-        array_push($bs, $arr);
-        $no++;
+        if( ! empty($sales))
+        {
+          $key = $ds->order_by == 'qty' ? $sales->qty : $sales->amount; //---- ไว้ sort array
+          $key = empty($key) ? $no : $key;
 
-        $totalQty += $rs->qty;
-        $totalAmount += $rs->amount;
+          $res[$key] = array(
+            'code' => 'WM',
+            'name' => 'ฝากขาย',
+            'qty' => number($sales->qty),
+            'amount' => number($sales->amount)
+          );
+
+          $no++;
+          $totalQty += $sales->qty;
+          $totalAmount += $sales->amount;
+        }
       }
 
-      $arr = array(
-        'totalQty' => number($totalQty),
-        'totalAmount' => number($totalAmount, 2)
-      );
+      if( ! empty($channels))
+      {
+        foreach($channels as $rs)
+        {
+          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate);
 
-      array_push($bs, $arr);
+          if( ! empty($sales))
+          {
+            $key = $ds->order_by == 'qty' ? $sales->qty : $sales->amount; //---- ไว้ sort array
+            $key = empty($key) ? $no : $key;
 
-      $bs;
+            $res[$key] = array(
+              'code' => $rs->code,
+              'name' => $rs->name,
+              'qty' => number($sales->qty),
+              'amount' => number($sales->amount)
+            );
+
+            $no++;
+            $totalQty += $sales->qty;
+            $totalAmount += $sales->amount;
+          }
+        }
+      }
+      else
+      {
+        $sc = FALSE;
+        $this->error = "ไม่พบช่องทางขาย";
+      }
+
+
+      if( ! empty($res))
+      {
+        krsort($res);
+        $no = 1;
+        $result = [];
+
+        foreach($res as $rs)
+        {
+          $result[] = (object) array(
+            'no' => $no,
+            'code' => $rs['code'],
+            'name' => $rs['name'],
+            'qty' => $rs['qty'],
+            'amount' => $rs['amount']
+          );
+
+          $no++;
+        }
+
+        $bs['bs'] = $result;
+        $bs['totalQty'] = number($totalQty);
+        $bs['totalAmount'] = number($totalAmount, 2);
+      }
+      else
+      {
+        $bs['bs'] = ['nodata' => 'nodata'];
+      }
     }
     else
     {
-      $arr = array('nodata' => 'nodata');
-      array_push($bs, $arr);
+      $sc = FALSE;
+      $this->error = set_error_message('required');
     }
 
-    $sc['bs'] = $bs;
+    $arr = array(
+      'status' => $sc === TRUE ? 'success' : 'failed',
+      'message' => $sc === TRUE ? 'success' : $this->error,
+      'data' => $bs
+    );
 
-    echo json_encode($sc);
+    echo json_encode($arr);
   }
 
 
   public function do_export()
   {
-    $allChannels = $this->input->post('allChannels');
-    $channels = $this->input->post('channels');
-
-    $fromDate = $this->input->post('fromDate');
-    $toDate = $this->input->post('toDate');
-
-		$orderBy = empty($this->input->post('orderBy')) ? 'amount' : $this->input->post('orderBy');
-
-		$token = $this->input->post('token');
-
-		$ch_list = '';
-    if(!empty($channels))
-    {
-      $i = 1;
-      foreach($channels as $ch)
-      {
-        $ch_list .= $i === 1 ? $ch : ', '.$ch;
-        $i++;
-      }
-    }
-
     //---  Report title
     $report_title = 'รายงานยอดขาย แยกตามช่องทางการขาย';
-    $date_title = 'วันที่ : '.thai_date($fromDate, FALSE, '/').' - '.thai_date($toDate, FALSE, '/');
-    $chList = $allChannels == 1 ? 'ทั้งหมด' : $ch_list;
-
+    $date_title = "";
+    $chList = "";
 
     //--- load excel library
     $this->load->library('excel');
@@ -140,61 +167,142 @@ class Sales_by_channels extends PS_Controller
     $this->excel->setActiveSheetIndex(0);
     $this->excel->getActiveSheet()->setTitle('Sales By Channels');
 
-    //--- set report title header
-    $this->excel->getActiveSheet()->setCellValue('A1', $report_title);
-    $this->excel->getActiveSheet()->mergeCells('A1:I1');
-    $this->excel->getActiveSheet()->setCellValue('A2', $date_title);
-    $this->excel->getActiveSheet()->mergeCells('A2:I2');
-    $this->excel->getActiveSheet()->setCellValue('A3', $chList);
-    $this->excel->getActiveSheet()->mergeCells('A3:I3');
+    $ds = json_decode($this->input->post('data'));
 
-    //--- set Table header
-    $this->excel->getActiveSheet()->setCellValue('A4', 'ลำดับ');
-    $this->excel->getActiveSheet()->setCellValue('B4', 'รหัส');
-    $this->excel->getActiveSheet()->setCellValue('C4', 'ช่องทางขาย');
-    $this->excel->getActiveSheet()->setCellValue('D4', 'จำนวน');
-    $this->excel->getActiveSheet()->setCellValue('E4', 'มูลค่า(Vat exclude)');
+    $token = $this->input->post('token');
 
-    $row = 5;
-
-		$ds = array(
-      'allChannels' => is_true($allChannels),
-      'channels' => $channels,
-      'fromDate' => from_date($fromDate),
-      'toDate' => to_date($toDate),
-			'orderBy' => $orderBy
-    );
-
-    $result = $this->sales_report_model->get_sum_channels_sales_by_date_upd($ds);
-
-    if(!empty($result))
+    if( ! empty($ds))
     {
-      $no = 1;
-      foreach($result as $rs)
-      {
-        $this->excel->getActiveSheet()->setCellValue('A'.$row, $no);
-        $this->excel->getActiveSheet()->setCellValue('B'.$row, $rs->code);
-        $this->excel->getActiveSheet()->setCellValue('C'.$row, $rs->name);
-        $this->excel->getActiveSheet()->setCellValue('D'.$row, $rs->qty);
-        $this->excel->getActiveSheet()->setCellValue('E'.$row, $rs->amount);
+      $ch_list = empty($ds->wm_channels) ? "" : "ฝากขาย";
 
-        $no++;
-        $row++;
+      if( ! empty($ds->channels))
+      {
+        $i = empty($ch_list) ? 1 : 2;
+
+        foreach($ds->channels as $ch)
+        {
+          $ch_list .= $i === 1 ? $ch->name : ', '.$ch->name;
+          $i++;
+        }
       }
 
-      $res = $row -1;
+      //---  Report title
+      $report_title = 'รายงานยอดขาย แยกตามช่องทางการขาย';
+      $date_title = 'วันที่ : '.thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/');
+      $chList = $ds->allChannels == 1 ? 'ทั้งหมด' : $ch_list;
 
-      $this->excel->getActiveSheet()->setCellValue('A'.$row, 'รวม');
-      $this->excel->getActiveSheet()->mergeCells('A'.$row.':C'.$row);
-      $this->excel->getActiveSheet()->setCellValue('D'.$row, '=SUM(D5:D'.$res.')');
-      $this->excel->getActiveSheet()->setCellValue('E'.$row, '=SUM(E5:E'.$res.')');
+      //--- set report title header
+      $this->excel->getActiveSheet()->setCellValue('A1', $report_title);
+      $this->excel->getActiveSheet()->mergeCells('A1:I1');
+      $this->excel->getActiveSheet()->setCellValue('A2', $date_title);
+      $this->excel->getActiveSheet()->mergeCells('A2:I2');
+      $this->excel->getActiveSheet()->setCellValue('A3', $chList);
+      $this->excel->getActiveSheet()->mergeCells('A3:I3');
 
-      $this->excel->getActiveSheet()->getStyle('A'.$row)->getAlignment()->setHorizontal('right');
-      $this->excel->getActiveSheet()->getStyle('D5:D'.$row)->getAlignment()->setHorizontal('right');
-      $this->excel->getActiveSheet()->getStyle('D5:D'.$row)->getNumberFormat()->setFormatCode('#,##0');
-      $this->excel->getActiveSheet()->getStyle('E5:E'.$row)->getAlignment()->setHorizontal('right');
-      $this->excel->getActiveSheet()->getStyle('E5:E'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
-    }
+      //--- set Table header
+      $this->excel->getActiveSheet()->setCellValue('A4', 'ลำดับ');
+      $this->excel->getActiveSheet()->setCellValue('B4', 'รหัส');
+      $this->excel->getActiveSheet()->setCellValue('C4', 'ช่องทางขาย');
+      $this->excel->getActiveSheet()->setCellValue('D4', 'จำนวน');
+      $this->excel->getActiveSheet()->setCellValue('E4', 'มูลค่า(Vat exclude)');
+
+      $row = 5;
+      $channels = $ds->allChannels == 1 ? $this->channels_model->get_all() : $ds->channels;
+      $res = [];
+      $result = [];
+      $no = 1;
+
+      if($ds->allChannels == 1 OR ! empty($ds->wm_channels))
+      {
+        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate);
+
+        if( ! empty($sales))
+        {
+          $key = $ds->order_by == 'qty' ? $sales->qty : $sales->amount; //---- ไว้ sort array
+          $key = empty($key) ? $no : $key;
+
+          $res[$key] = array(
+            'code' => 'WM',
+            'name' => 'ฝากขาย',
+            'qty' => $sales->qty,
+            'amount' => $sales->amount
+          );
+
+          $no++;
+        }
+      }
+
+      if( ! empty($channels))
+      {
+        foreach($channels as $rs)
+        {
+          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate);
+
+          if( ! empty($sales))
+          {
+            $key = $ds->order_by == 'qty' ? $sales->qty : $sales->amount; //---- ไว้ sort array
+            $key = empty($key) ? $no : $key;
+
+            $res[$key] = array(
+              'code' => $rs->code,
+              'name' => $rs->name,
+              'qty' => $sales->qty,
+              'amount' => $sales->amount
+            );
+
+            $no++;
+          }
+        }
+      }
+
+      if( ! empty($res))
+      {
+        krsort($res);
+        $no = 1;
+
+        foreach($res as $rs)
+        {
+          $result[] = (object) array(
+            'no' => $no,
+            'code' => $rs['code'],
+            'name' => $rs['name'],
+            'qty' => $rs['qty'],
+            'amount' => $rs['amount']
+          );
+
+          $no++;
+        }
+      }
+
+      if( ! empty($result))
+      {
+        $no = 1;
+        foreach($result as $rs)
+        {
+          $this->excel->getActiveSheet()->setCellValue('A'.$row, $no);
+          $this->excel->getActiveSheet()->setCellValue('B'.$row, $rs->code);
+          $this->excel->getActiveSheet()->setCellValue('C'.$row, $rs->name);
+          $this->excel->getActiveSheet()->setCellValue('D'.$row, $rs->qty);
+          $this->excel->getActiveSheet()->setCellValue('E'.$row, $rs->amount);
+
+          $no++;
+          $row++;
+        }
+
+        $re = $row -1;
+
+        $this->excel->getActiveSheet()->setCellValue('A'.$row, 'รวม');
+        $this->excel->getActiveSheet()->mergeCells('A'.$row.':C'.$row);
+        $this->excel->getActiveSheet()->setCellValue('D'.$row, '=SUM(D5:D'.$re.')');
+        $this->excel->getActiveSheet()->setCellValue('E'.$row, '=SUM(E5:E'.$re.')');
+
+        $this->excel->getActiveSheet()->getStyle('A'.$row)->getAlignment()->setHorizontal('right');
+        $this->excel->getActiveSheet()->getStyle('D5:D'.$row)->getAlignment()->setHorizontal('right');
+        $this->excel->getActiveSheet()->getStyle('D5:D'.$row)->getNumberFormat()->setFormatCode('#,##0');
+        $this->excel->getActiveSheet()->getStyle('E5:E'.$row)->getAlignment()->setHorizontal('right');
+        $this->excel->getActiveSheet()->getStyle('E5:E'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
+      }
+    } //---------- $ds
 
 		setToken($token);
     $file_name = "Report Sales by Channels.xlsx";
@@ -204,7 +312,6 @@ class Sales_by_channels extends PS_Controller
     $writer->save('php://output');
 
   }
-
 
 } //--- end class
 

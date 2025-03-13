@@ -48,13 +48,19 @@ $("#toDate").datepicker({
 
 
 
-function getReport(){
-  var allChannels = $('#allChannels').val();
-  var fromDate = $('#fromDate').val();
-  var toDate = $('#toDate').val();
-	var order_by = $('#orderBy').val();
+function getReport() {
+  clearErrorByClass('e');
 
-	if(allChannels == 0){
+  let h = {
+    'allChannels' : $('#allChannels').val(),
+    'fromDate' : $('#fromDate').val(),
+    'toDate' : $('#toDate').val(),
+    'order_by' : $('#orderBy').val(),
+    'wm_channels' : $('#wm-channels').is(':checked') ? 1 : 0,
+    'channels' : []
+  };
+
+	if(h.allChannels == 0){
 		var count = $('.chk:checked').length;
 		if(count == 0){
 			$('#channels-modal').modal('show');
@@ -62,30 +68,18 @@ function getReport(){
 		}
 	}
 
-  if(! isDate(fromDate) || ! isDate(toDate)){
+  if(! isDate(h.fromDate) || ! isDate(h.toDate)){
     swal('วันที่ไม่ถูกต้อง');
     $('#fromDate').addClass('has-error');
     $('#toDate').addClass('has-error');
     return false;
-  }else{
-    $('#fromDate').removeClass('has-error');
-    $('#toDate').removeClass('has-error');
   }
 
-  var data = [
-    {'name' : 'allChannels' , 'value' : allChannels},
-    {'name' : 'fromDate' , 'value' : fromDate},
-    {'name' : 'toDate', 'value' : toDate},
-		{'name' : 'orderBy', 'value' : order_by}
-  ];
-
-
-  if(allChannels == 0){
-    $('.chk').each(function(index, el) {
-      if($(this).is(':checked')){
-        let names = 'channels['+index+']';
-        data.push({'name' : names, 'value' : $(this).val() });
-      }
+  if(h.allChannels == 0) {
+    $('.chk:checked').each(function(index, el) {
+      let code = $(this).val();
+      let name = $(this).data('name');
+      h.channels.push({'code':code, 'name':name});
     });
   }
 
@@ -93,30 +87,51 @@ function getReport(){
 
   $.ajax({
     url:HOME + 'get_report',
-    type:'GET',
+    type:'POST',
     cache:'false',
-    data:data,
-    success:function(rs){
+    data: {
+      'data' : JSON.stringify(h)
+    },
+    success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(isJson(rs)){
-        var source = $('#template').html();
-        var data = $.parseJSON(rs);
-        var output = $('#rs');
-        render(source,  data, output);
+
+      if(isJson(rs)) {
+        let ds = JSON.parse(rs);
+
+        if(ds.status === 'success') {
+          var source = $('#template').html();
+          var output = $('#rs');
+          render(source,  ds.data, output);
+        }
+        else {
+          showError(ds.message);
+        }
       }
+      else {
+        showError(rs);
+      }
+    },
+    error:function(rs) {
+      showError(rs);
     }
   });
 
 }
 
 
-function doExport(){
-	var allChannels = $('#allChannels').val();
-  var fromDate = $('#fromDate').val();
-  var toDate = $('#toDate').val();
+function doExport() {
+  clearErrorByClass('e');
 
-	if(allChannels == 0){
+  let h = {
+    'allChannels' : $('#allChannels').val(),
+    'fromDate' : $('#fromDate').val(),
+    'toDate' : $('#toDate').val(),
+    'order_by' : $('#orderBy').val(),
+    'wm_channels' : $('#wm-channels').is(':checked') ? 1 : 0,
+    'channels' : []
+  };
+
+	if(h.allChannels == 0){
 		var count = $('.chk:checked').length;
 		if(count == 0){
 			$('#channels-modal').modal('show');
@@ -124,18 +139,24 @@ function doExport(){
 		}
 	}
 
-  if(! isDate(fromDate) || ! isDate(toDate)){
+  if(! isDate(h.fromDate) || ! isDate(h.toDate)){
     swal('วันที่ไม่ถูกต้อง');
     $('#fromDate').addClass('has-error');
     $('#toDate').addClass('has-error');
     return false;
-  }else{
-    $('#fromDate').removeClass('has-error');
-    $('#toDate').removeClass('has-error');
   }
 
-	var token = $('#token').val();
+  if(h.allChannels == 0) {
+    $('.chk:checked').each(function(index, el) {
+      let code = $(this).val();
+      let name = $(this).data('name');
+      h.channels.push({'code':code, 'name':name});
+    });
+  }
+
+  $('#data').val(JSON.stringify(h));
+  let token = generateUID();
+  $('#token').val(token);
 	get_download(token);
   $('#reportForm').submit();
-
 }

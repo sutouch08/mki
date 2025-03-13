@@ -102,7 +102,7 @@ class Channels_model extends CI_Model
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
   public function get_name($code)
@@ -113,7 +113,7 @@ class Channels_model extends CI_Model
       return $rs->row()->name;
     }
 
-    return FALSE;
+    return NULL;
   }
 
 

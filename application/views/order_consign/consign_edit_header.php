@@ -15,18 +15,39 @@
     	<label>ลูกค้า[ในระบบ]</label>
 			<input type="text" class="form-control input-sm edit" id="customer-name" name="customer" value="<?php echo $order->customer_name; ?>" disabled />
     </div>
-		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
+		<div class="col-lg-4 col-md-4-harf col-sm-4-harf col-xs-6 padding-5">
 	    <label>โซน[ฝากขาย]</label>
 			<input type="text" class="form-control input-sm edit" name="zone" id="zone" value="<?php echo $order->zone_name; ?>" required disabled/>
 	  </div>
 
-	  <div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-3 padding-5">
+		<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label>ตัดรอบออเดอร์</label>
+	    <select class="width-100 e edit" id="order-round" disabled>
+	      <option value="">กรุณาเลือก</option>
+	      <?php echo select_order_round($order->order_round); ?>
+	    </select>
+	  </div>
+
+		<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label>รอบจัดส่ง</label>
+	    <select class="width-100 e edit" id="shipping-round" disabled>
+	      <option value="">กรุณาเลือก</option>
+	      <?php echo select_shipping_round($order->shipping_round); ?>
+	    </select>
+	  </div>
+
+		<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	    <label>วันที่จัดส่ง</label>
+	    <input type="text" class="width-100 e text-center edit" id="ship-date" value="<?php echo empty($order->shipping_date) ? NULL : thai_date($order->shipping_date); ?>" readonly disabled/>
+	  </div>
+
+	  <div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-3 padding-5 hide">
 	    <label>GP[%]</label>
 			<input type="text" class="form-control input-sm text-center edit" name="gp" id="gp" value="<?php echo $order->gp; ?>" disabled />
 	  </div>
 
 		<?php if($order->state < 4 && ($this->pm->can_add OR $this->pm->can_edit)) : ?>
-			<div class="col-lg-10 col-md-6 col-sm-5 col-xs-9 padding-5">
+			<div class="col-lg-7 col-md-11 col-sm-10-harf col-xs-9 padding-5">
 				<label>หมายเหตุ</label>
 				<input type="text" class="form-control input-sm edit" name="remark" id="remark" value="<?php echo $order->remark; ?>" disabled />
 			</div>
@@ -36,7 +57,7 @@
 				<button type="button" class="btn btn-xs btn-success btn-block hide" id="btn-update" onclick="updateOrder()"><i class="fa fa-save"></i> บันทึก</i></button>
 			</div>
 		<?php else : ?>
-			<div class="col-lg-11 col-md-7 col-sm-6-harf col-xs-12 padding-5">
+			<div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 padding-5">
 				<label>หมายเหตุ</label>
 				<input type="text" class="form-control input-sm edit" name="remark" id="remark" value="<?php echo $order->remark; ?>" disabled />
 			</div>

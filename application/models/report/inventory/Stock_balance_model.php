@@ -10,10 +10,11 @@ class Stock_balance_model extends CI_Model
   public function get_current_stock_balance($allProduct, $pdFrom, $pdTo, $allWhouse, $warehouse)
   {
     $this->db
-    ->select('products.barcode, products.code, products.name, products.cost')
+    ->select('products.barcode, products.code, products.name, products.cost, unit.name AS unit_name')
     ->select_sum('stock.qty')
     ->from('stock')
-    ->join('products', 'stock.product_code = products.code', 'left');
+    ->join('products', 'stock.product_code = products.code', 'left')
+    ->join('unit', 'products.unit_code = unit.code', 'left');
 
     //--- if specify warehouse
     if(empty($allWhouse))
@@ -47,9 +48,10 @@ class Stock_balance_model extends CI_Model
   {
     $date = to_date($date);
 
-    $qr  = "SELECT pd.barcode, pd.code, pd.name, pd.cost, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
+    $qr  = "SELECT pd.barcode, pd.code, pd.name, pd.cost, un.name AS unit_name, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
     $qr .= "FROM stock_movement AS s ";
     $qr .= "LEFT JOIN products AS pd ON s.product_code = pd.code ";
+    $qr .= "LEFT JOIN unit AS un ON pd.unit_code = un.code ";
 
     if($allWhouse == 0)
     {

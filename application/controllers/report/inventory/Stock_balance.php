@@ -11,13 +11,12 @@ class Stock_balance extends PS_Controller
   {
     parent::__construct();
     $this->home = base_url().'report/inventory/stock_balance';
-    //$this->title = label_value($this->menu_code);
     $this->load->model('report/inventory/stock_balance_model');
+    $this->load->model('masters/warehouse_model');
   }
 
   public function index()
   {
-    $this->load->model('masters/warehouse_model');
     $whList = $this->warehouse_model->get_all_warehouse();
     $ds['whList'] = $whList;
     $this->load->view('report/inventory/stock_balance_report', $ds);
@@ -44,7 +43,9 @@ class Stock_balance extends PS_Controller
       $i = 1;
       foreach($warehouse as $wh)
       {
-        $wh_list .= $i === 1 ? $wh : ', '.$wh;
+        $whsName = $this->warehouse_model->get_name($wh);
+
+        $wh_list .= $i === 1 ? $wh.' : '.$whsName : ', '.$wh.' : '.$whsName;
         $i++;
       }
     }
@@ -80,6 +81,7 @@ class Stock_balance extends PS_Controller
           'pdName' => $rs->name,
           'cost' => number($rs->cost, 2),
           'qty' => number($rs->qty),
+          'unit' => $rs->unit_name,
           'amount' => number($rs->cost * $rs->qty, 2)
         );
 
@@ -135,7 +137,9 @@ class Stock_balance extends PS_Controller
       $i = 1;
       foreach($warehouse as $wh)
       {
-        $wh_list .= $i === 1 ? $wh : ', '.$wh;
+        $whsName = $this->warehouse_model->get_name($wh);
+
+        $wh_list .= $i === 1 ? $wh.' : '.$whsName : ', '.$wh.' : '.$whsName;
         $i++;
       }
     }
@@ -163,20 +167,21 @@ class Stock_balance extends PS_Controller
 
     //--- set report title header
     $this->excel->getActiveSheet()->setCellValue('A1', $report_title);
-    $this->excel->getActiveSheet()->mergeCells('A1:G1');
+    $this->excel->getActiveSheet()->mergeCells('A1:H1');
     $this->excel->getActiveSheet()->setCellValue('A2', $wh_title);
-    $this->excel->getActiveSheet()->mergeCells('A2:G2');
+    $this->excel->getActiveSheet()->mergeCells('A2:H2');
     $this->excel->getActiveSheet()->setCellValue('A3', $pd_title);
-    $this->excel->getActiveSheet()->mergeCells('A3:G3');
+    $this->excel->getActiveSheet()->mergeCells('A3:H3');
 
     //--- set Table header
     $this->excel->getActiveSheet()->setCellValue('A4', 'ลำดับ');
     $this->excel->getActiveSheet()->setCellValue('B4', 'บาร์โค้ด');
     $this->excel->getActiveSheet()->setCellValue('C4', 'รหัส');
     $this->excel->getActiveSheet()->setCellValue('D4', 'สินค้า');
-    $this->excel->getActiveSheet()->setCellValue('E4', 'ทุน');
-    $this->excel->getActiveSheet()->setCellValue('F4', 'จำนวน');
-    $this->excel->getActiveSheet()->setCellValue('G4', 'มูลค่า');
+    $this->excel->getActiveSheet()->setCellValue('E4', 'หน่วยนับ');
+    $this->excel->getActiveSheet()->setCellValue('F4', 'ทุน');
+    $this->excel->getActiveSheet()->setCellValue('G4', 'จำนวน');
+    $this->excel->getActiveSheet()->setCellValue('H4', 'มูลค่า');
 
     $row = 5;
     if(!empty($result))
@@ -188,9 +193,10 @@ class Stock_balance extends PS_Controller
         $this->excel->getActiveSheet()->setCellValue('B'.$row, $rs->barcode);
         $this->excel->getActiveSheet()->setCellValue('C'.$row, $rs->code);
         $this->excel->getActiveSheet()->setCellValue('D'.$row, $rs->name);
-        $this->excel->getActiveSheet()->setCellValue('E'.$row, $rs->cost);
-        $this->excel->getActiveSheet()->setCellValue('F'.$row, $rs->qty);
-        $this->excel->getActiveSheet()->setCellValue('G'.$row, '=E'.$row.'*F'.$row);
+        $this->excel->getActiveSheet()->setCellValue('E'.$row, $rs->unit_name);
+        $this->excel->getActiveSheet()->setCellValue('F'.$row, $rs->cost);
+        $this->excel->getActiveSheet()->setCellValue('G'.$row, $rs->qty);
+        $this->excel->getActiveSheet()->setCellValue('H'.$row, '=F'.$row.'*G'.$row);
         $no++;
         $row++;
       }
@@ -198,15 +204,15 @@ class Stock_balance extends PS_Controller
       $res = $row -1;
 
       $this->excel->getActiveSheet()->setCellValue('A'.$row, 'รวม');
-      $this->excel->getActiveSheet()->mergeCells('A'.$row.':E'.$row);
-      $this->excel->getActiveSheet()->setCellValue('F'.$row, '=SUM(F5:F'.$res.')');
+      $this->excel->getActiveSheet()->mergeCells('A'.$row.':F'.$row);
       $this->excel->getActiveSheet()->setCellValue('G'.$row, '=SUM(G5:G'.$res.')');
+      $this->excel->getActiveSheet()->setCellValue('H'.$row, '=SUM(H5:H'.$res.')');
 
       $this->excel->getActiveSheet()->getStyle('A'.$row)->getAlignment()->setHorizontal('right');
       $this->excel->getActiveSheet()->getStyle('B5:B'.$res)->getNumberFormat()->setFormatCode('0');
-      $this->excel->getActiveSheet()->getStyle('F5:G'.$row)->getAlignment()->setHorizontal('right');
-      $this->excel->getActiveSheet()->getStyle('F5:F'.$row)->getNumberFormat()->setFormatCode('#,##0');
-      $this->excel->getActiveSheet()->getStyle('G5:G'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
+      $this->excel->getActiveSheet()->getStyle('G5:H'.$row)->getAlignment()->setHorizontal('right');
+      $this->excel->getActiveSheet()->getStyle('G5:H'.$row)->getNumberFormat()->setFormatCode('#,##0');
+      $this->excel->getActiveSheet()->getStyle('H5:H'.$row)->getNumberFormat()->setFormatCode('#,##0.00');
     }
 
     setToken($token);

@@ -131,6 +131,9 @@ class Consign_tr extends PS_Controller
           'gp' => empty($ds->gp) ? 0 : $ds->gp,
           'user' => $this->_user->uname,
           'sale_code' => empty($customer) ? NULL : $customer->sale_code,
+          'shipping_date' => db_date($ds->shipping_date),
+          'order_round' => get_null($ds->order_round),
+          'shipping_round' => get_null($ds->shipping_round),
           'remark' => get_null($ds->remark),
           'zone_code' => $zone->code,
           'warehouse_code' => NULL
@@ -256,6 +259,9 @@ class Consign_tr extends PS_Controller
             'sale_code' => empty($customer) ? NULL : $customer->sale_code,
             'gp' => empty($ds->gp) ? 0 : $ds->gp,
             'zone_code' => $zone->code,
+            'shipping_date' => db_date($ds->shipping_date),
+            'order_round' => get_null($ds->order_round),
+            'shipping_round' => get_null($ds->shipping_round),
             'remark' => get_null($ds->remark)
           );
 

@@ -5,7 +5,16 @@ window.addEventListener('load', () => {
    zoneInit(customer_code, false);
 })
 
+
 $('#date').datepicker({
+  dateFormat:'dd-mm-yy',
+  onClose:function(sd) {
+    $('#ship-date').datepicker('option', 'minDate', sd)
+  }
+});
+
+
+$('#ship-date').datepicker({
   dateFormat:'dd-mm-yy'
 });
 
@@ -21,7 +30,10 @@ function add() {
       'zone_code' : $('#zone_code').val(),
       'zone_name' : $('#zone').val(),
       'gp' : parseDefault(parseFloat($('#gp').val()), 0),
-      'remark' : $('#remark').val().trim()
+      'remark' : $('#remark').val().trim(),
+      'order_round' : $('#order-round').val(),
+      'shipping_round' : $('#shipping-round').val(),
+      'shipping_date' : $('#ship-date').val()
     };
 
     if( ! isDate(h.date)) {
@@ -406,7 +418,10 @@ function updateOrder() {
       'zone_code' : $('#zone_code').val(),
       'zone_name' : $('#zone').val(),
       'gp' : parseDefault(parseFloat($('#gp').val()), 0),
-      'remark' : $('#remark').val().trim()
+      'remark' : $('#remark').val().trim(),
+      'order_round' : $('#order-round').val(),
+      'shipping_round' : $('#shipping-round').val(),
+      'shipping_date' : $('#ship-date').val()
     };
 
     if( ! isDate(h.date)) {

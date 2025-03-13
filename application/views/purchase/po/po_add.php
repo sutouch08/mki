@@ -45,6 +45,6 @@
   </div>
 </form>
 <hr class="margin-top-15">
-<script src="<?php echo base_url(); ?>scripts/purchase/po.js"></script>
-<script src="<?php echo base_url(); ?>scripts/purchase/po_add.js"></script>
+<script src="<?php echo base_url(); ?>scripts/purchase/po.js?v=<?php echo date('Ymd');?>"></script>
+<script src="<?php echo base_url(); ?>scripts/purchase/po_add.js?v=<?php echo date('Ymd');?>"></script>
 <?php $this->load->view('include/footer'); ?>

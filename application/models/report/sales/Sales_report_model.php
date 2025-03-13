@@ -92,49 +92,81 @@ class Sales_report_model extends CI_Model
   }
 
 
-
-
-	///---- sale by channels
-	public function get_sum_channels_sales_by_date_upd(array $ds = array())
+  public function get_sum_wm($from_date, $to_date)
   {
-    if(!empty($ds))
+    $rs = $this->db->select_sum('qty')
+    ->select_sum('total_amount_ex', 'amount')
+    ->where('role', 'M')
+    ->where('date_upd >=', from_date($from_date))
+    ->where('date_upd <=', to_date($to_date))
+    ->get('order_sold');
+
+    if($rs->num_rows() === 1)
     {
-			$this->db
-			->select('channels_code AS code, channels_name AS name')
-			->select_sum('qty')
-			->select_sum('total_amount_ex', 'amount')
-			->where_in('role', array('S', 'O'))
-			->where('date_upd >=', $ds['fromDate'])
-			->where('date_upd <=', $ds['toDate']);
-
-			if(empty($ds['allChannels']) && !empty($ds['channels']))
-			{
-				$this->db->where_in('channels_code', $ds['channels']);
-			}
-
-			$this->db->group_by('channels_code');
-
-			if(!empty($ds['orderBy']))
-			{
-				$this->db->order_by($ds['orderBy'], 'DESC');
-			}
-			else
-			{
-				$this->db->order_by('amount', 'DESC');
-			}
-
-      $rs = $this->db->get('order_sold');
-
-      if($rs->num_rows() > 0)
-      {
-        return $rs->result();
-      }
-
-      return FALSE;
+      return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
+
+  public function get_sum_sales_by_channels($channels, $from_date, $to_date)
+  {
+    $rs = $this->db
+    ->select_sum('qty')
+    ->select_sum('total_amount_ex', 'amount')
+    ->where_in('role', ['S', 'O'])
+    ->where('channels_code', $channels)
+    ->where('date_upd >=', from_date($from_date))
+    ->where('date_upd <=', to_date($to_date))
+    ->get('order_sold');
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row();
+    }
+
+    return NULL;
+  }
+
+	// ///---- sale by channels
+	// public function get_sum_channels_sales_by_date_upd(array $ds = array())
+  // {
+  //   if( ! empty($ds))
+  //   {
+	// 		$this->db
+	// 		->select('channels_code AS code, channels_name AS name')
+	// 		->select_sum('qty')
+	// 		->select_sum('total_amount_ex', 'amount')
+	// 		->where_in('role', array('S', 'O', 'M'))
+	// 		->where('date_upd >=', $ds['fromDate'])
+	// 		->where('date_upd <=', $ds['toDate']);
+  //
+	// 		if(empty($ds['allChannels']) && !empty($ds['channels']))
+	// 		{
+	// 			$this->db->where_in('channels_code', $ds['channels']);
+	// 		}
+  //
+	// 		$this->db->group_by('channels_code');
+  //
+	// 		if(!empty($ds['orderBy']))
+	// 		{
+	// 			$this->db->order_by($ds['orderBy'], 'DESC');
+	// 		}
+	// 		else
+	// 		{
+	// 			$this->db->order_by('amount', 'DESC');
+	// 		}
+  //
+  //     $rs = $this->db->get('order_sold');
+  //
+  //     if($rs->num_rows() > 0)
+  //     {
+  //       return $rs->result();
+  //     }
+  //   }
+  //
+  //   return NULL;
+  // }
 
 
 

@@ -115,22 +115,23 @@
 <script id="template" type="text/x-handlebars-template">
   <table class="table table-bordered table-striped">
     <tr>
-      <th colspan="7" class="text-center">รายงานสินค้าคงเหลือ ณ วันที่ {{ reportDate }}</th>
+      <th colspan="8" >รายงานสินค้าคงเหลือ ณ วันที่ {{ reportDate }}</th>
     </tr>
     <tr>
-      <th colspan="7" class="text-center"> คลัง : {{ whList }} </th>
+      <th colspan="8"> คลัง : {{ whList }} </th>
     </tr>
 		<tr>
-      <th colspan="7" class="text-center"> โซน : {{ zoneCode }} </th>
+      <th colspan="8"> โซน : {{ zoneCode }} </th>
     </tr>
     <tr>
-      <th colspan="7" class="text-center"> สินค้า : {{ productList }} </th>
+      <th colspan="8"> สินค้า : {{ productList }} </th>
     </tr>
     <tr class="font-size-12">
       <th class="fix-width-40 middle text-center">#</th>
 			<th class="fix-width-200 middle text-center">โซน</th>
       <th class="fix-width-150 middle text-center">รหัส</th>
       <th class="min-width-200 middle text-center">สินค้า</th>
+			<th class="fix-width-100 middle text-center">หน่วยนับ</th>
       <th class="fix-width-100 middle text-right">ทุน</th>
       <th class="fix-width-100 text-right middle">คงเหลือ</th>
       <th class="fix-width-120 text-right middle">มูลค่า</th>
@@ -138,12 +139,12 @@
 {{#each bs}}
   {{#if nodata}}
     <tr>
-      <td colspan="7" align="center"><h4>-----  ไม่พบสินค้าคงเหลือตามเงื่อนไขที่กำหนด  -----</h4></td>
+      <td colspan="8" align="center"><h4>-----  ไม่พบสินค้าคงเหลือตามเงื่อนไขที่กำหนด  -----</h4></td>
     </tr>
   {{else}}
     {{#if @last}}
     <tr class="font-size-14">
-      <td colspan="5" class="text-right">รวม</td>
+      <td colspan="6" class="text-right">รวม</td>
       <td class="text-right">{{ totalQty }}</td>
       <td class="text-right">{{ totalAmount }}</td>
     </tr>
@@ -153,6 +154,7 @@
       <td class="middle text-center">{{ zone }}</td>
       <td class="middle">{{ pdCode }}</td>
       <td class="middle">{{ pdName }}</td>
+			<td class="middle">{{ unit }}</td>
       <td class="middle text-right">{{ cost }}</td>
       <td class="middle text-right">{{ qty }}</td>
       <td class="middle text-right">{{ amount }}</td>
@@ -163,5 +165,5 @@
   </table>
 </script>
 
-<script src="<?php echo base_url(); ?>scripts/report/inventory/stock_balance_zone.js"></script>
+<script src="<?php echo base_url(); ?>scripts/report/inventory/stock_balance_zone.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php $this->load->view("include/footer"); ?>

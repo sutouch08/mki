@@ -62,17 +62,18 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:950px;">
+		<table class="table table-striped table-hover border-1" style="min-width:1100px;">
 			<thead>
 				<tr>
 					<th class="fix-width-100 middle"></th>
-					<th class="fix-width-50 middle text-center"><?php label('num'); ?></th>
-					<th class="fix-width-100 middle text-center"><?php label('date'); ?></th>
-					<th class="fix-width-150 middle"><?php label('doc_num'); ?></th>
-					<th class="min-width-200 middle"><?php label('vender'); ?></th>
-					<th class="fix-width-150 middle text-right"><?php label('amount'); ?></th>
-					<th class="fix-width-100 middle"><?php label('due_date'); ?></th>
-					<th class="fix-width-100 middle text-center"><?php label('status'); ?></th>
+					<th class="fix-width-50 middle text-center">#</th>
+					<th class="fix-width-100 middle text-center">วันที่</th>
+					<th class="fix-width-150 middle">เลขที่เอกสาร</th>
+					<th class="min-width-200 middle">ผู้ขาย</th>
+					<th class="fix-width-150 middle">ผู้ดำเนินการ</th>
+					<th class="fix-width-150 middle text-right">มูลค่า</th>
+					<th class="fix-width-100 middle">วันครบกำหนด</th>
+					<th class="fix-width-100 middle text-center">สถานะ</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -93,6 +94,7 @@
               <td class="middle text-center"><?php echo thai_date($rs->date_add); ?></td>
               <td class="middle"><?php echo $rs->code; ?></td>
               <td class="middle"><?php echo $rs->vender_name; ?></td>
+							<td class="middle"><?php echo get_display_name($rs->user); ?></td>
 							<td class="middle text-right"><?php echo number($rs->total_amount, 2); ?></td>
               <td class="middle"><?php echo thai_date($rs->due_date); ?></td>
               <td class="middle text-center">
@@ -135,6 +137,6 @@
 </div>
 
 
-<script src="<?php echo base_url(); ?>scripts/purchase/po.js"></script>
+<script src="<?php echo base_url(); ?>scripts/purchase/po.js?v=<?php echo date('Ymd');?>"></script>
 
 <?php $this->load->view('include/footer'); ?>

@@ -37,7 +37,7 @@ $btn_tab_item = $PRODUCT_TAB_TYPE == 'item' ? 'btn-success' : '';
     </div>
     <div class="divider-hidden"></div>
 	-->
-		
+
 		<div class="col-sm-3"><span class="form-control left-label">การจำกัดการแสดงผลสต็อก</span></div>
 		<div class="col-sm-9">
 			<input type="text" class="form-control input-sm input-small text-center" name="STOCK_FILTER" required value="<?php echo $STOCK_FILTER; ?>" />
@@ -130,6 +130,25 @@ $btn_tab_item = $PRODUCT_TAB_TYPE == 'item' ? 'btn-success' : '';
 			<input type="hidden" name="PRODUCT_TAB_TYPE" id="product-tab-type" value="<?php echo $PRODUCT_TAB_TYPE; ?>" />
     </div>
     <div class="divider-hidden"></div>
+
+		<div class="col-sm-3"><span class="form-control left-label">ช่องทางขายสำหรับฝากขาย</span></div>
+		<div class="col-sm-9">
+			<select class="form-control input-medium" name="CONSIGN_ORDER_CHANNELS" >
+				<option value="">ไม่ระบุ</option>
+				<?php echo select_channels($CONSIGN_ORDER_CHANNELS); ?>
+			</select>
+			<span class="help-block">กำหนดช่องทางขายที่ใช้สำหรับการตัดยอกฝากขาย</span>
+		</div>
+		<div class="divider-hidden"></div>
+
+		<div class="col-sm-3"><span class="form-control left-label">การขำระเงินสำหรับฝากขาย</span></div>
+		<div class="col-sm-9">
+			<select class="form-control input-medium" name="CONSIGN_ORDER_PAYMENT" >
+				<?php echo select_payment_method($CONSIGN_ORDER_PAYMENT); ?>
+			</select>
+			<span class="help-block">กำหนดช่องทางการชำระเงินเริ่มต้นที่ใช้สำหรับการตัดยอดฝากขาย</span>
+		</div>
+		<div class="divider-hidden"></div>
 
     <div class="col-sm-9 col-sm-offset-3">
 			<button type="button" class="btn btn-sm btn-success" onClick="updateConfig('orderForm')"><i class="fa fa-save"></i> บันทึก</button>

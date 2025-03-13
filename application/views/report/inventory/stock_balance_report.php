@@ -95,36 +95,35 @@
 </div>
 
 
-
-
 <script id="template" type="text/x-handlebars-template">
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped" style="min-width:800px;">
     <tr>
-      <th colspan="6" class="text-center">รายงานสินค้าคงเหลือ ณ วันที่ {{ reportDate }}</th>
+      <th colspan="7" class="">รายงานสินค้าคงเหลือ ณ วันที่ {{ reportDate }}</th>
     </tr>
     <tr>
-      <th colspan="6" class="text-center"> คลัง : {{ whList }} </th>
+      <th colspan="7" class=""> คลัง : {{ whList }} </th>
     </tr>
     <tr>
-      <th colspan="6" class="text-center"> สินค้า : {{ productList }} </th>
+      <th colspan="7" class=""> สินค้า : {{ productList }} </th>
     </tr>
     <tr class="font-size-12">
-      <th class="width-5 middle text-center">ลำดับ</th>
-      <th class="width-15 middle text-center">รหัส</th>
-      <th class="width-30 middle text-center">สินค้า</th>
-      <th class="width-10 middle text-right">ทุน</th>
-      <th class="width-10 text-right middle">คงเหลือ</th>
-      <th class="width-15 text-right middle">มูลค่า</th>
+      <th class="fix-width-50 middle text-center">ลำดับ</th>
+      <th class="fix-width-150 middle text-center">รหัส</th>
+      <th class="min-width-200 middle text-center">สินค้า</th>
+			<th class="fix-width-100 middle text-center">หน่วยนับ</th>
+      <th class="fix-width-100 middle text-right">ทุน</th>
+      <th class="fix-width-100 text-right middle">คงเหลือ</th>
+      <th class="fix-width-100 text-right middle">มูลค่า</th>
     </tr>
 {{#each bs}}
   {{#if nodata}}
     <tr>
-      <td colspan="6" align="center"><h4>-----  ไม่พบสินค้าคงเหลือตามเงื่อนไขที่กำหนด  -----</h4></td>
+      <td colspan="7" align="center"><h4>-----  ไม่พบสินค้าคงเหลือตามเงื่อนไขที่กำหนด  -----</h4></td>
     </tr>
   {{else}}
     {{#if @last}}
     <tr class="font-size-14">
-      <td colspan="4" class="text-right">รวม</td>
+      <td colspan="5" class="text-right">รวม</td>
       <td class="text-right">{{ totalQty }}</td>
       <td class="text-right">{{ totalAmount }}</td>
     </tr>
@@ -133,6 +132,7 @@
       <td class="middle text-center">{{no}}</td>
       <td class="middle">{{ pdCode }}</td>
       <td class="middle">{{ pdName }}</td>
+			<td class="middle">{{ unit }}</td>
       <td class="middle text-right">{{ cost }}</td>
       <td class="middle text-right">{{ qty }}</td>
       <td class="middle text-right">{{ amount }}</td>

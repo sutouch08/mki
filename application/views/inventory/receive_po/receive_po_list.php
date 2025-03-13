@@ -75,6 +75,7 @@
 					<th class="fix-width-120 middle"><?php label('inv'); ?></th>
 					<th class="fix-width-120 middle">ใบสั่งผลิต</th>
 					<th class="min-width-200 middle"><?php label('vender'); ?></th>
+					<th class="fix-width-150 middle">ผู้ดำเนินการ</th>
 					<th class="fix-width-100 middle text-center"><?php label('qty'); ?></th>
 					<th class="fix-width-80 middle text-center"><?php label('status'); ?></th>
           <th class="fix-width-100"></th>
@@ -91,6 +92,7 @@
               <td class="middle"><?php echo $rs->invoice_code; ?></td>
               <td class="middle"><?php echo $rs->po_code; ?></td>
               <td class="middle"><?php echo $rs->vender_name; ?></td>
+							<td class="middle"><?php echo get_display_name($rs->user); ?></td>
               <td class="middle text-center"><?php echo $rs->qty; ?></td>
               <td class="middle text-center">
                 <?php if($rs->status == 0 ) : ?>

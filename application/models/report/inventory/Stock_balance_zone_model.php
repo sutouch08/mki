@@ -10,10 +10,11 @@ class Stock_balance_zone_model extends CI_Model
   public function get_current_stock_zone(array $ds = array())
   {
     $this->db
-    ->select('products.code, products.name, products.cost')
+    ->select('products.code, products.name, products.cost, unit.name AS unit_name')
     ->select('zone.code AS zone_code, zone.name AS zone_name, stock.qty')
     ->from('stock')
     ->join('products', 'stock.product_code = products.code', 'left')
+    ->join('unit', 'products.unit_code = unit.code', 'left')
     ->join('zone', 'stock.zone_code = zone.code', 'left');
 
     if(empty($ds['allZone']) && !empty($ds['zoneCode']))
@@ -55,9 +56,10 @@ class Stock_balance_zone_model extends CI_Model
     $date = to_date($date);
 
     $qr  = "SELECT z.code AS zone_code, z.name AS zone_name, ";
-    $qr .= "pd.code, pd.name, pd.cost, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
+    $qr .= "pd.code, pd.name, pd.cost, un.name AS unit_name, (SUM(s.move_in) - SUM(s.move_out)) AS qty ";
     $qr .= "FROM stock_movement AS s ";
     $qr .= "JOIN products AS pd ON s.product_code = pd.code ";
+    $ar .= "JOIN unit AS un ON pd.unit_code = un.code ";
     $qr .= "JOIN zone AS z ON s.zone_code = z.code ";
 
     $qr .= "WHERE s.date_add <= '{$date}' ";
@@ -91,7 +93,7 @@ class Stock_balance_zone_model extends CI_Model
 
 
     $qr .= "GROUP BY pd.code, s.zone_code ";
-    $qr .= "ORDER BY pd.code ASC";    
+    $qr .= "ORDER BY pd.code ASC";
 
     $rs = $this->db->query($qr);
 

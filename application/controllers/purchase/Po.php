@@ -325,7 +325,8 @@ class Po extends PS_Controller
           'no' => $no,
           'id' => $rs->id,
           'product_code' => $rs->product_code,
-          'product_name' => $this->products_model->get_name($rs->product_code),
+          'product_name' => $rs->product_name,
+          'unit_name' => $rs->unit_name,
           'price' => $rs->price,
           'qty' => $rs->qty,
           'amount' => number($rs->total_amount, 2)

@@ -1,15 +1,16 @@
 <div class="row">
-  <div class="col-sm-12">
-    <table class="table table-bordered border-1">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+    <table class="table table-bordered border-1" style="min-width:800px;">
       <thead>
         <tr>
-          <th class="width-5 text-center"><?php label('num'); ?></th>
-          <th class="width-20"><?php label('item_code'); ?></th>
-          <th class=""><?php label('item_name'); ?></th>
-          <th class="width-10 text-center"><?php label('price'); ?></th>
-          <th class="width-10 text-center"><?php label('qty'); ?></th>
-          <th class="width-20 text-center"><?php label('amount'); ?></th>
-          <th class="width-5 text-center"></th>
+          <th class="fix-width-50 text-center">#</th>
+          <th class="fix-width-100">รหัสสินค้า</th>
+          <th class="min-width-200">ชื่อสินค้า</th>
+          <th class="fix-width-100">หน่วยนับ</th>
+          <th class="fix-width-100 text-right">ราคา</th>
+          <th class="fix-width-100 text-right">จำนวน</th>
+          <th class="fix-width-100 text-right">มูลค่า</th>
+          <th class="fix-width-50 text-center"></th>
         </tr>
       </thead>
       <tbody id="detail-table">
@@ -22,6 +23,7 @@
           <td class="middle text-center no"><?php echo $no; ?></td>
           <td class="middle"><?php echo $rs->product_code; ?></td>
           <td class="middle"><?php echo $rs->product_name; ?></td>
+          <td class="middle"><?php echo $rs->unit_name; ?></td>
           <td class="middle text-right">
             <?php if($po->status > 0) : ?>
               <?php echo number($rs->price, 2); ?>
@@ -52,7 +54,7 @@
           <?php $total_amount += $rs->total_amount; ?>
         <?php endforeach; ?>
         <tr>
-          <td colspan="4" class="text-right"><?php label('total'); ?></td>
+          <td colspan="5" class="text-right"><?php label('total'); ?></td>
           <td class="text-right" id="total-qty"><?php echo number($total_qty); ?></td>
           <td class="text-right" id="total-amount"><?php echo number($total_amount, 2); ?></td>
           <td></td>
@@ -70,7 +72,7 @@
   {{#each this}}
     {{#if @last}}
     <tr>
-      <td colspan="4" class="text-right"><?php label('total'); ?></td>
+      <td colspan="5" class="text-right"><?php label('total'); ?></td>
       <td class="text-right">{{total_qty}}</td>
       <td class="text-right">{{total_amount}} </td>
       <td></td>
@@ -80,6 +82,7 @@
       <td class="middle text-center no">{{no}}</td>
       <td class="middle">{{product_code}}</td>
       <td class="middle">{{product_name}}</td>
+      <td class="middle">{{unit_name}}</td>
       <td class="middle text-center">
         <?php if($po->status > 1) : ?>
           {{price}}

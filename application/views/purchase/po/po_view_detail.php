@@ -53,13 +53,14 @@
     <table class="table table-striped table-bordered border-1">
       <thead>
         <tr>
-          <th class="width-5 text-center"><?php label('num'); ?></th>
-          <th class="width-20"><?php label('item_code'); ?></th>
-          <th class=""><?php label('item_name'); ?></th>
-          <th class="width-10 text-center"><?php label('price'); ?></th>
-          <th class="width-10 text-center"><?php label('qty'); ?></th>
-          <th class="width-20 text-center"><?php label('amount'); ?></th>
-					<th class="width-10 text-center"><?php label('received'); ?></th>
+          <th class="fix-width-50 text-center">#</th>
+          <th class="fix-width-100">รหัสสินค้า</th>
+          <th class="min-width-200">ชื่อสินค้า</th>
+					<th class="fix-width-100">หน่วยนับ</th>
+          <th class="fix-width-100 text-center">ราคา</th>
+          <th class="fix-width-100 text-center">จำนวน</th>
+          <th class="fix-width-100 text-center">มูลค่า</th>
+					<th class="fix-width-100 text-center">รับแล้ว</th>
         </tr>
       </thead>
       <tbody>
@@ -73,6 +74,7 @@
           <td class="middle text-center"><?php echo $no; ?></td>
           <td class="middle"><?php echo $rs->product_code; ?></td>
           <td class="middle"><?php echo $rs->product_name; ?></td>
+					<td class="middle"><?php echo $rs->unit_name; ?></td>
           <td class="middle text-right"><?php echo number($rs->price, 2); ?></td>
           <td class="middle text-right"><?php echo number($rs->qty, 2); ?></td>
           <td class="middle text-right" ><?php echo number($rs->total_amount, 2); ?></td>
@@ -84,14 +86,14 @@
 					<?php $total_received += $rs->received; ?>
         <?php endforeach; ?>
         <tr class="bold">
-          <td colspan="4" class="text-right"><?php label('total'); ?></td>
+          <td colspan="5" class="text-right"><?php label('total'); ?></td>
           <td class="text-right"><?php echo number($total_qty); ?></td>
           <td class="text-right"><?php echo number($total_amount, 2); ?></td>
 					<td class="middle text-right"><?php echo number($total_received); ?></td>
         </tr>
       <?php else : ?>
         <tr>
-          <td colspan="7" class="text-center">---- <?php label('no_content'); ?> ----</td>
+          <td colspan="8" class="text-center">---- <?php label('no_content'); ?> ----</td>
         </tr>
       <?php endif; ?>
       </tbody>

@@ -398,14 +398,6 @@ class Consign_order extends PS_Controller
 
     $details = $this->consign_order_model->get_details($code);
 
-    if(!empty($details))
-    {
-      foreach($details as $rs)
-      {
-        $rs->barcode = $this->products_model->get_barcode($rs->product_code);
-      }
-    }
-
     $ds = array(
       'doc' => $doc,
       'details' => $details
@@ -763,6 +755,169 @@ class Consign_order extends PS_Controller
           {
             $this->db->trans_rollback();
           }
+        }
+        else
+        {
+          $sc = FALSE;
+          $this->error = "สถานะเอกสารไม่ถูกต้อง";
+        }
+      }
+      else
+      {
+        $sc = FALSE;
+        $this->error = get_error_message('notfound');
+      }
+    }
+    else
+    {
+      $sc = FALSE;
+      $this->error = get_error_message('required');
+    }
+
+    $this->response($sc);
+  }
+
+  public function clear_credit_payment($order)
+  {
+    $this->load->model('masters/customers_model');
+    $this->load->model('account/order_credit_model');
+    //--- ดึงยอดที่เคยตั้งหนี้ไว้ แล้วทำให้เป็นค่าลบเพื่อบวกกลับเข้ายอดใช้ไป
+    $credit = $this->order_credit_model->get($order->code);
+
+    if( ! empty($credit))
+    {
+      $amount = $credit->amount * (-1);
+      //--- คืนยอดใช้ไป
+      if($this->customers_model->update_used($order->customer_code, $amount))
+      {
+        //--- ลบรายการตั้งหนี้
+        return $this->order_credit_model->delete($order->code);
+      }
+
+      return FALSE;
+    }
+
+    return TRUE;
+  }
+  public function unsave_consign()
+  {
+    $sc = TRUE;
+
+    $this->load->model('inventory/movement_model');
+    $this->load->model('inventory/invoice_model');
+    $this->load->model('account/payment_receive_model');
+    $this->load->model('account/order_credit_model');
+    $this->load->model('account/order_repay_model');
+    $this->load->model("masters/warehouse_model");
+    $this->load->model('masters/customers_model');
+
+    $code = $this->input->post('code');
+
+    if( ! empty($code))
+    {
+      $doc = $this->consign_order_model->get($code);
+
+      if( ! empty($doc))
+      {
+        if( $doc->status == 1 )
+        {
+          //--- เช็คว่ามีใบเสร็จแล้วหรือยังถ้ามีใบเสร็จแล้วไม่ให้ย้อน
+          if( ! empty($this->order_repay_model->is_exists_reference($code)))
+          {
+            $sc = FALSE;
+            $this->error = "เอกสารนี้ถูกดึงไปรับชำระเงินแล้ว ไม่อนุญาติให้แก้ไข";
+          }
+
+          if($sc === TRUE)
+          {
+            $this->db->trans_begin();
+
+            //--- ลบรารการตั้งหนี้
+            if( ! $this->order_credit_model->delete($code))
+            {
+              $sc = FALSE;
+              $this->error = "ลบรายการตั้งหนี้ไม่สำเร็จ";
+            }
+
+            if($sc === TRUE)
+            {
+              //---- drop sold data -> drop movement -> rollback stock
+              $sold = $this->invoice_model->get_details($code);
+
+              if( ! empty($sold))
+              {
+                foreach($sold as $rs)
+                {
+                  if($sc === FALSE) { break; }
+
+                  //--- rollback stock
+                  if($rs->is_count)
+                  {
+                    if( ! $this->stock_model->update_stock_zone($rs->zone_code, $rs->product_code, $rs->qty))
+                    {
+                      $sc = FALSE;
+                      $this->error = "คืนสต็อกเข้าโซนไม่สำเร็จ";
+                    }
+                  }
+                } //--- end foreach
+
+                //---- drop sold data
+                if($sc === TRUE)
+                {
+                  if( ! $this->invoice_model->drop_order_sold($code))
+                  {
+                    $sc = FALSE;
+                    $this->error = "ลบรายการบันทึกขายไม่สำเร็จ";
+                  }
+                }
+
+                //--- drop movement
+                if($sc === TRUE)
+                {
+                  if( ! $this->movement_model->drop_movement($code))
+                  {
+                    $sc = FALSE;
+                    $this->error = "ลบ movement ไม่สำเร็จ";
+                  }
+                }
+              }
+            }
+
+            if($sc === TRUE)
+            {
+              //---- rollback detail status
+              $arr = ['status' => 0];
+
+              if( ! $this->consign_order_model->update_details($code, $arr))
+              {
+                $sc = FALSE;
+                $this->error = "เปลี่ยนสถานะรายการไม่สำเร็จ";
+              }
+            }
+
+
+            if($sc === TRUE)
+            {
+              //--- rollback doc status
+              $arr = ['status' => 0, 'update_user' => $this->_user->uname];
+
+              if( ! $this->consign_order_model->update($code, $arr))
+              {
+                $sc = FALSE;
+                $this->error = "เปลี่ยนสถานะเอกสารไม่สำเร็จ";
+              }
+            }
+
+            if($sc === TRUE)
+            {
+              $this->db->trans_commit();
+            }
+            else
+            {
+              $this->db->trans_rollback();
+            }
+
+          } //--- if $sc === TRUE
         }
         else
         {
