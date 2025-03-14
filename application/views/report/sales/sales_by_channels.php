@@ -39,6 +39,14 @@
   </div>
 
 	<div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
+    <label>ดึงตามวันที่</label>
+		<select class="form-control input-sm" id="sold_date" name="sold_date">
+			<option value="D">ดึงตามวันที่เอกสาร</option>
+			<option value="B">ดึงตามวันที่เปิดบิล</option>
+		</select>
+  </div>
+
+	<div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
     <label>order by</label>
 		<select class="form-control input-sm" id="orderBy" name="orderBy">
 			<option value="amount">เรียงตามมูลค่า</option>

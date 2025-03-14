@@ -100,8 +100,8 @@
 								<?php endif; ?>
 								<?php echo number($rs->pay_amount,2); ?>
 							</td>
-              <td class="middle"><?php echo $rs->user; ?></td>
 							<td class="middle"><?php echo $csr; ?></td>
+              <td class="middle"><?php echo $rs->user; ?></td>
               <td class="middle text-center"><?php echo $rs->acc_no; ?></td>
             </tr>
             <?php $no++; ?>

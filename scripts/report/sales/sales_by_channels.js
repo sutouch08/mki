@@ -55,6 +55,7 @@ function getReport() {
     'allChannels' : $('#allChannels').val(),
     'fromDate' : $('#fromDate').val(),
     'toDate' : $('#toDate').val(),
+    'sold_date' : $('#sold_date').val(),
     'order_by' : $('#orderBy').val(),
     'wm_channels' : $('#wm-channels').is(':checked') ? 1 : 0,
     'channels' : []
@@ -126,6 +127,7 @@ function doExport() {
     'allChannels' : $('#allChannels').val(),
     'fromDate' : $('#fromDate').val(),
     'toDate' : $('#toDate').val(),
+    'sold_date' : $('#sold_date').val(),
     'order_by' : $('#orderBy').val(),
     'wm_channels' : $('#wm-channels').is(':checked') ? 1 : 0,
     'channels' : []

@@ -118,13 +118,13 @@ class Sales_report_model extends CI_Model
   }
 
 
-  public function get_sum_wm($from_date, $to_date)
+  public function get_sum_wm($from_date, $to_date, $sold_date = 'D')
   {
     $this->db->select_sum('qty')
     ->select_sum('total_amount_ex', 'amount')
     ->where('role', 'M');
 
-    if($this->sold_date == 'B')
+    if($sold_date == 'B')
     {
       $this->db
       ->where('date_upd >=', from_date($from_date))
@@ -148,7 +148,7 @@ class Sales_report_model extends CI_Model
   }
 
 
-  public function get_sum_sales_by_channels($channels, $from_date, $to_date)
+  public function get_sum_sales_by_channels($channels, $from_date, $to_date, $sold_date = 'D')
   {
 
     $this->db
@@ -157,7 +157,7 @@ class Sales_report_model extends CI_Model
     ->where_in('role', ['S', 'O'])
     ->where('channels_code', $channels);
 
-    if($this->sold_date == 'B')
+    if($sold_date == 'B')
     {
       $this->db
       ->where('date_upd >=', from_date($from_date))

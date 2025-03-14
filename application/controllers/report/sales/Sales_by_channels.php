@@ -46,8 +46,9 @@ class Sales_by_channels extends PS_Controller
         }
       }
 
+      $sold_date = $ds->sold_date == 'B' ? '(วันที่เปิดบิล)' : '(วันที่เอกสาร)';
       //---  Report title
-      $bs['reportDate'] = thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/');
+      $bs['reportDate'] = thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/') . "&nbsp;&nbsp; {$sold_date}";
   		$bs['chList']   = $ds->allChannels == 1 ? 'ทั้งหมด' : $ch_list;
 
       $channels = $ds->allChannels == 1 ? $this->channels_model->get_all() : $ds->channels;
@@ -59,7 +60,7 @@ class Sales_by_channels extends PS_Controller
 
       if($ds->allChannels == 1 OR ! empty($ds->wm_channels))
       {
-        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate);
+        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate, $ds->sold_date);
 
         if( ! empty($sales))
         {
@@ -83,7 +84,7 @@ class Sales_by_channels extends PS_Controller
       {
         foreach($channels as $rs)
         {
-          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate);
+          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate, $ds->sold_date);
 
           if( ! empty($sales))
           {
@@ -188,7 +189,8 @@ class Sales_by_channels extends PS_Controller
 
       //---  Report title
       $report_title = 'รายงานยอดขาย แยกตามช่องทางการขาย';
-      $date_title = 'วันที่ : '.thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/');
+      $sold_date = $ds->sold_date == 'B' ? '(วันที่เปิดบิล)' : '(วันที่เอกสาร)';
+      $date_title = 'วันที่ : '.thai_date($ds->fromDate, FALSE, '/').' - '.thai_date($ds->toDate, FALSE, '/') . "&nbsp;&nbsp; {$sold_date}";
       $chList = $ds->allChannels == 1 ? 'ทั้งหมด' : $ch_list;
 
       //--- set report title header
@@ -214,7 +216,7 @@ class Sales_by_channels extends PS_Controller
 
       if($ds->allChannels == 1 OR ! empty($ds->wm_channels))
       {
-        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate);
+        $sales = $this->sales_report_model->get_sum_wm($ds->fromDate, $ds->toDate, $ds->sold_date);
 
         if( ! empty($sales))
         {
@@ -236,7 +238,7 @@ class Sales_by_channels extends PS_Controller
       {
         foreach($channels as $rs)
         {
-          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate);
+          $sales = $this->sales_report_model->get_sum_sales_by_channels($rs->code, $ds->fromDate, $ds->toDate, $ds->sold_date);
 
           if( ! empty($sales))
           {
