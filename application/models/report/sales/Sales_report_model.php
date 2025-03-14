@@ -1,9 +1,13 @@
 <?php
 class Sales_report_model extends CI_Model
 {
+  private $sold_date = 'D';
+
   public function __construct()
   {
     parent::__construct();
+
+    $this->sold_date = getConfig('ORDER_SOLD_DATE');
   }
 
 	public function get_sum_item_sales_by_date_upd(array $ds = array())
@@ -14,9 +18,20 @@ class Sales_report_model extends CI_Model
 			->select('product_code, product_name, price_ex AS price')
 			->select_sum('qty')
 			->select_sum('total_amount_ex', 'amount')
-			->where_in('role', array('S', 'O'))
-			->where('date_upd >=', $ds['fromDate'])
-			->where('date_upd <=', $ds['toDate']);
+			->where_in('role', array('S', 'O', 'M'));
+
+      if($this->sold_date == 'B')
+      {
+        $this->db
+        ->where('date_upd >=', from_date($ds['fromDate']))
+        ->where('date_upd <=', to_date($ds['toDate']));
+      }
+      else
+      {
+        $this->db
+        ->where('date_add >=', from_date($ds['fromDate']))
+        ->where('date_add <=', to_date($ds['toDate']));
+      }
 
 			if(empty($ds['allProduct']) && !empty($ds['pdFrom']) && !empty($ds['pdTo']))
 			{
@@ -58,9 +73,20 @@ class Sales_report_model extends CI_Model
 			->select('customer_code, customer_name')
 			->select_sum('qty')
 			->select_sum('total_amount_ex', 'amount')
-			->where_in('role', array('S', 'O'))
-			->where('date_upd >=', $ds['fromDate'])
-			->where('date_upd <=', $ds['toDate']);
+			->where_in('role', array('S', 'O', 'M'));
+
+      if($this->sold_date == 'B')
+      {
+        $this->db
+        ->where('date_upd >=', from_date($ds['fromDate']))
+        ->where('date_upd <=', to_date($ds['toDate']));
+      }
+      else
+      {
+        $this->db
+        ->where('date_add >=', from_date($ds['fromDate']))
+        ->where('date_add <=', to_date($ds['toDate']));
+      }
 
 			if(empty($ds['allCustomer']) && !empty($ds['cusFrom']) && !empty($ds['cusTo']))
 			{
@@ -94,12 +120,24 @@ class Sales_report_model extends CI_Model
 
   public function get_sum_wm($from_date, $to_date)
   {
-    $rs = $this->db->select_sum('qty')
+    $this->db->select_sum('qty')
     ->select_sum('total_amount_ex', 'amount')
-    ->where('role', 'M')
-    ->where('date_upd >=', from_date($from_date))
-    ->where('date_upd <=', to_date($to_date))
-    ->get('order_sold');
+    ->where('role', 'M');
+
+    if($this->sold_date == 'B')
+    {
+      $this->db
+      ->where('date_upd >=', from_date($from_date))
+      ->where('date_upd <=', to_date($to_date));
+    }
+    else
+    {
+      $this->db
+      ->where('date_add >=', from_date($from_date))
+      ->where('date_add <=', to_date($to_date));
+    }
+
+    $rs = $this->db->get('order_sold');
 
     if($rs->num_rows() === 1)
     {
@@ -109,16 +147,30 @@ class Sales_report_model extends CI_Model
     return NULL;
   }
 
+
   public function get_sum_sales_by_channels($channels, $from_date, $to_date)
   {
-    $rs = $this->db
+
+    $this->db
     ->select_sum('qty')
     ->select_sum('total_amount_ex', 'amount')
     ->where_in('role', ['S', 'O'])
-    ->where('channels_code', $channels)
-    ->where('date_upd >=', from_date($from_date))
-    ->where('date_upd <=', to_date($to_date))
-    ->get('order_sold');
+    ->where('channels_code', $channels);
+
+    if($this->sold_date == 'B')
+    {
+      $this->db
+      ->where('date_upd >=', from_date($from_date))
+      ->where('date_upd <=', to_date($to_date));
+    }
+    else
+    {
+      $this->db
+      ->where('date_add >=', from_date($from_date))
+      ->where('date_add <=', to_date($to_date));
+    }
+
+    $rs = $this->db->get('order_sold');
 
     if($rs->num_rows() === 1)
     {
@@ -131,7 +183,7 @@ class Sales_report_model extends CI_Model
 
   public function get_order_sold_by_date_upd(array $ds = array())
   {
-    if(!empty($ds))
+    if( ! empty($ds))
     {
       $this->db->select('sold.date_add,sold.date_upd, sold.reference, ch.name AS channels, pm.name AS payment');
       $this->db->select('cus.name AS customer_name, sold.customer_ref');
@@ -143,9 +195,20 @@ class Sales_report_model extends CI_Model
       $this->db->join('payment_method AS pm', 'sold.payment_code = pm.code', 'left');
       $this->db->join('customers AS cus', 'sold.customer_code = cus.code', 'left');
       $this->db->join('order_credit AS credit', 'sold.reference = credit.order_code', 'left');
-      $this->db->where_in('sold.role', array('S', 'O'));
-      $this->db->where('sold.date_upd >=', $ds['fromDate']);
-      $this->db->where('sold.date_upd <=', $ds['toDate']);
+      $this->db->where_in('sold.role', array('S', 'O', 'M'));
+
+      if($this->sold_date == 'B')
+      {
+        $this->db
+        ->where('sold.date_upd >=', from_date($ds['fromDate']))
+        ->where('sold.date_upd <=', to_date($ds['toDate']));
+      }
+      else
+      {
+        $this->db
+        ->where('sold.date_add >=', from_date($ds['fromDate']))
+        ->where('sold.date_add <=', to_date($ds['toDate']));
+      }
 
       if(empty($ds['allCustomer']) && !empty($ds['cusFrom']) && !empty($ds['cusTo']) )
       {
@@ -188,9 +251,20 @@ class Sales_report_model extends CI_Model
       $this->db->join('payment_method AS pm', 'sold.payment_code = pm.code', 'left');
       $this->db->join('customers AS cus', 'sold.customer_code = cus.code', 'left');
       $this->db->join('order_credit AS credit', 'sold.reference = credit.order_code', 'left');
-      $this->db->where_in('sold.role', array('S', 'O'));
-      $this->db->where('sold.date_upd >=', $ds['fromDate']);
-      $this->db->where('sold.date_upd <=', $ds['toDate']);
+      $this->db->where_in('sold.role', array('S', 'O', 'M'));
+
+      if($this->sold_date == 'B')
+      {
+        $this->db
+        ->where('sold.date_upd >=', from_date($ds['fromDate']))
+        ->where('sold.date_upd <=', to_date($ds['toDate']));
+      }
+      else
+      {
+        $this->db
+        ->where('sold.date_add >=', from_date($ds['fromDate']))
+        ->where('sold.date_add <=', to_date($ds['toDate']));
+      }
 
       if(empty($ds['allCustomer']) && !empty($ds['cusFrom']) && !empty($ds['cusTo']) )
       {
@@ -246,9 +320,20 @@ class Sales_report_model extends CI_Model
 				$this->db->where_in('role', array('S', 'O', 'M'));
 			}
 
+      if($this->sold_date == 'B')
+      {
+        $this->db
+        ->where('date_upd >=', from_date($ds['fromDate']))
+        ->where('date_upd <=', to_date($ds['toDate']));
+      }
+      else
+      {
+        $this->db
+        ->where('date_add >=', from_date($ds['fromDate']))
+        ->where('date_add <=', to_date($ds['toDate']));
+      }
+
 			$this->db
-			->where('date_add >=', $ds['fromDate'])
-			->where('date_add <=', $ds['toDate'])
 			->order_by('date_add', 'ASC')
 			->order_by('reference', 'ASC')
 			->order_by('is_count', 'DESC');
