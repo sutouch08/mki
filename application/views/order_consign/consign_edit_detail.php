@@ -21,37 +21,37 @@ $hide = $order->status == 1 ? 'hide' : '';
 
 <!--  Search Product -->
 <div class="row">
-	<div class="divider padding-5 visible-xs"></div>
-	<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-8 padding-5 margin-bottom-10 not-show">
-    <label>รุ่นสินค้า</label>
-    <input type="text" class="form-control input-sm text-center" id="pd-box" placeholder="ค้นรหัสสินค้า" />
-  </div>
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10 not-show">
-    <label class="not-show">รุ่นสินค้า</label>
-  	<button type="button" class="btn btn-xs btn-primary btn-block" onclick="getProductGrid()">แสดงสินค้า</button>
-  </div>
-
-	<div class="divider padding-5 visible-xs"></div>
-
-  <div class="col-lg-2-harf col-lg-offset-1 col-md-3 col-md-offset-1 col-sm-3 col-sm-offset-1 col-xs-12 padding-5 margin-bottom-10">
+  <div class="col-lg-2 col-lg-offset-2 col-md-2-harf col-sm-3-harf col-xs-8 padding-5 margin-bottom-10">
     <label>รหัสสินค้า</label>
     <input type="text" class="form-control input-sm text-center" id="item-code" placeholder="ค้นหารหัสสินค้า">
+  </div>
+  <div class="col-lg-3 col-md-3-harf col-sm-4-harf col-xs-8 padding-5 margin-bottom-10">
+    <label>ชื่อสินค้า</label>
+    <input type="text" class="form-control input-sm text-center" id="item-name" readonly>
   </div>
   <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>คงเหลือ</label>
     <input type="number" class="form-control input-sm text-center" id="stock-qty" disabled>
   </div>
   <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
+    <label>ค้างรับ</label>
+    <input type="number" class="form-control input-sm text-center" id="po-qty" disabled>
+  </div>
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
+    <label>ค้างส่ง</label>
+    <input type="number" class="form-control input-sm text-center" id="do-qty" disabled>
+  </div>
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-4 padding-5 margin-bottom-10">
     <label>จำนวน</label>
     <input type="number" class="form-control input-sm text-center" id="input-qty">
   </div>
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-4 padding-5 margin-bottom-10">
-    <label class="not-show">add</label>
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-12 padding-5 margin-bottom-10">
+    <label class="not-show">Add</label>
     <button type="button" class="btn btn-xs btn-primary btn-block" onclick="addItemToOrder()">เพิ่ม</button>
   </div>
-
-  <input type="hidden" id="auz" value="<?php echo getConfig('ALLOW_UNDER_ZERO'); ?>">
 </div>
+
+<input type="hidden" id="auz" value="<?php echo getConfig('ALLOW_UNDER_ZERO'); ?>">
 <hr class="margin-top-10 margin-bottom-0 padding-5" />
 
 
