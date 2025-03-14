@@ -51,40 +51,40 @@
 
 <div class="modal fade" id="channels-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog" id="modal" style="width:500px; max-width:95vw;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="title" id="modal_title">เลือกคลัง</h4>
-            </div>
-            <div class="modal-body" id="modal_body">
-							<div class="row" style="margin-left:0;">
-								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-									<label>
-										<input type="checkbox" class="ace" id="wm-channels" name="wm_channels" value="1"  />
-										<span class="lbl">&nbsp;&nbsp;&nbsp;  ตัดยอดฝากขาย</span>
-									</label>
-								</div>
-								<?php if(!empty($channels)) : ?>
-									<?php $no = 0; ?>
-									<?php foreach($channels as $rs) : ?>
-										<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-											<label>
-												<input type="checkbox" class="ace chk" id="channels_<?php echo $no; ?>" name="channels[<?php echo $no; ?>]" data-name="<?php echo $rs->name; ?>" value="<?php echo $rs->code; ?>" />
-												<span class="lbl">&nbsp;&nbsp;&nbsp;  <?php echo $rs->code; ?> | <?php echo $rs->name; ?></span>
-											</label>
-										</div>
-										<?php $no++; ?>
-									<?php endforeach; ?>
-								<?php endif;?>
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="title" id="modal_title">ช่องทางขาย</h4>
+			</div>
+			<div class="modal-body" id="modal_body">
+				<div class="row" style="margin-left:0;">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<label>
+							<input type="checkbox" class="ace" id="wm-channels" name="wm_channels" value="1"  />
+							<span class="lbl">&nbsp;&nbsp;&nbsp;  ตัดยอดฝากขาย</span>
+						</label>
+					</div>
+					<?php if(!empty($channels)) : ?>
+						<?php $no = 0; ?>
+						<?php foreach($channels as $rs) : ?>
+							<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+								<label>
+									<input type="checkbox" class="ace chk" id="channels_<?php echo $no; ?>" name="channels[<?php echo $no; ?>]" data-name="<?php echo $rs->name; ?>" value="<?php echo $rs->code; ?>" />
+									<span class="lbl">&nbsp;&nbsp;&nbsp;  <?php echo $rs->code; ?> | <?php echo $rs->name; ?></span>
+								</label>
 							</div>
+							<?php $no++; ?>
+						<?php endforeach; ?>
+					<?php endif;?>
+				</div>
 
-        		<div class="divider" ></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-block" data-dismiss="modal">ตกลง</button>
-            </div>
-        </div>
-    </div>
+				<div class="divider" ></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default btn-block" data-dismiss="modal">ตกลง</button>
+			</div>
+		</div>
+	</div>
 </div>
 <hr class="padding-5">
 

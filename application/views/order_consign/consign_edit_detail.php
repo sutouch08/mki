@@ -96,8 +96,9 @@ $hide = $order->status == 1 ? 'hide' : '';
 <?php else : ?>
 <script src="<?php echo base_url(); ?>scripts/order_consign/consign_tr.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php endif; ?>
-<script src="<?php echo base_url(); ?>scripts/order_consign/consign_add.js"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/product_tab_menu.js"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/order_grid.js"></script>
+<script src="<?php echo base_url(); ?>scripts/order_consign/consign_add.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/product_tab_menu.js?v=<?php echo date('Ymd'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/order_grid.js?v=<?php echo date('Ymd'); ?>"></script>
+<!-- <script src="<?php echo base_url(); ?>scripts/orders/order_add.js?v=<?php echo date('Ymd'); ?>"></script> -->
 
 <?php $this->load->view('include/footer'); ?>

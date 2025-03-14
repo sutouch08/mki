@@ -53,6 +53,15 @@
 			{
 				window.location.href = BASE_URL +'user_pwd/change/'+uname;
 			}
+
+
+			//---- fix Block element aria-hidden
+			document.addEventListener('hidden.bs.modal', function (event) {
+				if (document.activeElement) {
+					document.activeElement.blur();
+				}
+			});
+
 		</script>
 
 	</body>

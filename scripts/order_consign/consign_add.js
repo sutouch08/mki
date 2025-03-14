@@ -369,13 +369,10 @@ function removeDetail(id, name){
 
 
 
-
 $("#pd-box").autocomplete({
 	source: BASE_URL + 'auto_complete/get_style_code',
 	autoFocus: true
 });
-
-
 
 
 $('#pd-box').keyup(function(event) {
@@ -388,11 +385,102 @@ $('#pd-box').keyup(function(event) {
 
 		}
 	}
-
 });
 
 
+$('#item-code').autocomplete({
+	source:BASE_URL + 'auto_complete/get_active_item_code_and_name',
+	autoFocus:true,
+	open:function(event){
+		var $ul = $(this).autocomplete('widget');
+		$ul.css('width', 'auto');
+	},
+	close:function(){
+		var rs = $(this).val();
+		var arr = rs.split(' | ');
 
+		if(arr.length === 2) {
+			$(this).val(arr[0]);
+      $('#item-name').val(arr[1]);
+			setTimeout(function(){
+				getItemGrid();
+			}, 200);
+		}
+		else {
+			$(this).val('');
+      $('#item-name').val('');
+		}
+	}
+});
+
+
+$('#item-code').keyup(function(e){
+	if(e.keyCode == 13){
+		var code = $(this).val();
+		if(code.length > 4){
+			setTimeout(function(){
+				getItemGrid();
+			}, 200);
+		}
+	}
+});
+
+
+$('#input-qty').keyup(function(e){
+	if(e.keyCode == 13){
+		addItemToOrder();
+	}
+});
+
+
+//---- เพิ่มรายการสินค้าเช้าออเดอร์
+function addItemToOrder(){
+	var orderCode = $('#order_code').val();
+	var qty = parseDefault(parseInt($('#input-qty').val()), 0);
+	var limit = parseDefault(parseInt($('#stock-qty').val()), 0);
+	var itemCode = $('#item-code').val();
+  var data = [{'code':itemCode, 'qty' : qty}];
+  var auz = $('#auz').val();
+
+	if(qty > 0 && (qty <= limit || auz > 0)){
+		load_in();
+		$.ajax({
+			url:BASE_URL + 'orders/orders/add_detail/'+orderCode,
+			type:"POST",
+			cache:"false",
+			data:{
+				'data' : data
+			},
+			success: function(rs){
+				load_out();
+				var rs = $.trim(rs);
+				if( rs == 'success' ){
+					swal({
+						title: 'success',
+						type: 'success',
+						timer: 1000
+					});
+
+					$("#btn-save-order").removeClass('hide');
+					updateDetailTable(); //--- update list of order detail
+
+					setTimeout(function(){
+						$('#item-code').val('');
+            $('#item-name').val('');
+						$('#stock-qty').val('');
+						$('#input-qty').val('');
+            $('#po-qty').val('');
+            $('#do-qty').val('');
+						$('#item-code').focus();
+					},1200);
+				}
+        else{
+					swal("Error", rs, "error");
+				}
+			}
+		});
+	}
+}
 
 //--- ตรวจสอบจำนวนที่คีย์สั่งใน order grid
 function countInput(){

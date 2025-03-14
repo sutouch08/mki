@@ -12,13 +12,20 @@ class Order_details extends PS_Controller
   {
     parent::__construct();
     $this->home = base_url().'report/sales/order_details';
-    $this->load->model('report/sales/sales_report_model');
+    $this->load->model('report/sales/order_report_model');
+    $this->load->model('masters/channels_model');
+    $this->load->model('masters/payment_methods_model');
     $this->load->helper('channels');
   }
 
   public function index()
   {
-    $this->load->view('report/sales/order_details');
+    $ds = array(
+      'channels' => $this->channels_model->get_all(),
+      'payments' => $this->payment_methods_model->get_all()
+    );
+
+    $this->load->view('report/sales/order_details', $ds);
   }
 
 
