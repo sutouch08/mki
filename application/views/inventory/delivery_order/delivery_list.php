@@ -62,28 +62,47 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-    <table class="table table-striped border-1" style="min-width:780px;">
+    <table class="table table-striped border-1" style="min-width:1230px;">
       <thead>
-        <tr>
+        <tr class="font-size-11">
           <th class="fix-width-40 text-center">ลำดับ</th>
+					<th class="fix-width-100 text-center">วันที่จัดส่ง</th>
+					<th class="fix-width-100 text-center">ตัดรอบออเดอร์</th>
+					<th class="fix-width-100 text-center">รอบจัดส่ง</th>
           <th class="fix-width-100 text-center">วันที่</th>
           <th class="fix-width-120">เลขที่เอกสาร</th>
           <th class="min-width-200">ลูกค้า/ผู้รับ/ผู้เบิก</th>
           <th class="fix-width-100 text-center">ยอดเงิน</th>
           <th class="fix-width-100 text-center">การชำระเงิน</th>
-          <th class="fix-width-120 text-center">พนักงาน</th>
+          <th class="fix-width-120 text-center">ผู้้ดำเนินการ</th>
+					<th class="fix-width-150">CSR</th>
         </tr>
       </thead>
       <tbody>
 <?php if(!empty($orders))  : ?>
 <?php $no = $this->uri->segment(4) + 1; ?>
+<?php $sa = saleman_array(); //-- saleman_helper ?>
+<?php $user = user_array(); //-- user_helper ?>
 <?php   foreach($orders as $rs)  : ?>
-
+<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
+<?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
         <tr class="font-size-12">
 
           <td class="text-center pointer" onclick="goDetail('<?php echo $rs->code; ?>')">
             <?php echo $no; ?>
           </td>
+
+					<td class="text-center" >
+						<?php echo empty($rs->shipping_date) ? "" : thai_date($rs->shipping_date, FALSE); ?>
+					</td>
+
+					<td class="text-center" >
+						<?php echo $rs->order_round; ?>
+					</td>
+
+					<td class="text-center" >
+						<?php echo $rs->shipping_round; ?>
+					</td>
 
           <td class="pointer text-center" onclick="goDetail('<?php echo $rs->code; ?>')">
             <?php echo thai_date($rs->date_add); ?>
@@ -107,7 +126,11 @@
           </td>
 
           <td class="pointer text-center hide-text" onclick="goDetail('<?php echo $rs->code; ?>')">
-            <?php echo $rs->user; ?>
+            <?php echo $dname; ?>
+          </td>
+
+					<td class="hide-text" >
+            <?php echo $csr; ?>
           </td>
 
         </tr>

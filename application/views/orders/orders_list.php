@@ -152,11 +152,12 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1780px;">
+		<table class="table table-striped table-bordered table-hover dataTable" style="min-width:1930px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
 					<th class="fix-width-100 middle text-center sorting <?php echo $sort_date; ?>" id="sort_date_add" onclick="sort('date_add')">วันที่</th>
+					<th class="fix-width-150 middle text-center">เวลาที่ดำเนินการ</th>
 					<th class="fix-width-120 middle sorting <?php echo $sort_code; ?>" id="sort_code" onclick="sort('code')">เลขที่เอกสาร</th>
 					<th class="min-width-250 middle text-center">ลูกค้า</th>
 					<th class="fix-width-100 middle text-center">ยอดเงิน</th>
@@ -188,10 +189,12 @@
 						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
 						<?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
 						<?php $type_name = empty($type[$rs->type_code]) ? NULL : $type[$rs->type_code]; ?>
+						<?php $first_state_date = $this->order_state_model->get_first_state_timestamp($rs->code); ?>
 
             <tr class="font-size-11" id="row-<?php echo $rs->code; ?>" style="<?php echo state_color($rs->state, $rs->status, $rs->is_expired); ?>">
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $no; ?></td>
               <td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($rs->date_add); ?></td>
+							<td class="middle text-center pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo thai_date($first_state_date, TRUE); ?></td>
               <td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->code . $cod_txt; ?></td>
 							<td class="middle pointer" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo $rs->customer_name . $c_ref; ?></td>
 							<td class="middle pointer text-right" onclick="editOrder('<?php echo $rs->code; ?>')"><?php echo number($rs->total_amount, 2); ?></td>

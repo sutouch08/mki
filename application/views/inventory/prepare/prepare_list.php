@@ -114,10 +114,12 @@
 			<tbody>
         <?php if(!empty($orders)) : ?>
 					<?php $sa = saleman_array(); //-- saleman_helper ?>
+					<?php $user = user_array(); //-- user_helper ?>
           <?php $no = $this->uri->segment(4) + 1; ?>
           <?php foreach($orders as $rs) : ?>
 						<?php $c_ref = empty($rs->customer_ref) ? '' : ' ['.$rs->customer_ref.']'; ?>
 						<?php $csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code]; ?>
+						<?php $dname = empty($user[$rs->user]) ? NULL : $user[$rs->user]; ?>
             <tr class="font-size-11" id="row-<?php echo $rs->code; ?>">
 							<td class="middle text-center">
 								<?php if($rs->picked == 0) : ?>
@@ -140,7 +142,7 @@
               <td class="middle"><?php echo $rs->code; ?></td>
               <td class="middle"><?php echo $rs->customer_name . $c_ref; ?></td>
               <td class="middle"><?php echo $rs->channels_name; ?></td>
-							<td class="middle"><?php echo $rs->user; ?></td>
+							<td class="middle"><?php echo $dname; ?></td>
 							<td class="middle"><?php echo $csr; ?></td>
             </tr>
             <?php $no++; ?>

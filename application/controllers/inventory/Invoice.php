@@ -18,6 +18,7 @@ class Invoice extends PS_Controller
     $this->load->model('masters/customers_model');
     $this->load->model('inventory/delivery_order_model');
     $this->load->helper('order');
+    $this->load->helper('saleman');
   }
 
 
@@ -54,9 +55,123 @@ class Invoice extends PS_Controller
 
 
     $filter['orders'] = $orders;
-    
+
 		$this->pagination->initialize($init);
     $this->load->view('inventory/order_closed/closed_list', $filter);
+  }
+
+
+  function export_filter()
+  {
+    $this->load->helper('channels');
+    $this->load->helper('payment_method');
+
+    $ds = json_decode($this->input->post('data'));
+    $token = $this->input->post('token');
+
+    //--- load excel library
+    $this->load->library('excel');
+
+    $this->excel->setActiveSheetIndex(0);
+    $this->excel->getActiveSheet()->setTitle('ออเดอร์เปิดบิลแล้ว');
+
+    $excel = $this->excel->getActiveSheet();
+
+    $row = 1;
+    //--- set report title header
+    $excel->setCellValue("A{$row}", "ออเดอร์เปิดบิลแล้ว");
+    $excel->mergeCells("A{$row}:N{$row}");
+    $row++;
+
+    //---- filter
+    $excel->setCellValue("A{$row}", "#");
+    $excel->setCellValue("B{$row}", "วันที่จัดส่ง");
+    $excel->setCellValue("C{$row}", "ตัดรอบออเดอร์");
+    $excel->setCellValue("D{$row}", "รอบจัดส่ง");
+    $excel->setCellValue("E{$row}", "วันที่");
+    $excel->setCellValue("F{$row}", "เลขที่เอกสาร");
+    $excel->setCellValue("G{$row}", "อ้างอิง[MKP]");
+    $excel->setCellValue("H{$row}", "อ้างอิง[CRM]");
+    $excel->setCellValue("I{$row}", "ใบกำกับ");
+    $excel->setCellValue("J{$row}", "ลูกค้า/ผู้รับ/ผู้เบิก");
+    $excel->setCellValue("K{$row}", "ยอดเงิน");
+    $excel->setCellValue("L{$row}", "Tracking No");
+    $excel->setCellValue("M{$row}", "ช่องทางการชำระเงิน");
+    $excel->setCellValue("N{$row}", "ช่องทางขาย");
+    $excel->setCellValue("O{$row}", "ผู้ดำเนินการ");
+    $excel->setCellValue("P{$row}", "CSR");
+    $row++;
+
+    if( ! empty($ds))
+    {
+      $perpage = 10000;
+      $offset = 0;
+
+      $filter = array(
+        'code' => $ds->code,
+  			'invoice_code' => $ds->invoice_code,
+        'customer' => $ds->customer,
+        'role' => $ds->role,
+  			'is_inv' => $ds->is_inv,
+        'channels' => $ds->channels,
+        'payment' => $ds->payment,
+        'user' => $ds->user,
+        'from_date' => $ds->from_date,
+        'to_date' => $ds->to_date
+      );
+
+      $data = $this->delivery_order_model->get_list($filter, $perpage, $offset, 8);
+    }
+
+    if( ! empty($data))
+    {
+      $no = 1;
+      $sa = saleman_array(); //-- saleman_helper
+      $user = user_array(); //-- user_helper
+      $payments = payment_array();
+      $channels = channels_array();
+
+      foreach($data as $rs)
+      {
+        $payment_name = empty($payments[$rs->payment_code]) ? NULL : $payments[$rs->payment_code];
+        $channels_name = empty($channels[$rs->channels_code]) ? NULL : $channels[$rs->channels_code];
+      	$csr = empty($sa[$rs->sale_code]) ? NULL : $sa[$rs->sale_code];
+      	$dname = empty($user[$rs->user]) ? NULL : $user[$rs->user];
+        $customerName = $rs->customer_name . (empty($rs->customer_ref) ? "" : " [{$rs->customer_ref}]");
+
+
+        $excel->setCellValue("A{$row}", $no);
+        $excel->setCellValue("B{$row}", thai_date($rs->shipping_date, FALSE));
+        $excel->setCellValue("C{$row}", $rs->order_round);
+        $excel->setCellValue("D{$row}", $rs->shipping_round);
+        $excel->setCellValue("E{$row}", thai_date($rs->date_add, FALSE));
+        $excel->setCellValue("F{$row}", $rs->code);
+        $excel->setCellValue("G{$row}", $rs->reference);
+        $excel->setCellValue("H{$row}", $rs->reference2);
+        $excel->setCellValue("I{$row}", $rs->invoice_code);
+        $excel->setCellValue("J{$row}", $customerName);
+        $excel->setCellValue("K{$row}", $rs->total_amount);
+        $excel->setCellValue("L{$row}", $rs->shipping_code);
+        $excel->setCellValue("M{$row}", $payment_name);
+        $excel->setCellValue("N{$row}", $channels_name);
+        $excel->setCellValue("O{$row}", $dname);
+        $excel->setCellValue("P{$row}", $csr);
+        $row++;
+        $no++;
+      }
+    }
+    else
+    {
+      $excel->setCellValue("A{$row}", "ไม่พบรายการตามเงื่อนไขที่กำหนด");
+    }
+
+    setToken($token);
+    $file_name = "ออเดอร์เปิดบิลแล้ว.xlsx";
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); /// form excel 2007 XLSX
+    header('Content-Disposition: attachment;filename="'.$file_name.'"');
+    $writer = PHPExcel_IOFactory::createWriter($this->excel, 'Excel2007');
+    $writer->save('php://output');
+
   }
 
 

@@ -25,6 +25,8 @@ class Delivery_order extends PS_Controller
     $this->load->helper('channels');
     $this->load->helper('payment_method');
     $this->load->helper('order');
+    $this->load->helper('saleman');
+    
     $filter = array(
       'code' => get_filter('code', 'code', ''),
       'customer'  => get_filter('customer', 'customer', ''),
