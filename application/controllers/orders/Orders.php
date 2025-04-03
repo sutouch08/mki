@@ -950,8 +950,7 @@ class Orders extends PS_Controller
       $rs->payment_role = $this->payment_methods_model->get_role($rs->payment_code);
       $rs->sale_name = (empty($customer) ? NULL : $customer->sale_name);
       $rs->type_name = empty($rs->type_code) ? NULL : $this->customer_type_model->get_name($rs->type_code);
-      $rs->total_amount = $this->orders_model->get_order_total_amount($rs->code);
-      $rs->user = $this->user_model->get_name($rs->user);
+      $rs->total_amount = $this->orders_model->get_order_total_amount($rs->code);      
       $rs->state_name = get_state_name($rs->state);
       $rs->has_payment = $this->order_payment_model->is_exists($code);
 
