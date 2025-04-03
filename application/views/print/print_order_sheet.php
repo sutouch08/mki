@@ -56,7 +56,7 @@ $header['right']['A'] = array(
 	array('label' => 'เลขที่', 'value' => $order->code),
 	array('label' => 'วันที่', 'value' => thai_date($order->date_add, FALSE, '/')),
 	array('label' => 'CSR', 'value' => $customer->sale_name),
-	array('label' => 'ผู้ทำรายการ', 'value' => $order->user)
+	array('label' => 'ผู้ทำรายการ', 'value' => get_display_name($order->user))
 );
 
 $header['right']['B'] = array(
